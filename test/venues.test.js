@@ -23,13 +23,13 @@ test('every stop can be played through to the stage door in one piece, with all 
   }
 });
 
-test('no two sets have the same boss, and the mirror ball hangs over the musical number and nowhere else', () => {
+test('no two stops have the same boss, and the one mirror ball on the tour hangs in Tokyo\'s karaoke box', () => {
   const bosses = VENUES.map((_, i) => bossOf(loadVenue(i))).flat();
   assert.equal(new Set(bosses).size, bosses.length, `bosses: ${bosses.join(', ')}`);
   for (let i = 0; i < VENUES.length; i++) {
     const v = loadVenue(i);
     const balls = v.fixtures.filter((f) => f.kind === 'ball').length;
-    assert.equal(balls, v.look.genre === 'Musical' ? 1 : 0, `${v.name} has ${balls} mirror balls`);
+    assert.equal(balls, v.look.country === 'Japan' ? 1 : 0, `${v.name} has ${balls} mirror balls`);
   }
 });
 
@@ -87,11 +87,11 @@ test('tape lies after something that can hurt Rock and before something that sti
   for (let i = 0; i < VENUES.length; i++) {
     const gig = createGig(GFX, i);
     const v = gig.venue, at = along(gig, graph(v));
-    // What does him real harm: drops, effects, live cable, and anyone who hits back harder than an extra.
+    // What does him real harm: drops, effects, live cable, and anyone who hits back harder than a tourist.
     const harm = [
       ...v.crushers.map((c) => at(c.x + c.w / 2, c.z + c.d / 2)),
       ...v.spikes.map((s) => at(s.x + s.w / 2, s.z + s.d / 2)),
-      ...v.foes.filter((f) => FOES[f.kind].power > FOES.extra.power).map((f) => at(f.x, f.z)),
+      ...v.foes.filter((f) => FOES[f.kind].power > FOES.tourist.power).map((f) => at(f.x, f.z)),
     ];
     for (let z = 0; z < v.rows; z++) for (let x = 0; x < v.cols; x++) if (v.cell(x, z)?.kind === 'zap') harm.push(at(x, z));
     for (const p of gig.actors.pickups) {

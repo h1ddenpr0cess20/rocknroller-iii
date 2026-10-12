@@ -15,7 +15,7 @@
  * under sail, a carnival float, a surfboard, a harbour ferry.
  *
  * Bumpers (`look` of a bumper): a London bollard, a snowman, a palm, a
- * traffic cone, a stone lantern, an amphora.
+ * traffic cone, a stone lantern, a Venetian mooring pole, an amphora.
  *
  * And what bursts out of the floor (`look.pyro`): a snow cannon, a sand
  * spout, a fountain or fireworks, besides machinery.js's flame and steam.
@@ -567,6 +567,25 @@ export const BUMPERS = {
     ring.position.y = 0.04;
     objects.push(ring);
     return { objects, parts: [box], rest: [1, 0.7, 0.4], flash: [1, 1, 0.8] };
+  },
+  pole(GFX, { radius, ringMat }) {
+    // A mooring pole out of the canal: striped like a barber's, a gilded cap.
+    const red = mat(GFX, '#c8203a', { roughness: 0.45 });
+    const white = mat(GFX, '#f4f0e8', { roughness: 0.45 });
+    const objects = [];
+    for (let k = 0; k < 6; k++) {
+      const band = new GFX.Mesh(new GFX.CylinderGeometry(radius * 0.3, radius * 0.32, 0.3, 12), k % 2 ? white : red);
+      band.position.y = 0.15 + k * 0.3;
+      objects.push(band);
+    }
+    const cap = new GFX.Mesh(new GFX.SphereGeometry(radius * 0.36, 12, 8), mat(GFX, '#d8b050', { metalness: 1, roughness: 0.3 }));
+    cap.position.y = 1.85;
+    objects.push(cap);
+    const ring = new GFX.Mesh(new GFX.TorusGeometry(radius * 0.6, 0.025, 6, 20), ringMat);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.04;
+    objects.push(ring);
+    return { objects, parts: objects.slice(0, 6), rest: [1, 0.4, 0.5], flash: [1, 1, 1] };
   },
   amphora(GFX, { radius, ringMat }) {
     const clay = mat(GFX, '#b8643a', { roughness: 0.85 });

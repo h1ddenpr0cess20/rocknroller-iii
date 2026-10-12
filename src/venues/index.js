@@ -1,20 +1,20 @@
-import { action } from './action.js';
-import { backlot } from './backlot.js';
-import { casting } from './casting.js';
-import { horror } from './horror.js';
-import { musical } from './musical.js';
-import { noir } from './noir.js';
-import { pirate } from './pirate.js';
-import { premiere } from './premiere.js';
-import { scifi } from './scifi.js';
-import { western } from './western.js';
+import { alps } from './alps.js';
+import { egypt } from './egypt.js';
+import { london } from './london.js';
+import { newyork } from './newyork.js';
+import { paris } from './paris.js';
+import { rio } from './rio.js';
+import { spain } from './spain.js';
+import { sydney } from './sydney.js';
+import { tokyo } from './tokyo.js';
+import { venice } from './venice.js';
 
 /**
- * The sets, in the order of the shoot: each a night further along, and
- * each dug with `dig.js` a piece at a time, with the people, hazards and
- * treasure put into the pieces by where they are in them.
+ * The stops of the tour, in order: each a city on the way to that night's
+ * show, dug with `dig.js` a piece at a time, with the people, hazards and
+ * souvenirs put into the pieces by where they are in them.
  */
-export const VENUES = [casting, backlot, western, musical, scifi, horror, noir, pirate, action, premiere];
+export const VENUES = [london, paris, venice, alps, spain, egypt, tokyo, rio, sydney, newyork];
 
 export function loadVenue(index) {
   return VENUES[index]();

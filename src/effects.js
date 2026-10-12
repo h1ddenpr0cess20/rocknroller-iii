@@ -26,7 +26,7 @@ const RAIN = Object.freeze({ drops: 900, reach: 11, height: 9, length: 0.5, spee
 const WEATHER = Object.freeze({
   rain: { streaks: true, color: '#c8d4e4', opacity: 0.45, velocity: [1.3, -16, 0], length: 0.5, splash: true },
   sand: { streaks: true, color: '#e0c088', opacity: 0.4, velocity: [9, -0.6, 2.5], length: 0.7, splash: false },
-  snow: { flakes: 650, color: '#ffffff', opacity: 0.92, velocity: [0.3, -1.4, 0.1], size: 0.07, wander: 0.5, turn: 1 },
+  snow: { flakes: 800, color: '#ffffff', opacity: 0.9, velocity: [0.3, -1.4, 0.1], size: 0.042, wander: 0.5, turn: 1 },
   petals: { flakes: 380, color: '#ffb8d4', opacity: 0.95, velocity: [0.6, -0.9, 0.2], size: 0.1, wander: 0.9, turn: 4 },
 });
 

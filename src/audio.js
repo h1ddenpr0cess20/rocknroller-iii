@@ -367,9 +367,9 @@ export function createAudio() {
     startMusic(venue, { gig = null } = {}) {
       wantTitle = false;
       if (!ctx || !band) return;
-      const name = venue.look?.theme ?? 'casting';
+      const name = venue.look?.theme ?? 'worldtour';
       const beat0 = gig ? (gig.time * venue.tempo) / 60 : 0;
-      band.start(THEMES[name] ?? THEMES.casting, venue.tempo, beat0);
+      band.start(THEMES[name] ?? THEMES.worldtour, venue.tempo, beat0);
     },
 
     stopMusic() {

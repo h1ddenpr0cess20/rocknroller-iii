@@ -20,16 +20,16 @@ test('a hit is graded by how fast it was: tap, bonk, smash, crit', () => {
 });
 
 test('a smash costs Rock nothing, a tap costs him the foe\'s whole power, and a bonk less the closer it was to a smash', () => {
-  const cowboy = foe('cowboy');
-  assert.equal(resolveImpact({ speed: cowboy.toughness, foe: cowboy }).damage, 0);
-  assert.equal(resolveImpact({ speed: 0, foe: cowboy }).damage, cowboy.power);
-  const slow = resolveImpact({ speed: cowboy.toughness * 0.55, foe: cowboy }).damage;
-  const fast = resolveImpact({ speed: cowboy.toughness * 0.95, foe: cowboy }).damage;
-  assert.ok(fast < slow && slow < cowboy.power);
+  const bobby = foe('bobby');
+  assert.equal(resolveImpact({ speed: bobby.toughness, foe: bobby }).damage, 0);
+  assert.equal(resolveImpact({ speed: 0, foe: bobby }).damage, bobby.power);
+  const slow = resolveImpact({ speed: bobby.toughness * 0.55, foe: bobby }).damage;
+  const fast = resolveImpact({ speed: bobby.toughness * 0.95, foe: bobby }).damage;
+  assert.ok(fast < slow && slow < bobby.power);
 });
 
 test('a boss is worn down, and never goes down for nothing', () => {
-  for (const kind of ['director', 'mrbig', 'mogul']) {
+  for (const kind of ['yeti', 'yokozuna', 'superfan']) {
     const boss = foe(kind);
     assert.ok(boss.hp > boss.toughness * 2, `${kind} has a lot of hp`);
     const smash = resolveImpact({ speed: boss.toughness + 1, foe: boss });
