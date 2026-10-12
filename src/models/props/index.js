@@ -1,9 +1,9 @@
-import bucket from './bucket.js';
-import clapper from './clapper.js';
+import globe from './globe.js';
+import lighter from './lighter.js';
 import pass from './pass.js';
-import popcorn from './popcorn.js';
-import reel from './reel.js';
+import pick from './pick.js';
+import suitcase from './suitcase.js';
 import tape from './tape.js';
 
-/** What lies about a set to be picked up, sculpted like the people but still: one bone, no animation. */
-export const PROPS = { popcorn, bucket, tape, clapper, pass, reel };
+/** What lies about a stop to be picked up, sculpted like the people but still: one bone, no animation. */
+export const PROPS = { pick, suitcase, tape, lighter, pass, globe };

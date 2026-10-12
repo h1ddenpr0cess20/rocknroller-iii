@@ -49,7 +49,7 @@ export function action() {
   const roof = d.hall(12, { width: 5, floor: 'concrete', wall: 'fence' });
   for (const k of [3, 8]) g.pillar(...backTile(roof, k), 1.0, { prop: 'vent' });
   g.foe('pa', ...roof.tile(6, 1), { range: 3 }).foe('drone', ...roof.tile(9, 0), { path: [roof.tile(3, 0), roof.tile(11, 0)] });
-  g.popcorn(...roof.tile(1, 0), 5).popcorn(...roof.tile(5, -1), 5).popcorn(...roof.tile(10, 1), 10);
+  g.pick(...roof.tile(1, 0), 5).pick(...roof.tile(5, -1), 5).pick(...roof.tile(10, 1), 10);
   sign(roof, 6, 'HELIPAD', BLAST[3], 0.5);
   d.turn('+z', { floor: 'concrete', wall: 'block' });
   // The fire stairs: down and round.
@@ -62,7 +62,7 @@ export function action() {
   const floor = d.hall(8, { width: 5, ...SITE });
   g.drop(...across(floor, 4, { beats: 8 }));
   g.foe('stuntman', ...floor.tile(6, 1), { range: 3 });
-  g.popcorn(...floor.tile(2, 0), 5).popcorn(...floor.tile(7, -1), 10);
+  g.pick(...floor.tile(2, 0), 5).pick(...floor.tile(7, -1), 10);
   beacon(floor, 2);
   const gap1 = d.ferry(9, { size: 3, period: 6 });
   g.zap(...gap1.rect(0, 9, gap1.lo - 2, 7), d.h - 1.8, { fill: true });
@@ -72,13 +72,13 @@ export function action() {
   const gap2 = d.ferry(9, { size: 3, period: 7, phase: 2 });
   g.zap(...gap2.rect(0, 9, gap2.lo - 2, 7), d.h - 1.8, { fill: true });
   const far = d.hall(4, { width: 5, ...SITE });
-  g.popcorn(...far.tile(2, 0), 10);
+  g.pick(...far.tile(2, 0), 10);
   // Through the window: sugar glass, and a reel on the desk of an office nobody has moved into.
   const pane = branch(d, far, 2, 'back', 3);
   const glass = pane.hall(5, { floor: 'carpet', wall: 'block' });
   flat(g, glass, 3, { look: 'glass', breakAt: 6 });
   const suite = pane.room(5, 5, { floor: 'carpet', wall: 'block' });
-  g.reel(...suite.tile(3, 0));
+  g.globe(...suite.tile(3, 0));
   g.block(...suite.rect(1, 1, 1, 2), 0.8, { prop: 'desk' });
   d.turn('+z', SITE);
   d.ramp(8, 4, { floor: 'asphalt', wall: 'block' });
@@ -90,7 +90,7 @@ export function action() {
   g.pyro(...across(garage, 10, { beats: 4, offset: 0.5 }));
   g.pyro(...across(garage, 15, { beats: 4 }));
   g.foe('paparazzo', ...garage.tile(3, 2), { range: 3 }).foe('stuntman', ...garage.tile(8, -1), { range: 2 }).foe('goon', ...garage.tile(13, 2), { range: 2 });
-  g.popcorn(...garage.tile(1, 0), 10).popcorn(...garage.tile(7, 3), 10).popcorn(...garage.tile(12, -2), 10).popcorn(...garage.tile(18, 0), 10);
+  g.pick(...garage.tile(1, 0), 10).pick(...garage.tile(7, 3), 10).pick(...garage.tile(12, -2), 10).pick(...garage.tile(18, 0), 10);
   g.tape(...garage.tile(17, 4));
   for (const k of [4, 14]) beacon(garage, k, k === 4 ? BLAST[2] : BLAST[1]);
   sign(garage, 9.5, 'LEVEL P2', BLAST[3], 0.5);
@@ -106,8 +106,8 @@ export function action() {
   g.block(...freeway.rect(17, 2, freeway.back * 2, 1), 0.9, { prop: 'sedan' });
   g.foe('drone', ...freeway.tile(10, 0), { path: [freeway.tile(4, -1), freeway.tile(19, -1)] });
   g.foe('goon', ...freeway.tile(20, 0), { range: 2 });
-  g.popcorn(...freeway.tile(2, freeway.back), 5).popcorn(...freeway.tile(9, -freeway.back), 5).popcorn(...freeway.tile(16, -freeway.back), 10);
-  g.clapper(...freeway.tile(21, -freeway.back));
+  g.pick(...freeway.tile(2, freeway.back), 5).pick(...freeway.tile(9, -freeway.back), 5).pick(...freeway.tile(16, -freeway.back), 10);
+  g.lighter(...freeway.tile(21, -freeway.back));
   sign(freeway, 7, 'EXIT 9', '#3aff7a', 0.5);
   sign(freeway, 14, 'NO STUNTS', BLAST[0], 0.45);
   d.turn('+z', SITE);
@@ -119,21 +119,21 @@ export function action() {
   g.block(...hangar.rect(7, 3, hangar.back * 6, 1), 1.3, { prop: 'racking' });
   g.pass(...hangar.tile(5, 3));
   g.foe('security', ...hangar.tile(12, -2), { range: 3 }).foe('pa', ...hangar.tile(14, 2), { range: 4 }).foe('pa', ...hangar.tile(5, -2), { range: 4 });
-  g.popcorn(...hangar.tile(1, 0), 10).popcorn(...hangar.tile(11, -3), 10).popcorn(...hangar.tile(16, 3), 10);
-  g.bucket(...hangar.tile(16, -5), 70);
+  g.pick(...hangar.tile(1, 0), 10).pick(...hangar.tile(11, -3), 10).pick(...hangar.tile(16, 3), 10);
+  g.suitcase(...hangar.tile(16, -5), 70);
   wash(g, hangar, [BLAST[3], BLAST[1]], { cans: 3, program: 'static' });
   const wall = branch(d, hangar, 11, 'front', 7);
   const drywall = wall.hall(5, { floor: 'concrete', wall: 'corrugated' });
   flat(g, drywall, 3, { look: 'drywall', breakAt: 6.5 });
   const nook = wall.room(5, 5, { floor: 'concrete', wall: 'corrugated' });
-  g.reel(...nook.tile(3, 0));
+  g.globe(...nook.tile(3, 0));
   // Behind the racking: the effects store, along a girder, the third reel.
   const store = branch(d, hangar, 3, 'front', 7);
   const beam = store.bridge(6, { floor: 'plate' });
   g.zap(...beam.rect(0, 6, beam.lo - 2, 5), store.h - 1.8, { fill: true });
   g.foe('drone', ...beam.tile(3, 0), { path: [beam.tile(1, 0), beam.tile(4, 0)] });
   const fx = store.room(5, 5, { floor: 'concrete', wall: 'corrugated' });
-  g.reel(...fx.tile(2, 0));
+  g.globe(...fx.tile(2, 0));
   const door = d.hall(4, SITE);
   barred(g, door, 2);
   d.hall(2, SITE);

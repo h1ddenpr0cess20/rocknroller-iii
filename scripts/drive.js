@@ -17,7 +17,7 @@ const t0 = performance.now();
 const r = drive(n - 1);
 const { gig } = r;
 console.log(`${gig.venue.name}: ${r.finished ? 'hit the mark' : `stuck ${JSON.stringify(r.stuck)}`} in ${r.time.toFixed(1)} s of play (${Math.round(performance.now() - t0)} ms)`);
-console.log(`  integrity ${gig.rock.hp}, reels ${gig.stats.reels}, smashed ${gig.stats.smashed} of ${gig.stats.foes}, buzz ${Math.round(gig.hype.score)}`);
+console.log(`  integrity ${gig.rock.hp}, snow globes ${gig.stats.globes}, smashed ${gig.stats.smashed} of ${gig.stats.foes}, hype ${Math.round(gig.hype.score)}`);
 if (r.losses.length) console.log('  lost:', r.losses);
 if (r.harms.length) console.log('  hurt:', r.harms);
 const tally = {};

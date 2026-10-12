@@ -47,7 +47,7 @@ export function horror() {
   g.start = { x: 4, z: 6 };
   const d = digger(g, { x: 7, z: 6, h: 84, heading: '+x' });
   const path = d.hall(6, { floor: 'dirt', wall: 'stone' });
-  g.popcorn(...path.tile(1, 0), 5).popcorn(...path.tile(3, 0), 5).popcorn(...path.tile(5, 0), 5);
+  g.pick(...path.tile(1, 0), 5).pick(...path.tile(3, 0), 5).pick(...path.tile(5, 0), 5);
   d.turn('+z', { floor: 'dirt', wall: 'stone' });
   d.hall(2, { floor: 'dirt', wall: 'stone' });
 
@@ -56,7 +56,7 @@ export function horror() {
   for (const [a, b] of [[3, -4], [3, -1], [3, 2], [8, -3], [8, 1], [8, 4], [13, -4], [13, 0], [13, 3]]) g.pillar(...yard.tile(a, b), 0.7, { prop: 'tombstone' });
   g.foe('zombie', ...yard.tile(5, 2), { range: 6 }).foe('zombie', ...yard.tile(10, -2), { range: 6 }).foe('zombie', ...yard.tile(15, 4), { range: 5 });
   g.foe('bat', ...yard.tile(9, 0), { path: [yard.tile(4, -5), yard.tile(15, -5), yard.tile(15, 5), yard.tile(4, 5)] });
-  g.popcorn(...yard.tile(1, 0), 10).popcorn(...yard.tile(6, -5), 10).popcorn(...yard.tile(11, 5), 10).popcorn(...yard.tile(16, -2), 10);
+  g.pick(...yard.tile(1, 0), 10).pick(...yard.tile(6, -5), 10).pick(...yard.tile(11, 5), 10).pick(...yard.tile(16, -2), 10);
   lightning(yard, 4);
   lightning(yard, 13, 0.5);
   g.light('par', ...wallTile(yard, 8), { colors: [GLOOM[1]], program: 'static', glow: 0.6, reach: 7, aim: toBack(yard).map((v) => -4 * v), height: 1.4 });
@@ -65,9 +65,9 @@ export function horror() {
   const slab = tomb.hall(5, { floor: 'cobble', wall: 'stone' });
   flat(g, slab, 3, { look: 'stone' });
   const vault = tomb.room(5, 5, { floor: 'cobble', wall: 'stone' });
-  g.reel(...vault.tile(3, 0));
+  g.globe(...vault.tile(3, 0));
   g.pillar(...vault.tile(3, 2), 0.6, { prop: 'coffin' });
-  g.popcorn(...vault.tile(1, -1), 10);
+  g.pick(...vault.tile(1, -1), 10);
   d.hall(2, { floor: 'cobble', wall: 'stone' });
   d.stairs(3, 1.5, { wall: 'stone' });
 
@@ -75,7 +75,7 @@ export function horror() {
   const hall = d.room(9, 13, HOUSE);
   for (const k of [2, 6]) candle(hall, k);
   g.foe('makeup', ...hall.tile(4, 2), { range: 5 });
-  g.popcorn(...hall.tile(2, -3), 10).popcorn(...hall.tile(6, 4), 10);
+  g.pick(...hall.tile(2, -3), 10).pick(...hall.tile(6, 4), 10);
   g.light('chandelier', ...centre(hall), { height: 3.2, radius: 4, color: '#ffc890' });
   d.hall(4, HOUSE);
   d.turn('+x', HOUSE);
@@ -89,7 +89,7 @@ export function horror() {
   }
   g.foe('bat', ...dining.tile(9, 1), { path: [dining.tile(3, 2), dining.tile(16, 2)] });
   g.foe('zombie', ...dining.tile(12, -1), { range: 4 });
-  g.popcorn(...dining.tile(2, 0), 5).popcorn(...dining.tile(8, -2), 5).popcorn(...dining.tile(13, 2), 10);
+  g.pick(...dining.tile(2, 0), 5).pick(...dining.tile(8, -2), 5).pick(...dining.tile(13, 2), 10);
   g.tape(...dining.tile(17, -2));
   for (const k of [3, 8, 13]) candle(dining, k);
   d.turn('+z', HOUSE);
@@ -101,7 +101,7 @@ export function horror() {
   g.block(...library.rect(6, 2, 2, 1), 0.8, { prop: 'desk' });
   g.pass(...library.tile(8, 3));
   g.foe('mummy', ...library.tile(5, -2), { range: 5 }).foe('makeup', ...library.tile(10, 3), { range: 4 });
-  g.popcorn(...library.tile(2, 2), 10).popcorn(...library.tile(11, -3), 10);
+  g.pick(...library.tile(2, 2), 10).pick(...library.tile(11, -3), 10);
   candle(library, 6);
   lightning(library, 6.5, 0.3);
   // Behind the bookcase that swings: the secret passage, and the second reel.
@@ -109,16 +109,16 @@ export function horror() {
   const shelf = secret.hall(5, { floor: 'planks', wall: 'stone' });
   flat(g, shelf, 3, { look: 'wood' });
   const study = secret.room(5, 5, { floor: 'planks', wall: 'stone' });
-  g.reel(...study.tile(3, 0));
-  g.bucket(...study.tile(1, 1), 60);
+  g.globe(...study.tile(3, 0));
+  g.suitcase(...study.tile(1, 1), 60);
   d.hall(2, HOUSE);
 
   // The corridor of fake blood: slick, and the Mummy's understudy in it.
   const gore = d.hall(12, { width: 5, floor: 'carpet', wall: 'stone' });
   g.sticky(...gore.rect(3, 7, -2, 5));
   g.foe('mummy', ...gore.tile(6, 0), { range: 4 });
-  g.popcorn(...gore.tile(1, 0), 5).popcorn(...gore.tile(11, 0), 10);
-  g.clapper(...gore.tile(11, 1));
+  g.pick(...gore.tile(1, 0), 5).pick(...gore.tile(11, 0), 10);
+  g.lighter(...gore.tile(11, 1));
   sign(gore, 6, 'GET OUT', '#ff2a2a', 0.5);
   const gate = d.hall(4, { floor: 'cobble', wall: 'stone' });
   barred(g, gate, 2, 'bars');
@@ -134,7 +134,7 @@ export function horror() {
   g.foe('zombie', ...crypt.tile(3, 3), { range: 4 }).foe('mummy', ...crypt.tile(8, -2), { range: 4 });
   g.foe('stuntman', ...crypt.tile(14, 2), { range: 4 });
   g.foe('bat', ...crypt.tile(8, 4), { path: [crypt.tile(2, 4), crypt.tile(15, 4)] });
-  g.popcorn(...crypt.tile(2, 0), 10).popcorn(...crypt.tile(8, 0), 10).popcorn(...crypt.tile(14, -3), 10);
+  g.pick(...crypt.tile(2, 0), 10).pick(...crypt.tile(8, 0), 10).pick(...crypt.tile(14, -3), 10);
   g.tape(...crypt.tile(9, 5));
   wash(g, crypt, [GLOOM[1], GLOOM[3]], { cans: 2, program: 'static' });
   // Across the pit on a plank, the altar: the last reel.
@@ -143,7 +143,7 @@ export function horror() {
   g.zap(...plank.rect(0, 7, plank.lo - 2, 5), pit.h - 1.8, { fill: true });
   g.foe('bat', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const altar = pit.room(5, 5, { floor: 'cobble', wall: 'stone' });
-  g.reel(...altar.tile(2, 0));
+  g.globe(...altar.tile(2, 0));
   g.light('chandelier', ...centre(altar), { height: 2.8, radius: 2.5, color: '#9aff8a' });
   d.hall(3, { floor: 'cobble', wall: 'stone' });
   d.exit(3);

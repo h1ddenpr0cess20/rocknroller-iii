@@ -49,7 +49,7 @@ export function scifi() {
   g.zap(...corridor.rect(3, 9, corridor.lo, 1), d.h);
   g.zap(...corridor.rect(3, 9, corridor.lo + 4, 1), d.h);
   g.foe('robot', ...corridor.tile(8, 0), { range: 4, path: [corridor.tile(5, 0), corridor.tile(11, 0)] });
-  g.popcorn(...corridor.tile(1, 0), 5).popcorn(...corridor.tile(4, 0), 5).popcorn(...corridor.tile(7, 1), 5).popcorn(...corridor.tile(13, 0), 10);
+  g.pick(...corridor.tile(1, 0), 5).pick(...corridor.tile(4, 0), 5).pick(...corridor.tile(7, 1), 5).pick(...corridor.tile(13, 0), 10);
   sign(corridor, 2, 'DECK 7', SPACE[0], 0.5);
   sign(corridor, 12, 'AIRLOCK', SPACE[2], 0.45);
   d.turn('+z', DECK);
@@ -62,8 +62,8 @@ export function scifi() {
   for (const [a, b] of [[4, 3], [11, 3]]) g.block(...bridge.rect(a, 2, b, 1), 0.85, { prop: 'console' });
   g.foe('alien', ...bridge.tile(5, -3), { range: 6 }).foe('alien', ...bridge.tile(11, -2), { range: 6 });
   g.foe('pa', ...bridge.tile(13, 4), { range: 5 });
-  g.popcorn(...bridge.tile(2, 0), 10).popcorn(...bridge.tile(7, -4), 10).popcorn(...bridge.tile(13, -4), 10);
-  g.bucket(...bridge.tile(2, 5), 50);
+  g.pick(...bridge.tile(2, 0), 10).pick(...bridge.tile(7, -4), 10).pick(...bridge.tile(13, -4), 10);
+  g.suitcase(...bridge.tile(2, 5), 50);
   sign(bridge, 7.5, 'RED ALERT', SPACE[2], 0.6, 1.8);
   for (const k of [3, 12]) g.light('strobe', ...wallTile(bridge, k), { colors: [SPACE[2]], reach: 8, height: 1.4, cycle: 16, on: 4, shift: k });
   wash(g, bridge, [SPACE[0], SPACE[1]], { cans: 2, program: 'pulse', every: 2 });
@@ -72,8 +72,8 @@ export function scifi() {
   const panel = quarters.hall(5, DECK);
   flat(g, panel, 3, { look: 'steel' });
   const cabin = quarters.room(5, 5, { floor: 'carpet', wall: 'hull' });
-  g.reel(...cabin.tile(3, 0));
-  g.popcorn(...cabin.tile(1, -1), 10).popcorn(...cabin.tile(1, 1), 10);
+  g.globe(...cabin.tile(3, 0));
+  g.pick(...cabin.tile(1, -1), 10).pick(...cabin.tile(1, 1), 10);
   d.hall(2, DECK);
   d.turn('+x', DECK);
 
@@ -83,7 +83,7 @@ export function scifi() {
   g.belt(...hull.rect(4, 3, hull.lo, 4), edge);
   g.belt(...hull.rect(12, 3, hull.lo, 4), edge);
   g.foe('drone', ...hull.tile(9, 0), { path: [hull.tile(5, -1), hull.tile(16, -1)] });
-  g.popcorn(...hull.tile(2, hull.back), 5).popcorn(...hull.tile(8, hull.back), 5).popcorn(...hull.tile(16, hull.back), 10);
+  g.pick(...hull.tile(2, hull.back), 5).pick(...hull.tile(8, hull.back), 5).pick(...hull.tile(16, hull.back), 10);
   sign(hull, 9, 'VIEWPORT', SPACE[0], 0.5);
   d.turn('+z', DECK);
   d.hall(2, DECK);
@@ -93,7 +93,7 @@ export function scifi() {
   g.pyro(...across(vents, 3, { beats: 4 }));
   g.pyro(...across(vents, 7, { beats: 4, offset: 0.5 }));
   g.foe('robot', ...vents.tile(10, 0), { range: 3 });
-  g.popcorn(...vents.tile(5, 0), 5).popcorn(...vents.tile(5, 1), 5).popcorn(...vents.tile(9, -1), 10);
+  g.pick(...vents.tile(5, 0), 5).pick(...vents.tile(5, 1), 5).pick(...vents.tile(9, -1), 10);
   g.tape(...vents.tile(11, 1));
   sign(vents, 5, 'COOLANT', SPACE[3], 0.45);
   d.turn('+x', DECK);
@@ -104,8 +104,8 @@ export function scifi() {
   for (const [along, b, offset] of [[4, -4, 0], [8, 2, 0.33], [12, -4, 0.66]]) g.drop(...engine.rect(along, 2, b, 3).slice(0, 2), { w: engine.dir[0] ? 2 : 3, d: engine.dir[0] ? 3 : 2, beats: 4, offset });
   g.block(...engine.rect(7, 3, -6, 2), 1.3, { prop: 'rack' });
   g.foe('robot', ...engine.tile(6, 3), { range: 5 }).foe('alien', ...engine.tile(14, 1), { range: 5 });
-  g.popcorn(...engine.tile(2, 0), 10).popcorn(...engine.tile(10, 5), 10).popcorn(...engine.tile(15, -3), 10);
-  g.clapper(...engine.tile(16, 5));
+  g.pick(...engine.tile(2, 0), 10).pick(...engine.tile(10, 5), 10).pick(...engine.tile(15, -3), 10);
+  g.lighter(...engine.tile(16, 5));
   wash(g, engine, [SPACE[1], SPACE[0]], { cans: 3, program: 'chase', every: 2 });
   g.light('laser', ...wallTile(engine, 6), { color: SPACE[1], radius: 4, height: 2.2 });
   // Across the reactor pit on a plank, the conduits live below: the second reel.
@@ -114,7 +114,7 @@ export function scifi() {
   g.zap(...plank.rect(0, 7, plank.lo - 2, 5), reactor.h - 1.8, { fill: true });
   g.foe('drone', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const core = reactor.room(5, 5, { ...DECK, floor: 'plate' });
-  g.reel(...core.tile(2, 0));
+  g.globe(...core.tile(2, 0));
   // The sick bay, off the front of the engine room: the pass.
   const sick = branch(d, engine, 5, 'front', 7);
   sick.hall(3, DECK);
@@ -136,7 +136,7 @@ export function scifi() {
   const voidway = d.ferry(12, { size: 3, period: 7 });
   void voidway;
   const pad = d.hall(3, DECK);
-  g.popcorn(...pad.tile(1, 0), 10);
+  g.pick(...pad.tile(1, 0), 10);
   // Down in the lift, to the planet.
   d.shaft(4, { size: 3, period: 7 });
   d.hall(2, { floor: 'dirt', wall: 'stone' });
@@ -147,15 +147,15 @@ export function scifi() {
   g.bowl(...planet.rect(3, 5, 1, 5), d.h, 0.5);
   for (const [a, b] of [[3, -4], [13, 4], [14, -4]]) g.bumper(...planet.tile(a, b), { radius: 0.45, look: 'post' });
   g.foe('alien', ...planet.tile(6, -3), { range: 6 }).foe('robot', ...planet.tile(12, -2), { range: 6 }).foe('alien', ...planet.tile(15, 2), { range: 5 });
-  g.popcorn(...planet.tile(5, 3), 10).popcorn(...planet.tile(11, 0), 10).popcorn(...planet.tile(16, -3), 10);
-  g.bucket(...planet.tile(16, 5), 70);
+  g.pick(...planet.tile(5, 3), 10).pick(...planet.tile(11, 0), 10).pick(...planet.tile(16, -3), 10);
+  g.suitcase(...planet.tile(16, 5), 70);
   wash(g, planet, [SPACE[1], '#9a5aff'], { cans: 3, program: 'static' });
   // Behind the painted sky at the back of the planet: the last reel.
   const crater = branch(d, planet, 9, 'back', 7);
   const skyHall = crater.hall(5, { wall: 'flats' });
   flat(g, skyHall, 3, { look: 'backdrop' });
   const nook = crater.room(5, 5, { floor: 'dirt', wall: 'flats' });
-  g.reel(...nook.tile(3, 0));
+  g.globe(...nook.tile(3, 0));
   void backTile; void centre; void toBack;
   d.hall(3, { floor: 'dirt', wall: 'stone' });
   d.exit(3);

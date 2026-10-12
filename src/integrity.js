@@ -1,7 +1,7 @@
 /**
  * Rock's integrity: how much of him is still in one piece. Every knock
  * takes some, gaffer tape puts some back, and at nothing he is shattered —
- * unless he picked up a clapperboard, and the director calls take two.
+ * unless he picked up a lighter, and the crowd calls him back for an encore.
  */
 
 export const MAX_INTEGRITY = 100;
@@ -16,7 +16,7 @@ export const HARM = Object.freeze({
 });
 
 export function createIntegrity() {
-  return { hp: MAX_INTEGRITY, max: MAX_INTEGRITY, takes: 0 };
+  return { hp: MAX_INTEGRITY, max: MAX_INTEGRITY, encores: 0 };
 }
 
 export const shattered = (rock) => rock.hp <= 0;
@@ -36,10 +36,10 @@ export function heal(rock, amount) {
   return gain;
 }
 
-/** Take two, if he has a clapperboard and he is done for: back up on half his integrity. Returns whether it was used. */
-export function retake(rock) {
-  if (rock.hp > 0 || rock.takes < 1) return false;
-  rock.takes -= 1;
+/** An encore, if he has a lighter and he is done for: back up on half his integrity. Returns whether it was used. */
+export function encore(rock) {
+  if (rock.hp > 0 || rock.encores < 1) return false;
+  rock.encores -= 1;
   rock.hp = Math.ceil(rock.max / 2);
   return true;
 }

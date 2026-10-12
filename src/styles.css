@@ -122,9 +122,9 @@ kbd {
 .carried .chip { display: none; align-items: baseline; gap: 6px; font-family: var(--display); font-size: 20px; letter-spacing: 0.04em; }
 .carried .chip.show { display: flex; }
 .carried .chip small { font-family: var(--body); font-weight: 600; font-size: 11px; letter-spacing: 0.22em; color: var(--dim); text-transform: uppercase; }
-.carried .chip.reels { color: var(--gold); text-shadow: 0 0 12px rgba(240,192,74,0.6); }
+.carried .chip.globes { color: var(--gold); text-shadow: 0 0 12px rgba(240,192,74,0.6); }
 .carried .chip.passes { color: var(--ivory); text-shadow: 0 0 12px rgba(246,236,210,0.5); }
-.carried .chip.takes { color: #ff8a6a; text-shadow: 0 0 12px rgba(255,110,80,0.55); }
+.carried .chip.encores { color: #ff8a6a; text-shadow: 0 0 12px rgba(255,110,80,0.55); }
 .carried .chip.pop { animation: bump 0.3s ease-out; }
 
 #map {

@@ -1,7 +1,7 @@
 /**
- * Bits that fly: puffs and stars where somebody was smashed, popcorn, stone
+ * Bits that fly: puffs and stars where somebody was smashed, guitar picks, stone
  * chips off Rock, sparks off pyro, steam, confetti, dust when he lands hard,
- * a glitter for a pass or a clapperboard, and a ring that goes out from a
+ * a glitter for a passport or a lighter, and a ring that goes out from a
  * big hit. Each bit is ballistic, bounces off the floor or settles on it,
  * and shrinks away. And the weather, on a set that has it: rain, falling
  * round Rock in streaks and splashing where it lands.
@@ -10,7 +10,7 @@
 const GRAVITY = 18;
 
 const CONFETTI = ['#ffd23a', '#f5f0e6', '#d81c2a', '#ffb02a', '#ffffff', '#c8a050', '#2de2ff'];
-const POPCORN = ['#fff6dc', '#fff0c8', '#ffe8a8', '#fff8ea'];
+const PICKS = ['#ff3a8a', '#2ad0ff', '#ffd23a', '#8a4be8', '#3ae88a', '#ff7a1a', '#f5f0e6'];
 
 /** The rain: how many streaks, how far round Rock they fall, how long each is and how fast it falls. */
 const RAIN = Object.freeze({ drops: 900, reach: 11, height: 9, length: 0.5, speed: 16 });
@@ -24,9 +24,9 @@ export function createEffects(GFX, scene) {
 
   const puff = new GFX.SphereGeometry(0.16, 12, 8);
   const smoke = new GFX.MeshStandardMaterial({ name: 'smoke', color: new GFX.Color('#c9c4d4'), roughness: 1, transparent: true, opacity: 0.55, depthWrite: false });
-  // A kernel of popcorn: a lumpy puff.
-  const cornGeometry = new GFX.IcosahedronGeometry(0.045, 0);
-  const corn = POPCORN.map((c) => new GFX.MeshStandardMaterial({ name: 'popcorn', color: new GFX.Color(c), roughness: 0.8, flatShading: true, emissive: new GFX.Color('#5a4010'), emissiveIntensity: 0.3 }));
+  // A guitar pick: a flat, rounded triangle of celluloid.
+  const pickGeometry = new GFX.CylinderGeometry(0.05, 0.05, 0.008, 3);
+  const celluloid = PICKS.map((c) => new GFX.MeshStandardMaterial({ name: 'pick', color: new GFX.Color(c), roughness: 0.25, emissive: new GFX.Color(c), emissiveIntensity: 0.25 }));
   const steamMat = new GFX.MeshStandardMaterial({ name: 'steam', color: new GFX.Color('#e8eef4'), roughness: 1, transparent: true, opacity: 0.4, depthWrite: false });
   const mote = new GFX.SphereGeometry(0.035, 6, 4);
   const glows = new Map();
@@ -174,10 +174,10 @@ export function createEffects(GFX, scene) {
       rings.push({ mesh, age: 0, life: 0.5, reach });
     },
 
-    /** Popcorn, flung up: what a handful or a bucket of it gives. */
-    popcorn(x, y, z, n = 8) {
+    /** Picks, flung up: what a pile or a suitcase of them gives. */
+    picks(x, y, z, n = 8) {
       for (let i = 0; i < n; i++) {
-        const m = new GFX.Mesh(cornGeometry, corn[Math.floor(Math.random() * corn.length)]);
+        const m = new GFX.Mesh(pickGeometry, celluloid[Math.floor(Math.random() * celluloid.length)]);
         m.scale.setScalar(0.7 + Math.random() * 0.7);
         const [ox, oy, oz] = outward(2.2, 6);
         spawn(m, { x, y: y + 0.2, z, vx: ox, vy: oy, vz: oz, life: 1.1 + Math.random() * 0.5, spin: 16, bounce: 0.45 });

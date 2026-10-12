@@ -50,7 +50,7 @@ export function premiere() {
   // The boulevard: the stars in the pavement, the fans already here, the searchlights going.
   const blvd = d.hall(14, { width: 5, ...BLVD });
   g.foe('fan', ...blvd.tile(5, 1), { range: 4 }).foe('fan', ...blvd.tile(10, -1), { range: 4 });
-  g.popcorn(...blvd.tile(1, 0), 5).popcorn(...blvd.tile(4, -1), 5).popcorn(...blvd.tile(8, 1), 5).popcorn(...blvd.tile(12, 0), 10);
+  g.pick(...blvd.tile(1, 0), 5).pick(...blvd.tile(4, -1), 5).pick(...blvd.tile(8, 1), 5).pick(...blvd.tile(12, 0), 10);
   g.light('klieg', ...blvd.tile(7, -2), { yaw: 1.1, sweep: 0.8, shift: 1.5 });
   for (const k of [3, 11]) g.light('streetlamp', ...blvd.tile(k, 2), { height: 2.4 });
   d.turn('+z', BLVD);
@@ -61,7 +61,7 @@ export function premiere() {
   for (const a of [3, 7, 11, 15, 19]) { rope(carpet, a, -2); rope(carpet, a, 2); }
   g.foe('paparazzo', ...carpet.tile(5, 3), { range: 4 }).foe('paparazzo', ...carpet.tile(13, -3), { range: 4 });
   g.foe('influencer', ...carpet.tile(9, 0), { range: 5 }).foe('fan', ...carpet.tile(17, 3), { range: 4 }).foe('critic', ...carpet.tile(21, -2), { range: 4 });
-  g.popcorn(...carpet.tile(2, 0), 10).popcorn(...carpet.tile(8, -3), 10).popcorn(...carpet.tile(14, 3), 10).popcorn(...carpet.tile(20, 0), 10);
+  g.pick(...carpet.tile(2, 0), 10).pick(...carpet.tile(8, -3), 10).pick(...carpet.tile(14, 3), 10).pick(...carpet.tile(20, 0), 10);
   sign(carpet, 11.5, 'LIKE A ROCK', GALA[0], 0.9, 1.6);
   sign(carpet, 3.5, 'TONIGHT', GALA[1], 0.45);
   sign(carpet, 20.5, 'PREMIERE', GALA[1], 0.45);
@@ -73,11 +73,11 @@ export function premiere() {
   // The lobby: marble, chandeliers, the concession stand heaped with popcorn, the doorman at the doors.
   const lobby = d.room(15, 13, { floor: 'checker', wall: 'damask' });
   g.block(...lobby.rect(3, 9, lobby.back * 6, 1), 0.9, { prop: 'bar' });
-  g.bucket(...lobby.tile(5, lobby.back * 5), 60).bucket(...lobby.tile(10, lobby.back * 5), 60);
+  g.suitcase(...lobby.tile(5, lobby.back * 5), 60).suitcase(...lobby.tile(10, lobby.back * 5), 60);
   for (const a of [4, 11]) g.light('chandelier', ...lobby.tile(a, 0), { height: 3.2, radius: 3.5 });
   g.foe('usher', ...lobby.tile(6, 3), { range: 5 }).foe('agent', ...lobby.tile(10, -1), { range: 5 }).foe('bouncer', ...lobby.tile(13, 3), { range: 3 });
   g.pass(...lobby.tile(4, 4));
-  g.popcorn(...lobby.tile(2, 0), 10).popcorn(...lobby.tile(8, 2), 10);
+  g.pick(...lobby.tile(2, 0), 10).pick(...lobby.tile(8, 2), 10);
   g.tape(...lobby.tile(14, -3));
   sign(lobby, 7.5, 'CONCESSIONS', GALA[0], 0.5, 2.0);
   // The coat check, behind its curtain: the first reel, in somebody's coat.
@@ -85,7 +85,7 @@ export function premiere() {
   const curtain = coats.hall(5, { floor: 'carpet', wall: 'damask' });
   flat(g, curtain, 3, { look: 'curtain', breakAt: 6 });
   const check = coats.room(5, 5, { floor: 'carpet', wall: 'damask' });
-  g.reel(...check.tile(3, 0));
+  g.globe(...check.tile(3, 0));
   g.pillar(...check.tile(3, 2), 1.1, { prop: 'rail' });
   const doors = d.hall(4, { floor: 'carpet', wall: 'damask' });
   barred(g, doors, 2);
@@ -104,8 +104,8 @@ export function premiere() {
   }
   for (const [i, [along, aisle]] of [[0, rows[1]], [1, rows[3]]]) g.drop(...stalls.tile(along + 1, aisle), { w: 2, d: 2, beats: 8, offset: i * 0.5 });
   g.foe('usher', ...stalls.tile(4, 0), { range: 4 }).foe('fan', ...stalls.tile(10, 2), { range: 4 }).foe('critic', ...stalls.tile(14, -2), { range: 4 });
-  for (const [along, aisle] of rows) g.popcorn(...stalls.tile(along - 1, aisle), 10);
-  g.clapper(...stalls.tile(16, 5));
+  for (const [along, aisle] of rows) g.pick(...stalls.tile(along - 1, aisle), 10);
+  g.lighter(...stalls.tile(16, 5));
   wash(g, stalls, [GALA[0], GALA[2]], { cans: 3, program: 'chase', every: 4 });
 
   // The orchestra pit: across on the fans' hands.
@@ -123,7 +123,7 @@ export function premiere() {
   g.block(...stage.rect(8, 3, stage.back * 6 - (stage.back > 0 ? 1 : 0), 2), 2.0, { prop: 'statue' });
   for (const [a, b] of [[4, -5], [4, 5], [15, -5], [15, 5]]) g.pillar(...stage.tile(a, b), 1.2, { prop: 'lamp' });
   g.foe('mogul', ...stage.tile(11, 0), { range: 6 });
-  g.popcorn(...stage.tile(2, 0), 10).popcorn(...stage.tile(7, -5), 10).popcorn(...stage.tile(7, 5), 10).popcorn(...stage.tile(12, -5), 10);
+  g.pick(...stage.tile(2, 0), 10).pick(...stage.tile(7, -5), 10).pick(...stage.tile(7, 5), 10).pick(...stage.tile(12, -5), 10);
   g.tape(...stage.tile(2, -5)).tape(...stage.tile(2, 5));
   g.light('spot', ...wallTile(stage, 5), { colors: ['#fff4e0'], radius: 3, aim: toBack(stage).map((v) => -5 * v), height: 2.6 });
   g.light('spot', ...wallTile(stage, 14), { colors: ['#fff4e0'], radius: 3, aim: toBack(stage).map((v) => -5 * v), height: 2.6, shift: 2 });
@@ -133,14 +133,14 @@ export function premiere() {
   const under = trap.hall(5, { floor: 'planks', wall: 'block' });
   flat(g, under, 3, { look: 'wood', breakAt: 6.5 });
   const cellar = trap.room(5, 5, { floor: 'planks', wall: 'block' });
-  g.reel(...cellar.tile(3, 0));
-  g.bucket(...cellar.tile(1, 1), 60);
+  g.globe(...cellar.tile(3, 0));
+  g.suitcase(...cellar.tile(1, 1), 60);
   // Up in the projection booth, along the catwalk: the third.
   const booth = branch(d, stage, 15, 'front', 8);
   const walk = booth.bridge(7, { floor: 'plate' });
   g.foe('drone', ...walk.tile(3, 0), { path: [walk.tile(1, 0), walk.tile(5, 0)] });
   const projection = booth.room(5, 5, { floor: 'concrete', wall: 'block' });
-  g.reel(...projection.tile(2, 0));
+  g.globe(...projection.tile(2, 0));
   g.block(...projection.rect(3, 1, -1, 1), 1.0, { prop: 'camera' });
   void centre;
   d.hall(3, { floor: 'planks', wall: 'curtain' });

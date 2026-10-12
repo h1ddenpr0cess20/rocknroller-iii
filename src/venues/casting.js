@@ -47,8 +47,8 @@ export function casting() {
   const d = digger(g, { x: 7, z: 6, h: 40, heading: '+x' });
   // The queue of hopefuls along the wall, headshots in hand; popcorn somebody dropped to follow in.
   const queue = d.hall(8, { wall: 'posters', floor: 'concrete' });
-  for (const a of [2, 3, 4]) g.popcorn(...queue.tile(a, 0), 5);
-  g.popcorn(...queue.tile(6, 1), 5);
+  for (const a of [2, 3, 4]) g.pick(...queue.tile(a, 0), 5);
+  g.pick(...queue.tile(6, 1), 5);
   g.foe('extra', ...queue.tile(5, -1), { range: 4 });
   sign(queue, 4, 'CASTING', GOLD, 0.6);
   d.turn('+z', { wall: 'posters', floor: 'concrete' });
@@ -63,8 +63,8 @@ export function casting() {
   g.block(...room.rect(12, 2, room.back * 5 - (room.back > 0 ? 1 : 0), 2), 0.8, { prop: 'desk' });
   g.foe('extra', ...room.tile(5, -2), { range: 6 }).foe('extra', ...room.tile(8, 2), { range: 6 });
   g.foe('pa', ...room.tile(10, -1), { range: 5 });
-  g.popcorn(...room.tile(3, 3), 10).popcorn(...room.tile(12, -3), 10).popcorn(...room.tile(6, 0), 5);
-  g.bucket(...room.tile(13, -4), 50);
+  g.pick(...room.tile(3, 3), 10).pick(...room.tile(12, -3), 10).pick(...room.tile(6, 0), 5);
+  g.suitcase(...room.tile(13, -4), 50);
   sign(room, 6.5, 'NEXT', '#ff6a4a', 0.5, 1.7);
   lamp(room, 4);
   lamp(room, 13, 2.5, OFFICE[0]);
@@ -73,22 +73,22 @@ export function casting() {
   const bayHall = bay.hall(3, { width: 3, wall: 'flats' });
   flat(g, bayHall, 1, { look: 'flat' });
   const closet = bay.room(5, 5, { wall: 'flats' });
-  g.reel(...closet.tile(3, 0));
-  g.popcorn(...closet.tile(1, -1), 10).popcorn(...closet.tile(1, 1), 10);
+  g.globe(...closet.tile(3, 0));
+  g.pick(...closet.tile(1, -1), 10).pick(...closet.tile(1, 1), 10);
   d.hall(5, { wall: 'wallpaper' });
   d.turn('+x', { wall: 'wallpaper' });
 
   // Down the corridor of offices, the agent pacing it.
   const offices = d.hall(11, { wall: 'wallpaper', floor: 'carpet' });
   g.foe('agent', ...offices.tile(5, 0), { range: 5, path: [offices.tile(2, 0), offices.tile(9, 0)] });
-  g.popcorn(...offices.tile(9, 1), 10).popcorn(...offices.tile(3, -1), 5);
+  g.pick(...offices.tile(9, 1), 10).pick(...offices.tile(3, -1), 5);
   sign(offices, 6, 'AGENTS', '#9ad0ff', 0.45, 1.5);
   // The corridor behind Stage 7, under the flies: sandbags coming down on the beat.
   const flies = d.hall(11, { wall: 'flats', floor: 'concrete' });
   g.drop(...across(flies, 4, { beats: 4 }));
-  g.popcorn(...flies.tile(5, 0), 5).popcorn(...flies.tile(5, 1), 5).popcorn(...flies.tile(5, -1), 5);
+  g.pick(...flies.tile(5, 0), 5).pick(...flies.tile(5, 1), 5).pick(...flies.tile(5, -1), 5);
   g.drop(...across(flies, 8, { beats: 4, offset: 0.5 }));
-  g.popcorn(...flies.tile(9, 0), 10);
+  g.pick(...flies.tile(9, 0), 10);
   // Past the second sandbag, the first roll of tape: for whatever the bags took off him.
   g.tape(...flies.tile(10, 0));
   d.turn('+z', { wall: 'flats' });
@@ -101,8 +101,8 @@ export function casting() {
   g.block(...stage.rect(8, 1, 4, 1), 1.0, { prop: 'camera' });
   g.pillar(...stage.tile(8, -4), 0.9, { prop: 'chair' });
   g.foe('pa', ...stage.tile(5, 0), { range: 6 }).foe('extra', ...stage.tile(9, 3), { range: 6 }).foe('extra', ...stage.tile(10, -3), { range: 6 });
-  g.bucket(...stage.tile(11, 5), 60).popcorn(...stage.tile(1, -5), 10).popcorn(...stage.tile(6, 5), 10);
-  g.clapper(...stage.tile(11, -5));
+  g.suitcase(...stage.tile(11, 5), 60).pick(...stage.tile(1, -5), 10).pick(...stage.tile(6, 5), 10);
+  g.lighter(...stage.tile(11, -5));
   // On the way out, once the three of them have had a go at him, a roll of tape.
   g.tape(...stage.tile(12, 1));
   g.light('spot', ...wallTile(stage, 6), { colors: ['#fff4e0'], radius: 3, aim: toBack(stage).map((v) => -4 * v), height: 2.2 });
@@ -115,14 +115,14 @@ export function casting() {
   g.pass(...rails.tile(3, 0));
   g.pillar(...rails.tile(5, 3), 1.1, { prop: 'rail' });
   g.foe('extra', ...rails.tile(2, 2), { range: 4 });
-  g.popcorn(...rails.tile(4, -2), 10);
+  g.pick(...rails.tile(4, -2), 10);
   // And over the pit, along a plank, a second reel.
   const pit = d.fork().jump(pick(stage.tile(10, stage.back * 7), stage.back > 0 ? '-x' : '+x'));
   pit.hall(2, { wall: 'curtain' });
   const plank = pit.bridge(7, { floor: 'planks' });
   g.foe('extra', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const alcove = pit.room(5, 5, { wall: 'curtain' });
-  g.reel(...alcove.tile(2, 0));
+  g.globe(...alcove.tile(2, 0));
   d.hall(4, { wall: 'curtain' });
   const gate = d.hall(6, { wall: 'stucco' });
   barred(g, gate, 3);
@@ -137,13 +137,13 @@ export function casting() {
   const sbHall = strongbox.hall(7, { wall: 'wallpaper' });
   flat(g, sbHall, 6, { breakAt: 6.5, look: 'drywall' });
   const office = strongbox.room(5, 5, { wall: 'wallpaper', floor: 'carpet' });
-  g.reel(...office.tile(3, 0));
-  g.bucket(...office.tile(1, -1), 70).tape(...office.tile(1, 1));
+  g.globe(...office.tile(3, 0));
+  g.suitcase(...office.tile(1, -1), 70).tape(...office.tile(1, 1));
   g.foe('agent', ...run.tile(6, 1), { range: 5 });
   g.drop(...across(run, 8, { beats: 4 }));
   const last = d.room(9, 9, { wall: 'flats', floor: 'planks' });
   g.foe('extra', ...last.tile(3, -2), { range: 5 }).foe('pa', ...last.tile(4, 2), { range: 5 });
-  g.popcorn(...last.tile(6, 0), 10);
+  g.pick(...last.tile(6, 0), 10);
   d.hall(3, { wall: 'flats' });
   d.stairs(3, 1.5, { wall: 'flats' });
   d.hall(2, { wall: 'flats' });

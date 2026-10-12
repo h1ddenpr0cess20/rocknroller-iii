@@ -1,13 +1,13 @@
 /**
  * What the game remembers between visits: how far into the shoot you have
- * got, the stars, best buzz, best time and golden reels of each scene, and
+ * got, the stars, best hype, best time and snow globes of each stop, and
  * the settings. Browser storage can be missing or refuse, so every touch of
  * it is guarded and the game plays the same without it.
  */
 
 const KEY = 'rocknroller3.v1';
 
-const blankVenue = () => ({ stars: 0, best: 0, time: null, reels: 0, smashed: 0 });
+const blankVenue = () => ({ stars: 0, best: 0, time: null, globes: 0, smashed: 0 });
 const DEFAULTS = { music: 0.8, sfx: 0.9, flashing: true, touchHints: true };
 
 export function createStorage(store = globalThis.localStorage) {
@@ -38,7 +38,7 @@ export function createStorage(store = globalThis.localStorage) {
       return save();
     },
     /**
-     * Scene `index` was wrapped with `result`: { hype, time, reels,
+     * Stop `index` was played through with `result`: { hype, time, globes,
      * smashed, stars }. Keeps the best of each, and opens the next scene.
      */
     cleared(index, result) {
@@ -47,7 +47,7 @@ export function createStorage(store = globalThis.localStorage) {
         stars: Math.max(old.stars, result.stars),
         best: Math.max(old.best, result.hype),
         time: old.time === null ? result.time : Math.min(old.time, result.time),
-        reels: Math.max(old.reels, result.reels),
+        globes: Math.max(old.globes, result.globes),
         smashed: Math.max(old.smashed, result.smashed),
       };
       saved.reached = Math.max(saved.reached, index + 1);
@@ -66,7 +66,7 @@ export function createStorage(store = globalThis.localStorage) {
 
 function pickNumbers(v) {
   const out = {};
-  for (const k of ['stars', 'best', 'reels', 'smashed']) if (Number.isFinite(v[k])) out[k] = v[k];
+  for (const k of ['stars', 'best', 'globes', 'smashed']) if (Number.isFinite(v[k])) out[k] = v[k];
   if (Number.isFinite(v.time)) out.time = v.time;
   return out;
 }

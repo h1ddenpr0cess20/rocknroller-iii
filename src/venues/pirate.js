@@ -44,11 +44,11 @@ export function pirate() {
   g.start = { x: 4, z: 6 };
   const d = digger(g, { x: 7, z: 6, h: 90, heading: '+x' });
   const yard = d.hall(5, { floor: 'planks', wall: 'fence' });
-  g.popcorn(...yard.tile(1, 0), 5).popcorn(...yard.tile(3, 0), 5);
+  g.pick(...yard.tile(1, 0), 5).pick(...yard.tile(3, 0), 5);
   // Down the rigging: a long way, the parrot going round.
   const ratlines = d.stairs(10, 5, { floor: 'planks', wall: 'fence' });
   g.foe('parrot', ...ratlines.tile(5, 0), { path: [ratlines.tile(1, 0), ratlines.tile(9, 0)] });
-  g.popcorn(...ratlines.tile(3, 0), 5).popcorn(...ratlines.tile(6, 0), 5).popcorn(...ratlines.tile(9, 0), 10);
+  g.pick(...ratlines.tile(3, 0), 5).pick(...ratlines.tile(6, 0), 5).pick(...ratlines.tile(9, 0), 10);
   d.hall(2, DECK);
   d.turn('+z', DECK);
   d.hall(2, DECK);
@@ -59,7 +59,7 @@ export function pirate() {
   for (const k of [2, 6, 10]) g.pillar(...backTile(quarter, k), 0.7, { prop: 'barrel' });
   g.pyro(...across(quarter, 7, { beats: 4 }));
   g.foe('pirate', ...quarter.tile(5, 2), { range: 5 }).foe('pirate', ...quarter.tile(10, -2), { range: 4 });
-  g.popcorn(...quarter.tile(1, -3), 10).popcorn(...quarter.tile(5, -4), 10).popcorn(...quarter.tile(11, 3), 10);
+  g.pick(...quarter.tile(1, -3), 10).pick(...quarter.tile(5, -4), 10).pick(...quarter.tile(11, 3), 10);
   g.tape(...quarter.tile(11, -4));
   for (const k of [4, 9]) lantern(quarter, k);
   d.hall(2, DECK);
@@ -74,8 +74,8 @@ export function pirate() {
   for (const [a, b] of [[4, 1], [12, -1], [19, 2]]) g.bumper(...deck.tile(a, b), { radius: 0.42, look: 'barrel' });
   g.foe('pirate', ...deck.tile(5, -1), { range: 4 }).foe('stuntman', ...deck.tile(17, 0), { range: 3 });
   g.foe('parrot', ...deck.tile(11, 0), { path: [deck.tile(3, 2), deck.tile(20, 2)] });
-  g.popcorn(...deck.tile(2, 0), 10).popcorn(...deck.tile(10, 1), 5).popcorn(...deck.tile(13, -2), 5).popcorn(...deck.tile(21, 0), 10);
-  g.bucket(...deck.tile(21, -2), 50);
+  g.pick(...deck.tile(2, 0), 10).pick(...deck.tile(10, 1), 5).pick(...deck.tile(13, -2), 5).pick(...deck.tile(21, 0), 10);
+  g.suitcase(...deck.tile(21, -2), 50);
   for (const k of [4, 12, 20]) lantern(deck, k);
   g.light('festoon', ...deck.tile(1, -3), { to: [20 * deck.dir[0] + 6 * deck.across[0], 20 * deck.dir[1] + 6 * deck.across[1]], colors: [SEA[0], SEA[3]], height: 2.6 });
   // Off the rail, the plank, out over the tank: the first reel, at the very end of it.
@@ -83,7 +83,7 @@ export function pirate() {
   const plank = plankRoot.bridge(8, { floor: 'planks' });
   g.foe('parrot', ...plank.tile(4, 0), { path: [plank.tile(1, 0), plank.tile(6, 0)] });
   const end = plankRoot.room(3, 3, { floor: 'planks', wall: 'fence' });
-  g.reel(...end.tile(1, 0));
+  g.globe(...end.tile(1, 0));
   d.hall(2, DECK);
   d.turn('+z', DECK);
   // Down the hatch.
@@ -95,8 +95,8 @@ export function pirate() {
   for (const [a, b] of [[2, -5], [2, 5], [7, -5], [12, 5], [15, -5]]) g.pillar(...hold.tile(a, b), 0.8, { prop: 'crate' });
   for (const k of [4, 10]) g.pillar(...backTile(hold, k), 0.7, { prop: 'barrel' });
   g.foe('pirate', ...hold.tile(5, 1), { range: 5 }).foe('pirate', ...hold.tile(12, -2), { range: 5 });
-  g.popcorn(...hold.tile(3, 0), 10).popcorn(...hold.tile(9, 3), 10).popcorn(...hold.tile(14, 0), 10);
-  g.clapper(...hold.tile(16, 4));
+  g.pick(...hold.tile(3, 0), 10).pick(...hold.tile(9, 3), 10).pick(...hold.tile(14, 0), 10);
+  g.lighter(...hold.tile(16, 4));
   wash(g, hold, [SEA[0], SEA[1]], { cans: 2, program: 'static' });
   // The captain's cabin, off the hold: the pass on the chart table.
   const aft = branch(d, hold, 4, 'front', 7);
@@ -111,9 +111,9 @@ export function pirate() {
   const bulkHall = bulk.hall(5, { floor: 'planks', wall: 'plywood' });
   flat(g, bulkHall, 3, { look: 'wood' });
   const store = bulk.room(5, 5, { floor: 'planks', wall: 'plywood' });
-  g.reel(...store.tile(3, 0));
+  g.globe(...store.tile(3, 0));
   g.pillar(...store.tile(3, 2), 0.7, { prop: 'chest' });
-  g.bucket(...store.tile(1, -1), 60);
+  g.suitcase(...store.tile(1, -1), 60);
   const port = d.hall(4, { floor: 'planks', wall: 'plywood' });
   barred(g, port, 2, 'bars');
   d.turn('+x', { floor: 'planks', wall: 'fence' });
@@ -127,13 +127,13 @@ export function pirate() {
   const isle = d.room(15, 13, { floor: 'dirt', wall: 'fence' });
   for (const [a, b] of [[3, -4], [11, 4], [12, -4]]) g.bumper(...isle.tile(a, b), { radius: 0.45, look: 'cactus' });
   g.foe('pirate', ...isle.tile(6, 2), { range: 5 }).foe('parrot', ...isle.tile(8, 0), { path: [isle.tile(3, -3), isle.tile(13, -3), isle.tile(13, 3), isle.tile(3, 3)] });
-  g.popcorn(...isle.tile(2, 0), 10).popcorn(...isle.tile(8, -4), 10).popcorn(...isle.tile(14, 2), 10);
+  g.pick(...isle.tile(2, 0), 10).pick(...isle.tile(8, -4), 10).pick(...isle.tile(14, 2), 10);
   wash(g, isle, [SEA[2], SEA[0]], { cans: 2, program: 'static' });
   const cave = branch(d, isle, 9, 'back', 7);
   const fall = cave.hall(5, { floor: 'dirt', wall: 'stone' });
   flat(g, fall, 3, { look: 'stone' });
   const hoard = cave.room(5, 5, { floor: 'dirt', wall: 'stone' });
-  g.reel(...hoard.tile(3, 0));
+  g.globe(...hoard.tile(3, 0));
   g.pillar(...hoard.tile(3, 2), 0.7, { prop: 'chest' });
   void centre; void toBack;
   d.hall(3, { floor: 'dirt', wall: 'fence' });

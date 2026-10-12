@@ -46,7 +46,7 @@ export function musical() {
   const corridor = d.hall(12, DRESS);
   for (const k of [2, 6, 10]) g.pillar(...backTile(corridor, k), 1.0, { prop: 'mirror' });
   g.foe('dancer', ...corridor.tile(7, 0), { range: 4, path: [corridor.tile(4, 0), corridor.tile(10, 0)] });
-  g.popcorn(...corridor.tile(1, 0), 5).popcorn(...corridor.tile(4, 1), 5).popcorn(...corridor.tile(8, -1), 5).popcorn(...corridor.tile(11, 0), 10);
+  g.pick(...corridor.tile(1, 0), 5).pick(...corridor.tile(4, 1), 5).pick(...corridor.tile(8, -1), 5).pick(...corridor.tile(11, 0), 10);
   sign(corridor, 4, 'STAGE 4', COLOUR[1], 0.5);
   d.turn('+z', DRESS);
   d.hall(2, DRESS);
@@ -57,7 +57,7 @@ export function musical() {
     g.light('festoon', ...stairs.tile(0, side * 4), { to: [9 * stairs.dir[0], 9 * stairs.dir[1]], colors: [COLOUR[1], '#fff4e0'], height: 1.4, sag: 0.1 });
   }
   g.foe('dancer', ...stairs.tile(3, -2), { range: 4 }).foe('dancer', ...stairs.tile(6, 2), { range: 4 });
-  g.popcorn(...stairs.tile(2, 0), 10).popcorn(...stairs.tile(5, -3), 5).popcorn(...stairs.tile(5, 3), 5).popcorn(...stairs.tile(8, 0), 10);
+  g.pick(...stairs.tile(2, 0), 10).pick(...stairs.tile(5, -3), 5).pick(...stairs.tile(5, 3), 5).pick(...stairs.tile(8, 0), 10);
   d.hall(2, { width: 9, floor: 'carpet', wall: 'damask' });
 
   // The ballroom: the dance floor lit from under, the mirror ball over it, lit cubes, and the chorus line.
@@ -66,8 +66,8 @@ export function musical() {
   const line = [ball.tile(3, 5), ball.tile(16, 5)];
   for (let k = 0; k < 4; k++) g.foe('dancer', ...ball.tile(4 + k * 3, 5), { range: 3, path: k % 2 ? [line[1], line[0]] : line });
   g.foe('drone', ...ball.tile(10, 0), { path: [ball.tile(4, -5), ball.tile(16, -5), ball.tile(16, 1), ball.tile(4, 1)] });
-  g.popcorn(...ball.tile(2, 0), 10).popcorn(...ball.tile(9, -6), 10).popcorn(...ball.tile(11, 6), 10).popcorn(...ball.tile(17, 0), 10);
-  g.bucket(...ball.tile(17, -6), 50);
+  g.pick(...ball.tile(2, 0), 10).pick(...ball.tile(9, -6), 10).pick(...ball.tile(11, 6), 10).pick(...ball.tile(17, 0), 10);
+  g.suitcase(...ball.tile(17, -6), 50);
   g.light('ball', ...centre(ball), { colors: COLOUR, radius: 8, height: 3.4 });
   wash(g, ball, [COLOUR[0], COLOUR[2], COLOUR[3]], { cans: 3, program: 'chase', every: 2 });
   g.light('spot', ...wallTile(ball, 7), { colors: ['#fff4e0'], radius: 3, aim: toBack(ball).map((v) => -5 * v), height: 2.4 });
@@ -78,8 +78,8 @@ export function musical() {
   const skyHall = scenery.hall(5, { wall: 'flats' });
   flat(g, skyHall, 3, { look: 'backdrop' });
   const behind = scenery.room(5, 5, { wall: 'flats', floor: 'planks' });
-  g.reel(...behind.tile(3, 0));
-  g.popcorn(...behind.tile(1, -1), 10).popcorn(...behind.tile(1, 1), 10);
+  g.globe(...behind.tile(3, 0));
+  g.pick(...behind.tile(1, -1), 10).pick(...behind.tile(1, 1), 10);
   d.hall(2, { wall: 'curtain' });
   d.turn('+x', { wall: 'curtain' });
 
@@ -88,7 +88,7 @@ export function musical() {
   g.drop(...across(lip, 4, { beats: 8 }));
   g.drop(...across(lip, 10, { beats: 8, offset: 0.5 }));
   g.foe('pa', ...lip.tile(7, 0), { range: 3 });
-  g.popcorn(...lip.tile(2, 0), 5).popcorn(...lip.tile(7, -1), 5).popcorn(...lip.tile(12, 1), 10);
+  g.pick(...lip.tile(2, 0), 5).pick(...lip.tile(7, -1), 5).pick(...lip.tile(12, 1), 10);
   g.tape(...lip.tile(13, -1));
   // Across the pit on a plank, to where the band keeps its music: the second reel.
   const pit = branch(d, lip, 7, 'front', 3);
@@ -96,7 +96,7 @@ export function musical() {
   g.zap(...plank.rect(0, 7, plank.lo - 2, 5), pit.h - 1.8, { fill: true });
   g.foe('dancer', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const band = pit.room(5, 5, { floor: 'planks', wall: 'block' });
-  g.reel(...band.tile(2, 0));
+  g.globe(...band.tile(2, 0));
   g.block(...band.rect(3, 2, -2, 1), 0.88, { prop: 'piano' });
   d.hall(2, { floor: 'planks', wall: 'curtain' });
   // The stage elevator: down to the understage.
@@ -109,17 +109,17 @@ export function musical() {
   for (const k of [2, 5, 8]) g.pillar(...backTile(under, k), 1.0, { prop: 'mirror' });
   g.foe('makeup', ...under.tile(6, 1), { range: 5 }).foe('critic', ...under.tile(10, -2), { range: 5 });
   g.pass(...under.tile(4, 3));
-  g.popcorn(...under.tile(2, -2), 10).popcorn(...under.tile(9, 3), 10);
-  g.clapper(...under.tile(12, 4));
+  g.pick(...under.tile(2, -2), 10).pick(...under.tile(9, 3), 10);
+  g.lighter(...under.tile(12, 4));
   wash(g, under, ['#ffe0a0', COLOUR[3]], { cans: 2, program: 'static' });
   // Wardrobe, behind a curtain: the last reel among the costumes.
   const ward = branch(d, under, 10, 'front', 6);
   const curtain = ward.hall(5, { wall: 'curtain' });
   flat(g, curtain, 3, { look: 'curtain', breakAt: 6.5 });
   const rails = ward.room(5, 5, { wall: 'curtain', floor: 'carpet' });
-  g.reel(...rails.tile(3, 0));
+  g.globe(...rails.tile(3, 0));
   g.pillar(...rails.tile(2, 2), 1.1, { prop: 'rail' });
-  g.bucket(...rails.tile(1, -1), 60);
+  g.suitcase(...rails.tile(1, -1), 60);
   const out = d.hall(4, { floor: 'concrete', wall: 'block' });
   barred(g, out, 2);
   d.stairs(3, 1.5, { wall: 'block' });
@@ -134,7 +134,7 @@ export function musical() {
   g.pillar(...floor.tile(16, -6), 0.9, { prop: 'chair' });
   g.foe('director', ...floor.tile(11, 0), { range: 6 });
   g.foe('pa', ...floor.tile(16, 4), { range: 4 });
-  g.popcorn(...floor.tile(2, 0), 10).popcorn(...floor.tile(7, -4), 10).popcorn(...floor.tile(7, 4), 10).popcorn(...floor.tile(12, -5), 10);
+  g.pick(...floor.tile(2, 0), 10).pick(...floor.tile(7, -4), 10).pick(...floor.tile(7, 4), 10).pick(...floor.tile(12, -5), 10);
   g.tape(...floor.tile(2, -5)).tape(...floor.tile(2, 5));
   wash(g, floor, ['#fff4e0', '#ffd890'], { cans: 3, program: 'static' });
   g.light('spot', ...wallTile(floor, 9), { colors: ['#fff4e0'], radius: 3, aim: toBack(floor).map((v) => -5 * v), height: 2.4 });

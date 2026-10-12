@@ -5,7 +5,7 @@
  *
  *   .  floor     #  wall      ~  electrified floor      E  Rock's mark     S  start
  *   ^  pyro or steam      X  a drop      |  closed set      /  breakaway      L  lift
- *   k  pass      $  popcorn or a bucket      +  gaffer tape      !  clapperboard      R  golden reel
+ *   k  passport  $  picks or a suitcase      +  gaffer tape      !  lighter      G  snow globe
  *   m  someone walking     o  someone crawling or flying      s  sticky     >  belt     O  bumper
  */
 
@@ -52,7 +52,7 @@ for (let z = 0; z < venue.rows; z++) {
 if (!heights) {
   for (const l of venue.lifts) grid[l.z][l.x] = 'L';
   for (const b of venue.bumpers) grid[Math.floor(b.z)][Math.floor(b.x)] = 'O';
-  const mark = { pass: 'k', tape: '+', clapper: '!', reel: 'R' };
+  const mark = { pass: 'k', tape: '+', lighter: '!', globe: 'G' };
   for (const p of venue.pickups) grid[Math.floor(p.z)][Math.floor(p.x)] = mark[p.kind] ?? '$';
   for (const m of venue.foes) grid[Math.floor(m.z)][Math.floor(m.x)] = FOES[m.kind].move === 'walk' ? 'm' : 'o';
 }

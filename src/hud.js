@@ -1,13 +1,13 @@
-import { goals, REELS } from './rating.js';
+import { GLOBES, goals } from './rating.js';
 import { MAX_INTEGRITY } from './integrity.js';
 import { VENUES } from './venues/index.js';
 
 /**
- * Everything on screen that isn't the 3D view: the scene, the buzz and the
- * combo along the top; Rock's integrity (a light meter) and rev along the
+ * Everything on screen that isn't the 3D view: the stop, the hype and the
+ * combo along the top; Rock's integrity (a level meter) and rev along the
  * bottom, and what he says; a map of what has been seen; the big messages
  * in the middle and the numbers that fly up off a smash; and the screens —
- * title, the call sheet, pause and settings, the dailies after a scene, and
+ * title, the itinerary, pause and settings, the review after a stop, and
  * the end.
  */
 
@@ -16,7 +16,7 @@ const SEGMENTS = 24;
 /** The sets' names and tints, read once. */
 const INFO = VENUES.map((make) => {
   const v = make();
-  return { name: v.name, act: v.act, intro: v.intro, genre: v.look.genre ?? '', tint: v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
+  return { name: v.name, act: v.act, intro: v.intro, country: v.look.country ?? v.look.genre ?? '', tint: v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
 });
 
 const el = (tag, className = '', html = '') => {
@@ -26,7 +26,7 @@ const el = (tag, className = '', html = '') => {
   return e;
 };
 
-/** `n` with thousands separated, for the buzz. */
+/** `n` with thousands separated, for the hype. */
 const grand = (n) => Math.round(n).toLocaleString('en-US');
 
 /** Seconds as m:ss. */
@@ -41,12 +41,12 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
   hud.hidden = true;
   hud.innerHTML = `
     <div class="plate"><span class="act"></span><span class="name"></span></div>
-    <div class="hype"><span class="label">Buzz</span><span class="num">0</span>
+    <div class="hype"><span class="label">Hype</span><span class="num">0</span>
       <div class="combo"><b>×1</b><div class="bar"><i></i></div></div></div>
     <div class="carried">
-      <div class="chip reels"><span class="n">0/3</span><small>reels</small></div>
-      <div class="chip passes"><span class="n">0</span><small>pass</small></div>
-      <div class="chip takes"><span class="n">0</span><small>take two</small></div>
+      <div class="chip globes"><span class="n">0/3</span><small>snow globes</small></div>
+      <div class="chip passes"><span class="n">0</span><small>passport</small></div>
+      <div class="chip encores"><span class="n">0</span><small>encore</small></div>
     </div>
     <canvas id="map" width="180" height="180" aria-label="Map of what has been seen"></canvas>
     <div class="meters">
@@ -62,9 +62,9 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
   const comboX = combo.querySelector('b');
   const comboBar = combo.querySelector('.bar i');
   const chips = {
-    reels: hud.querySelector('.chip.reels'),
+    globes: hud.querySelector('.chip.globes'),
     passes: hud.querySelector('.chip.passes'),
-    takes: hud.querySelector('.chip.takes'),
+    encores: hud.querySelector('.chip.encores'),
   };
   const vu = hud.querySelector('#vu');
   const segs = [...vu.children];
@@ -131,22 +131,22 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
         <p class="tag">a boulder goes abroad</p>
       </header>
       <div class="menu">
-        <button class="btn" data-act="start" type="button"><span>Action!</span></button>
-        <button class="btn alt" data-act="tour" type="button"><span>Call sheet</span></button>
+        <button class="btn" data-act="start" type="button"><span>Let's go</span></button>
+        <button class="btn alt" data-act="tour" type="button"><span>Itinerary</span></button>
         <button class="btn alt small" data-act="settings" type="button"><span>Settings</span></button>
         <p class="best"></p>
       </div>
       <p class="help">
         <span class="keys"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> or <kbd>WASD</kbd> roll · <kbd>Space</kbd> rev · <kbd>Q</kbd><kbd>E</kbd> turn the view · wheel zoom · <kbd>P</kbd> pause</span>
         <span class="touch">hold a finger and roll toward it · REV button to charge · two fingers to turn and zoom</span>
-        <span>run into people at speed. it's what rocks do. even on a night shoot.</span>
+        <span>run into people at speed. it's what rocks do. even abroad.</span>
       </p>
     </div>`);
 
   const tour = screen('tour', 'tour scrim', `
     <div style="width:100%">
-      <h2 class="display neon">Call Sheet</h2>
-      <p class="sub">pick a scene · every one a night shoot</p>
+      <h2 class="display neon">Itinerary</h2>
+      <p class="sub">pick a stop · ten cities, ten shows, one boulder</p>
       <div class="venues" id="venues"></div>
       <button class="btn alt small back" data-act="back" type="button"><span>Back</span></button>
     </div>`);
@@ -155,15 +155,15 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
   const review = screen('review', 'scrim', `
     <div class="card">
       <div class="venue-name"></div>
-      <h2 class="neon" style="--glow: var(--gold)">Dailies</h2>
+      <h2 class="neon" style="--glow: var(--gold)">The Review</h2>
       <div class="newbest" hidden>new best</div>
       <div class="big-stars"></div>
       <ul class="goals"></ul>
       <div class="tally"></div>
       <div class="row">
-        <button class="btn" data-act="next" type="button"><span>Next scene</span></button>
-        <button class="btn alt small" data-act="again" type="button"><span>Reshoot</span></button>
-        <button class="btn alt small" data-act="tour" type="button"><span>Call sheet</span></button>
+        <button class="btn" data-act="next" type="button"><span>Next stop</span></button>
+        <button class="btn alt small" data-act="again" type="button"><span>Play it again</span></button>
+        <button class="btn alt small" data-act="tour" type="button"><span>Itinerary</span></button>
       </div>
     </div>`);
 
@@ -174,19 +174,19 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       <p class="quip"></p>
       <div class="tally"></div>
       <div class="row">
-        <button class="btn" data-act="again" type="button"><span>Take two</span></button>
-        <button class="btn alt small" data-act="tour" type="button"><span>Call sheet</span></button>
+        <button class="btn" data-act="again" type="button"><span>Try again</span></button>
+        <button class="btn alt small" data-act="tour" type="button"><span>Itinerary</span></button>
       </div>
     </div>`);
 
   const pause = screen('pause', 'scrim', `
     <div class="card">
-      <h2 class="neon" style="--glow: var(--red)">Hold the roll</h2>
+      <h2 class="neon" style="--glow: var(--red)">Layover</h2>
       <div class="settings"></div>
       <div class="row" style="margin-top:14px">
         <button class="btn" data-act="resume" type="button"><span>Back to it</span></button>
         <button class="btn alt small" data-act="again" type="button"><span>From the top</span></button>
-        <button class="btn alt small" data-act="tour" type="button"><span>Call sheet</span></button>
+        <button class="btn alt small" data-act="tour" type="button"><span>Itinerary</span></button>
       </div>
     </div>`);
 
@@ -268,7 +268,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
     }
     for (const p of gig.actors.pickups) {
       if (p.taken || !explored[Math.floor(p.z) * venue.cols + Math.floor(p.x)]) continue;
-      mapCtx.fillStyle = p.kind === 'pass' ? '#2de2ff' : p.kind === 'tape' ? '#c8ccd4' : p.kind === 'clapper' ? '#ffffff' : p.kind === 'reel' ? '#ffd23a' : '#fff0c8';
+      mapCtx.fillStyle = p.kind === 'pass' ? '#2de2ff' : p.kind === 'tape' ? '#c8ccd4' : p.kind === 'lighter' ? '#ffb84a' : p.kind === 'globe' ? '#e8f4ff' : '#fff0c8';
       mapCtx.fillRect(p.x * s - s / 2, p.z * s - s / 2, s, s);
     }
     mapCtx.fillStyle = '#ffffff';
@@ -295,23 +295,23 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       const total = Object.values(saved.venues).reduce((s, v) => s + v.stars, 0);
       const best = Object.values(saved.venues).reduce((s, v) => s + (v.best ?? 0), 0);
       title.querySelector('.best').textContent = saved.reached > 0 || total > 0
-        ? `${total} of ${INFO.length * 3} stars · box office ${grand(best)}`
+        ? `${total} of ${INFO.length * 3} stars · ${grand(best)} hype`
         : '';
-      title.querySelector('[data-act=start]').firstElementChild.textContent = saved.reached > 0 ? 'Keep rolling' : 'Action!';
+      title.querySelector('[data-act=start]').firstElementChild.textContent = saved.reached > 0 ? 'Keep rolling' : 'Let\'s go';
     },
 
-    /** The call sheet: every scene as a card; those not yet reached are locked. */
+    /** The itinerary: every stop as a card; those not yet reached are locked. */
     tour(saved) {
       this.saved = saved;
       hideScreens();
       tour.hidden = false;
       venuesEl.replaceChildren(...INFO.map((v, i) => {
-        const s = saved.venues[i] ?? { stars: 0, best: 0, reels: 0 };
+        const s = saved.venues[i] ?? { stars: 0, best: 0, globes: 0 };
         const b = el('button', `venue ${v.grade}`);
         b.type = 'button';
         b.style.setProperty('--tint', v.tint);
         b.disabled = i > saved.reached;
-        b.innerHTML = `<span class="num">${i + 1}</span><span class="genre">${v.genre}</span><span class="name">${v.name}</span><span class="line">${v.intro}</span>`
+        b.innerHTML = `<span class="num">${i + 1}</span><span class="genre">${v.country}</span><span class="name">${v.name}</span><span class="line">${v.intro}</span>`
           + `<span class="foot"><span class="stars">${stars(s.stars)}</span><span>${s.best ? grand(s.best) : b.disabled ? 'locked' : 'new'}</span></span>`;
         b.addEventListener('click', (e) => { e.stopPropagation(); onStart?.(i); });
         return b;
@@ -331,11 +331,11 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       this.title(this.saved);
     },
 
-    /** The scene begins: the HUD up, the screens down. */
+    /** The stop begins: the HUD up, the screens down. */
     play(venue) {
       hideScreens();
       hud.hidden = false;
-      plate.querySelector('.act').textContent = `Reel ${venue.act}${venue.look.genre ? ` · ${venue.look.genre}` : ''}`;
+      plate.querySelector('.act').textContent = `Stop ${venue.act}${(venue.look.country ?? venue.look.genre) ? ` · ${venue.look.country ?? venue.look.genre}` : ''}`;
       plate.querySelector('.name').textContent = venue.name;
       revButton.classList.add('available');
     },
@@ -371,16 +371,16 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       revEl.classList.toggle('empty', frac < 0.15);
     },
 
-    carried({ reels = 0, passes = 0, takes = 0 }) {
+    carried({ globes = 0, passes = 0, encores = 0 }) {
       const set = (chip, n, text, show) => {
         const was = chip.querySelector('.n').textContent;
         chip.querySelector('.n').textContent = text ?? String(n);
         chip.classList.toggle('show', show);
         if (was !== chip.querySelector('.n').textContent) { chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop'); }
       };
-      set(chips.reels, reels, `${reels}/${REELS}`, reels > 0);
+      set(chips.globes, globes, `${globes}/${GLOBES}`, globes > 0);
       set(chips.passes, passes, null, passes > 0);
-      set(chips.takes, takes, null, takes > 0);
+      set(chips.encores, encores, null, encores > 0);
     },
 
     /** Rock says something; `who` names whoever it is about (a foe's blurb, say). */
@@ -422,7 +422,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       s.style.opacity = String(Math.min(0.22, level * 0.22));
     },
 
-    /** A new set: a map canvas to fit it. */
+    /** A new stop: a map canvas to fit it. */
     map(gig) {
       const { cols, rows } = gig.venue;
       mapScale = Math.max(1, Math.floor(Math.min(180 / cols, 180 / rows)));
@@ -443,11 +443,11 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       drawMap(gig);
     },
 
-    /** The dailies after a scene: stars, goals, numbers. `result` from the game. */
+    /** The review after a stop: stars, goals, numbers. `result` from the game. */
     review(result) {
       hideScreens();
       review.hidden = false;
-      review.querySelector('.venue-name').textContent = `Reel ${result.act} · ${result.name}`;
+      review.querySelector('.venue-name').textContent = `Stop ${result.act} · ${result.name}`;
       review.querySelector('.big-stars').innerHTML = stars(result.stars);
       review.querySelector('.newbest').hidden = !result.newBest;
       review.querySelector('.goals').innerHTML = goals(result).map((g) => `
@@ -455,8 +455,8 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
         <span class="t">${g.title}<br><small>${g.text}</small></span>
         <small>${g.progress ? `${g.progress[0]}/${g.progress[1]}` : ''}</small></li>`).join('');
       review.querySelector('.tally').innerHTML = `
-        <div><b>${grand(result.hype)}</b><span class="label">Buzz</span></div>
-        <div><b>${clock(result.time)}</b><span class="label">Running time</span></div>
+        <div><b>${grand(result.hype)}</b><span class="label">Hype</span></div>
+        <div><b>${clock(result.time)}</b><span class="label">Time</span></div>
         <div><b>${result.best}</b><span class="label">Best combo</span></div>`;
       review.querySelector('[data-act=next]').hidden = !result.hasNext;
       review.querySelector('[data-act=next]').focus({ preventScroll: true });
@@ -466,10 +466,10 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
     over(result, quip = '') {
       hideScreens();
       over.hidden = false;
-      over.querySelector('.venue-name').textContent = `Reel ${result.act} · ${result.name}`;
+      over.querySelector('.venue-name').textContent = `Stop ${result.act} · ${result.name}`;
       over.querySelector('.quip').textContent = quip ? `“${quip}”` : '';
       over.querySelector('.tally').innerHTML = `
-        <div><b>${grand(result.hype)}</b><span class="label">Buzz</span></div>
+        <div><b>${grand(result.hype)}</b><span class="label">Hype</span></div>
         <div><b>${result.smashed}/${result.foes}</b><span class="label">Smashed</span></div>
         <div><b>${clock(result.time)}</b><span class="label">Time</span></div>`;
       over.querySelector('[data-act=again]').focus({ preventScroll: true });

@@ -49,7 +49,7 @@ export function noir() {
   const d = digger(g, { x: 21, z: 6, h: 82, heading: '+x' });
   const steps = d.hall(6, STREET);
   g.foe('newsie', ...steps.tile(4, 0), { range: 4 });
-  g.popcorn(...steps.tile(1, 0), 5).popcorn(...steps.tile(3, 0), 5).popcorn(...steps.tile(5, 0), 5);
+  g.pick(...steps.tile(1, 0), 5).pick(...steps.tile(3, 0), 5).pick(...steps.tile(5, 0), 5);
   sign(steps, 3, 'HOTEL', NIGHT[1], 0.7, 1.8);
   d.turn('+z', STREET);
   d.stairs(3, 1.5, { wall: 'brick' });
@@ -67,7 +67,7 @@ export function noir() {
   g.zap(...street.rect(10, 2, -street.back * 5, 1), d.h);
   g.foe('cop', ...street.tile(4, -2), { range: 3 }).foe('gangster', ...street.tile(12, 2), { range: 3 });
   g.foe('newsie', ...street.tile(20, 0), { range: 5 });
-  g.popcorn(...street.tile(2, 0), 10).popcorn(...street.tile(10, -2), 10).popcorn(...street.tile(13, 0), 10).popcorn(...street.tile(22, 2), 10);
+  g.pick(...street.tile(2, 0), 10).pick(...street.tile(10, -2), 10).pick(...street.tile(13, 0), 10).pick(...street.tile(22, 2), 10);
   sign(street, 5, 'CAFE', NIGHT[2], 0.6);
   sign(street, 13, 'BAR', NIGHT[1], 0.7);
   sign(street, 21, 'ROOMS', NIGHT[3], 0.55);
@@ -82,7 +82,7 @@ export function noir() {
   for (const k of [1, 2]) g.pillar(...backTile(office, k), 1.2, { prop: 'cabinet' });
   g.pass(...office.tile(6, -1));
   g.foe('dame', ...office.tile(3, 2), { range: 4 });
-  g.popcorn(...office.tile(7, 3), 10);
+  g.pick(...office.tile(7, 3), 10);
   g.tape(...office.tile(7, -3));
   g.light('blinds', ...wallTile(office, 5), { aim: toBack(office).map((v) => -3.2 * v), height: 2.0, width: 2.4, depth: 2.8 });
   sign(office, 7.5, 'PRIVATE', NIGHT[2], 0.4, 1.6);
@@ -91,8 +91,8 @@ export function noir() {
   const door = inner.hall(5, ROOMS);
   flat(g, door, 3, { look: 'glass', breakAt: 6 });
   const safe = inner.room(5, 5, ROOMS);
-  g.reel(...safe.tile(3, 0));
-  g.bucket(...safe.tile(1, 1), 60);
+  g.globe(...safe.tile(3, 0));
+  g.suitcase(...safe.tile(1, 1), 60);
   d.hall(2, STREET);
   d.turn('+x', STREET);
 
@@ -102,7 +102,7 @@ export function noir() {
   g.drop(...across(alley, 11, { beats: 4, offset: 0.5 }));
   for (const k of [2, 8, 14]) g.pillar(...backTile(alley, k), 0.8, { prop: 'trash' });
   g.foe('goon', ...alley.tile(14, 1), { range: 2 });
-  g.popcorn(...alley.tile(3, 0), 5).popcorn(...alley.tile(8, 1), 5).popcorn(...alley.tile(15, 0), 10);
+  g.pick(...alley.tile(3, 0), 5).pick(...alley.tile(8, 1), 5).pick(...alley.tile(15, 0), 10);
   g.tape(...alley.tile(15, -1));
   g.light('bulb', ...wallTile(alley, 8), { color: '#fff0d8', buzz: true });
   d.turn('+z', { floor: 'cobble', wall: 'brick' });
@@ -116,8 +116,8 @@ export function noir() {
   for (const [a, b] of [[4, 2], [8, -2], [8, 3], [12, 0]]) g.pillar(...club.tile(a, b), 0.62, { prop: 'table' });
   g.foe('dame', ...club.tile(14, 2), { range: 5 }).foe('gangster', ...club.tile(6, -2), { range: 5 });
   g.foe('bouncer', ...club.tile(2, 3), { range: 3 });
-  g.popcorn(...club.tile(2, -2), 10).popcorn(...club.tile(10, 5), 10).popcorn(...club.tile(15, -3), 10);
-  g.clapper(...club.tile(16, -5));
+  g.pick(...club.tile(2, -2), 10).pick(...club.tile(10, 5), 10).pick(...club.tile(15, -3), 10);
+  g.lighter(...club.tile(16, -5));
   sign(club, 8, 'THE ROCK BOTTOM', NIGHT[1], 0.5, 1.9);
   g.light('spot', ...wallTile(club, 14), { colors: ['#ffffff'], radius: 2, aim: toBack(club).map((v) => -6 * v), height: 2.4 });
   wash(g, club, [NIGHT[2], NIGHT[0]], { cans: 2, program: 'static' });
@@ -126,7 +126,7 @@ export function noir() {
   const mirror = back.hall(5, { floor: 'planks', wall: 'brick' });
   flat(g, mirror, 3, { look: 'wood' });
   const den = back.room(5, 5, ROOMS);
-  g.reel(...den.tile(3, 0));
+  g.globe(...den.tile(3, 0));
   g.pillar(...den.tile(3, 2), 0.62, { prop: 'table' });
   const exit = d.hall(4, { floor: 'planks', wall: 'brick' });
   barred(g, exit, 2);
@@ -136,15 +136,15 @@ export function noir() {
   const pier = d.ledge(18, { width: 4, floor: 'planks', wallTex: 'corrugated' });
   g.drop(...across(pier, 6, { beats: 4 }));
   g.foe('gangster', ...pier.tile(10, 0), { range: 3 });
-  g.popcorn(...pier.tile(3, pier.back), 5).popcorn(...pier.tile(9, pier.back), 10).popcorn(...pier.tile(16, pier.back), 5);
+  g.pick(...pier.tile(3, pier.back), 5).pick(...pier.tile(9, pier.back), 10).pick(...pier.tile(16, pier.back), 5);
   g.light('streetlamp', ...pier.tile(12, pier.back), { height: 2.4 });
   sign(pier, 3, 'PIER 9', NIGHT[1], 0.5);
   // A launch out to the end of the jetty, where the last reel is in a fishing boat's hold.
   const jetty = branch(d, pier, 13, 'front', 2);
   jetty.ferry(9, { size: 3, period: 7 });
   const boat = jetty.room(5, 5, { floor: 'planks', wall: 'fence' });
-  g.reel(...boat.tile(2, 0));
-  g.popcorn(...boat.tile(3, -1), 10).popcorn(...boat.tile(3, 1), 10);
+  g.globe(...boat.tile(2, 0));
+  g.pick(...boat.tile(3, -1), 10).pick(...boat.tile(3, 1), 10);
   d.turn('+z', { floor: 'planks', wall: 'corrugated' });
   d.hall(3, { floor: 'concrete', wall: 'corrugated' });
   d.turn('+x', { floor: 'concrete', wall: 'corrugated' });
@@ -155,7 +155,7 @@ export function noir() {
   for (const [a, b] of [[4, -6], [4, 6], [18, -6], [18, 6]]) g.pillar(...store.tile(a, b), 0.9, { prop: 'crate' });
   g.block(...store.rect(9, 3, -7, 1), 1.3, { prop: 'racking' });
   g.foe('mrbig', ...store.tile(14, 0), { range: 6 });
-  g.popcorn(...store.tile(2, 0), 10).popcorn(...store.tile(7, -4), 10).popcorn(...store.tile(7, 4), 10).popcorn(...store.tile(12, -5), 10);
+  g.pick(...store.tile(2, 0), 10).pick(...store.tile(7, -4), 10).pick(...store.tile(7, 4), 10).pick(...store.tile(12, -5), 10);
   g.tape(...store.tile(2, -5)).tape(...store.tile(2, 5));
   g.light('blinds', ...wallTile(store, 9), { aim: toBack(store).map((v) => -4 * v), height: 2.2, width: 3, depth: 3.4, program: 'pulse' });
   void centre;

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { COMBO_WINDOW, comboAt, createHype, earn, MAX_MULTIPLIER, smashed, windowLeft } from '../src/hype.js';
-import { createIntegrity, cracked, heal, hurt, retake, shattered } from '../src/integrity.js';
-import { goals, REELS, stars } from '../src/rating.js';
+import { createIntegrity, cracked, encore, heal, hurt, shattered } from '../src/integrity.js';
+import { GLOBES, goals, stars } from '../src/rating.js';
 import { closingSpeed, CRIT, resolveImpact } from '../src/smash.js';
 import { createStorage } from '../src/storage.js';
 import { FOES } from '../src/foes.js';
@@ -83,7 +83,7 @@ test('hype: smashes in a row build a combo that multiplies, up to the cap, and i
   assert.equal(earn(hype, 25), 25);
 });
 
-test('integrity: hurt, heal up to the best and no more, shatter, and take two from a clapperboard', () => {
+test('integrity: hurt, heal up to the best and no more, shatter, and an encore from a lighter', () => {
   const rock = createIntegrity();
   assert.equal(hurt(rock, 30), 30);
   assert.equal(rock.hp, 70);
@@ -92,20 +92,20 @@ test('integrity: hurt, heal up to the best and no more, shatter, and take two fr
   assert.equal(cracked(rock), 0);
   hurt(rock, 150);
   assert.ok(shattered(rock));
-  assert.equal(retake(rock), false);
-  rock.takes = 1;
-  assert.equal(retake(rock), true);
+  assert.equal(encore(rock), false);
+  rock.encores = 1;
+  assert.equal(encore(rock), true);
   assert.equal(rock.hp, 50);
-  assert.equal(rock.takes, 0);
+  assert.equal(rock.encores, 0);
   assert.equal(heal({ hp: 0, max: 100 }, 10), 0, 'no healing the dead');
 });
 
-test('stars: one for hitting the mark, one for smashing three in four, one for the three reels', () => {
-  assert.equal(stars({ smashed: 0, foes: 12, reels: 0 }), 1);
-  assert.equal(stars({ smashed: 9, foes: 12, reels: 0 }), 2);
-  assert.equal(stars({ smashed: 8, foes: 12, reels: REELS }), 2);
-  assert.equal(stars({ smashed: 9, foes: 12, reels: REELS }), 3);
-  assert.equal(goals({ smashed: 0, foes: 0, reels: 0 }).find((g) => g.id === 'steal').met, true, 'nobody to smash is a pass');
+test('stars: one for making the show, one for smashing three in four, one for the three snow globes', () => {
+  assert.equal(stars({ smashed: 0, foes: 12, globes: 0 }), 1);
+  assert.equal(stars({ smashed: 9, foes: 12, globes: 0 }), 2);
+  assert.equal(stars({ smashed: 8, foes: 12, globes: GLOBES }), 2);
+  assert.equal(stars({ smashed: 9, foes: 12, globes: GLOBES }), 3);
+  assert.equal(goals({ smashed: 0, foes: 0, globes: 0 }).find((g) => g.id === 'crowd').met, true, 'nobody to smash is a pass');
 });
 
 function memory(initial = null) {
@@ -116,9 +116,9 @@ function memory(initial = null) {
 test('storage: keeps the best of each scene and opens the next one', () => {
   const store = memory();
   const s = createStorage(store);
-  s.cleared(0, { hype: 500, time: 90, reels: 2, smashed: 5, stars: 2 });
-  s.cleared(0, { hype: 400, time: 80, reels: 3, smashed: 4, stars: 3 });
-  assert.deepEqual(s.venue(0), { stars: 3, best: 500, time: 80, reels: 3, smashed: 5 });
+  s.cleared(0, { hype: 500, time: 90, globes: 2, smashed: 5, stars: 2 });
+  s.cleared(0, { hype: 400, time: 80, globes: 3, smashed: 4, stars: 3 });
+  assert.deepEqual(s.venue(0), { stars: 3, best: 500, time: 80, globes: 3, smashed: 5 });
   assert.equal(s.load().reached, 1);
   assert.equal(s.totalStars(), 3);
   // And it was written, and reads back.
@@ -137,7 +137,7 @@ test('storage: a missing, broken or hostile store changes nothing', () => {
   assert.equal(hostile.load().settings.sfx, 0.2);
   assert.equal('evil' in hostile.load().settings, false);
   const throwing = createStorage({ getItem() { throw new Error('no'); }, setItem() { throw new Error('no'); } });
-  assert.doesNotThrow(() => throwing.cleared(0, { hype: 1, time: 1, reels: 0, smashed: 0, stars: 1 }));
+  assert.doesNotThrow(() => throwing.cleared(0, { hype: 1, time: 1, globes: 0, smashed: 0, stars: 1 }));
 });
 
 test('storage: settings are remembered, and only the known ones', () => {

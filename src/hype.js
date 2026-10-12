@@ -1,5 +1,5 @@
 /**
- * Hype (on screen, the buzz): the score. Popcorn is worth a few points a
+ * Hype: the score. Picks are worth a few points a
  * time; smashing people is worth more, and smashing them one after another is worth a lot more: each
  * smash within a few seconds of the last one adds to the combo, and the combo
  * multiplies what the smash is worth, up to five times.
@@ -10,7 +10,7 @@ export const COMBO_WINDOW = 3.5;
 export const MAX_MULTIPLIER = 5;
 
 export function createHype() {
-  return { score: 0, combo: 0, since: -Infinity, best: 0, smashes: 0, popcorn: 0 };
+  return { score: 0, combo: 0, since: -Infinity, best: 0, smashes: 0, picks: 0 };
 }
 
 /** What the combo is at `time`: dropped, if the window has run out. */
@@ -38,7 +38,7 @@ export function smashed(hype, base, time, scale = 1) {
   return { gain, multiplier, combo: hype.combo };
 }
 
-/** Points that don't count toward the combo: popcorn, buckets, reels, the wrap bonus. */
+/** Points that don't count toward the combo: picks, suitcases, snow globes, the end-of-stop bonus. */
 export function earn(hype, amount) {
   hype.score += amount;
   return amount;

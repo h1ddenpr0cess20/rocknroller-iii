@@ -48,7 +48,7 @@ export function western() {
   const hill = d.hall(10, { width: 5, floor: 'dirt', wall: 'fence' });
   for (const k of [2, 5, 8]) g.pillar(...backTile(hill, k), 0.7, { prop: 'tombstone' });
   g.bumper(...hill.tile(4, 1), { radius: 0.45, look: 'cactus' });
-  g.popcorn(...hill.tile(1, 0), 5).popcorn(...hill.tile(3, -1), 5).popcorn(...hill.tile(6, 0), 5).popcorn(...hill.tile(9, 1), 10);
+  g.pick(...hill.tile(1, 0), 5).pick(...hill.tile(3, -1), 5).pick(...hill.tile(6, 0), 5).pick(...hill.tile(9, 1), 10);
   g.foe('cowboy', ...hill.tile(7, 1), { range: 4 });
   d.turn('+z', { width: 5, floor: 'dirt', wall: 'fence' });
   d.ramp(6, 3, { width: 5, floor: 'dirt', wall: 'fence' });
@@ -60,7 +60,7 @@ export function western() {
   for (const [a, b] of [[4, 2], [14, -3], [19, 3]]) g.bumper(...street.tile(a, b), { radius: 0.42, look: 'barrel' });
   g.foe('cowboy', ...street.tile(5, -3), { range: 6 }).foe('cowboy', ...street.tile(16, 3), { range: 6 });
   g.foe('horse', ...street.tile(10, 0), { range: 6 });
-  g.popcorn(...street.tile(2, 0), 10).popcorn(...street.tile(8, 4), 10).popcorn(...street.tile(12, -4), 10).popcorn(...street.tile(20, 0), 10);
+  g.pick(...street.tile(2, 0), 10).pick(...street.tile(8, 4), 10).pick(...street.tile(12, -4), 10).pick(...street.tile(20, 0), 10);
   for (const k of [6, 14]) lantern(street, k);
   g.light('festoon', ...street.tile(2, -5), { to: [17 * street.dir[0] + 10 * street.across[0], 17 * street.dir[1] + 10 * street.across[1]], colors: ['#ffd890', '#ffb860', '#ff9a4a'], height: 2.4 });
   sign(street, 9, 'GENERAL STORE', DUSK[2], 0.4);
@@ -70,8 +70,8 @@ export function western() {
   const vaultHall = bank.hall(5, BOARDS);
   flat(g, vaultHall, 1, { look: 'wood' });
   const vault = bank.room(5, 5, { floor: 'planks', wall: 'block' });
-  g.reel(...vault.tile(3, 0));
-  g.popcorn(...vault.tile(1, -1), 10).popcorn(...vault.tile(1, 1), 10);
+  g.globe(...vault.tile(3, 0));
+  g.pick(...vault.tile(1, -1), 10).pick(...vault.tile(1, 1), 10);
   d.hall(5, BOARDS);
   d.turn('+x', BOARDS);
   d.hall(3, BOARDS);
@@ -83,7 +83,7 @@ export function western() {
   for (const [a, b] of [[5, 1], [8, 3], [10, -1]]) g.pillar(...saloon.tile(a, b), 0.62, { prop: 'table' });
   g.foe('drunk', ...saloon.tile(5, -2), { range: 5 }).foe('drunk', ...saloon.tile(10, 2), { range: 5 });
   g.foe('cowboy', ...saloon.tile(13, -1), { range: 5 });
-  g.popcorn(...saloon.tile(2, -3), 10).popcorn(...saloon.tile(9, -3), 10).popcorn(...saloon.tile(13, 4), 10);
+  g.pick(...saloon.tile(2, -3), 10).pick(...saloon.tile(9, -3), 10).pick(...saloon.tile(13, 4), 10);
   g.tape(...saloon.tile(14, 3));
   sign(saloon, 7, 'SALOON', '#ffd890', 0.6);
   wash(g, saloon, ['#ffb860', '#ff9a5a'], { cans: 2, program: 'static' });
@@ -92,22 +92,22 @@ export function western() {
   const mirror = back.hall(5, BOARDS);
   flat(g, mirror, 3, { look: 'glass', breakAt: 6 });
   const den = back.room(5, 5, { floor: 'planks', wall: 'clapboard' });
-  g.reel(...den.tile(3, 0));
-  g.popcorn(...den.tile(1, -1), 10).popcorn(...den.tile(1, 1), 10);
+  g.globe(...den.tile(3, 0));
+  g.pick(...den.tile(1, -1), 10).pick(...den.tile(1, 1), 10);
   d.hall(3, BOARDS);
   d.turn('+z', BOARDS);
 
   // Behind the saloon: the sheriff's office (the pass is on his desk) and the livery.
   const yard = d.hall(14, { width: 5, floor: 'dirt', wall: 'fence' });
   g.foe('stuntman', ...yard.tile(10, 0), { range: 4 });
-  g.popcorn(...yard.tile(3, 0), 5).popcorn(...yard.tile(6, 1), 5).popcorn(...yard.tile(12, -1), 10);
+  g.pick(...yard.tile(3, 0), 5).pick(...yard.tile(6, 1), 5).pick(...yard.tile(12, -1), 10);
   const office = branch(d, yard, 4, 'front', 3);
   office.hall(3, BOARDS);
   const sheriff = office.room(7, 7, { floor: 'planks', wall: 'clapboard' });
   g.pass(...sheriff.tile(4, 0));
   g.block(...sheriff.rect(5, 1, -2, 2), 0.8, { prop: 'desk' });
   g.foe('cowboy', ...sheriff.tile(2, 2), { range: 4 });
-  g.clapper(...sheriff.tile(5, 2));
+  g.lighter(...sheriff.tile(5, 2));
   sign(sheriff, 3.5, 'SHERIFF', DUSK[2], 0.45);
   const livery = branch(d, yard, 11, 'back', 3);
   livery.hall(2, { floor: 'dirt', wall: 'fence' });
@@ -115,7 +115,7 @@ export function western() {
   g.sticky(...barn.rect(1, 5, -2, 5));
   for (const [a, b] of [[1, -3], [6, 3]]) g.pillar(...barn.tile(a, b), 0.7, { prop: 'bale' });
   g.foe('horse', ...barn.tile(4, 0), { range: 4 });
-  g.bucket(...barn.tile(6, -3), 60);
+  g.suitcase(...barn.tile(6, -3), 60);
   const mine = d.hall(5, { floor: 'dirt', wall: 'stone' });
   barred(g, mine, 2, 'bars');
   sign(mine, 4, 'MINE', '#ff9a4a', 0.5);
@@ -128,7 +128,7 @@ export function western() {
   g.pyro(...across(drift, 9, { beats: 6, offset: 0.25 }));
   g.drop(...across(drift, 13, { beats: 6, offset: 0.5 }));
   g.foe('pa', ...drift.tile(7, 1), { range: 3 });
-  g.popcorn(...drift.tile(2, 0), 5).popcorn(...drift.tile(6, -1), 5).popcorn(...drift.tile(11, 1), 5).popcorn(...drift.tile(15, 0), 10);
+  g.pick(...drift.tile(2, 0), 5).pick(...drift.tile(6, -1), 5).pick(...drift.tile(11, 1), 5).pick(...drift.tile(15, 0), 10);
   for (const k of [2, 7, 11]) lantern(drift, k);
   d.hall(2, { floor: 'dirt', wall: 'stone' });
   // The chasm: the cart is the only way over, the lighting cables loose in the dark below.
@@ -143,15 +143,15 @@ export function western() {
   const seam = d.room(13, 11, { floor: 'dirt', wall: 'stone' });
   g.pyro(...across(seam, 9, { beats: 6 }));
   g.foe('stuntman', ...seam.tile(5, 2), { range: 5 }).foe('cowboy', ...seam.tile(11, -2), { range: 4 });
-  g.popcorn(...seam.tile(3, -3), 10).popcorn(...seam.tile(6, 4), 10).popcorn(...seam.tile(12, 3), 10);
+  g.pick(...seam.tile(3, -3), 10).pick(...seam.tile(6, 4), 10).pick(...seam.tile(12, 3), 10);
   wash(g, seam, ['#ffb860', '#ff7a3a'], { cans: 2, program: 'pulse', every: 2 });
   const shaft = branch(d, seam, 4, 'front', 6);
   const plank = shaft.bridge(7, { floor: 'planks' });
   g.zap(...plank.rect(0, 7, plank.lo - 2, 5), shaft.h - 1.8, { fill: true });
   g.foe('pa', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const nugget = shaft.room(5, 5, { floor: 'dirt', wall: 'stone' });
-  g.reel(...nugget.tile(2, 0));
-  g.bucket(...nugget.tile(3, 1), 70);
+  g.globe(...nugget.tile(2, 0));
+  g.suitcase(...nugget.tile(3, 1), 70);
   d.hall(3, { floor: 'dirt', wall: 'stone' });
   d.ramp(5, 2, { wall: 'stone' });
   // Out by the water tower.

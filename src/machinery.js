@@ -793,12 +793,12 @@ export function createBumperMesh(GFX, { radius, look = 'post' }) {
 
 /** The look of each pickup when it has no model (under node, or until the model has baked). */
 const STAND_INS = {
-  popcorn: { color: '#fff0c8', make: (GFX) => new GFX.SphereGeometry(0.09, 8, 6), y: 0.06 },
-  bucket: { color: '#d81c2a', make: (GFX) => new GFX.CylinderGeometry(0.15, 0.11, 0.36, 12), y: 0.18 },
+  pick: { color: '#ff3a8a', make: (GFX) => new GFX.CylinderGeometry(0.09, 0.09, 0.02, 3), y: 0.03 },
+  suitcase: { color: '#8a5a32', make: (GFX) => new GFX.BoxGeometry(0.38, 0.14, 0.24), y: 0.07 },
   tape: { color: '#9aa0a8', make: (GFX) => new GFX.TorusGeometry(0.1, 0.05, 8, 14), y: 0.2 },
-  clapper: { color: '#e8e8ee', make: (GFX) => new GFX.BoxGeometry(0.26, 0.22, 0.03), y: 0.2 },
-  pass: { color: '#f0b830', make: (GFX) => new GFX.BoxGeometry(0.16, 0.22, 0.02), y: 0.25 },
-  reel: { color: '#ffcf4a', make: (GFX) => new GFX.CylinderGeometry(0.2, 0.2, 0.02, 24), y: 0.3, tilt: true },
+  lighter: { color: '#d6d9e0', make: (GFX) => new GFX.BoxGeometry(0.08, 0.14, 0.04), y: 0.2 },
+  pass: { color: '#1a2450', make: (GFX) => new GFX.BoxGeometry(0.16, 0.2, 0.03), y: 0.25 },
+  globe: { color: '#e8f4ff', make: (GFX) => new GFX.SphereGeometry(0.15, 16, 10), y: 0.25 },
 };
 
 /** A pickup to put in the world: its sculpted model as soon as it is baked, a stand-in till then. */
@@ -816,7 +816,7 @@ export function createPickupMesh(GFX, kind, { amount = 10 } = {}) {
   const put = () => {
     const prop = createStatic(GFX, PROPS[kind]);
     // A heap as big as what's in it.
-    if (kind === 'popcorn') prop.scale.setScalar(0.95 + 0.55 * Math.min(1, Math.max(0, (amount - 3) / 30)));
+    if (kind === 'pick') prop.scale.setScalar(0.95 + 0.55 * Math.min(1, Math.max(0, (amount - 3) / 30)));
     group.add(prop);
     group.remove(standIn);
   };

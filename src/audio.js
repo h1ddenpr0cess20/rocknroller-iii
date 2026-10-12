@@ -3,10 +3,10 @@ import { createBand, THEMES } from './music.js';
 /**
  * Every sound, made on the spot with Web Audio — no samples. Rock rolling is
  * a low grind of filtered noise that rises with speed; every landing a stone
- * knocking on the floor; a smash is a kick drum and a crash cymbal; popcorn
- * pops, tape rips, a clapperboard claps, shutters rattle, breakaways
- * splinter, sandbags thump, pyro whooshes and steam hisses, floor zaps, a
- * film leader counts each scene in, and the crew cheers a wrap. The score
+ * knocking on the floor; a smash is a kick drum and a crash cymbal; picks
+ * plink, tape rips, a lighter flicks, shutters rattle, breakaways
+ * splinter, sandbags thump, pyro whooshes and steam hisses, floor zaps, the
+ * cabin chime brings each stop in, and the crowd cheers at the stage door. The score
  * (music.js) plays under it all, and keeps the time.
  *
  * Nothing can play until the page has had a click or a key (browsers insist),
@@ -234,16 +234,15 @@ export function createAudio() {
       burst({ length: 0.14, type: 'bandpass', freq: 900, q: 1.5, gain: 0.4 });
     },
 
-    /** Popcorn: a pop and a little bell over it, or a whole bucket popping and a glissando up. */
-    popcorn(big = false) {
+    /** Picks: a plink, or for a suitcase of them the latches snapping and a strum. */
+    pick(big = false) {
       const scale = [64, 67, 69, 71, 74, 76];
       const n = scale[Math.floor(Math.random() * scale.length)] + 12;
-      burst({ length: 0.03, type: 'bandpass', freq: 2200 + Math.random() * 1200, q: 3, gain: 0.35 });
-      tone({ freq: NOTE(n), length: 0.24, type: 'triangle', gain: 0.15 });
-      tone({ freq: NOTE(n) * 2, length: 0.1, type: 'sine', gain: 0.07 });
+      tone({ freq: NOTE(n), length: 0.28, type: 'triangle', gain: 0.18 });
+      tone({ freq: NOTE(n) * 2, length: 0.1, type: 'sine', gain: 0.08 });
       if (big) {
-        for (let i = 0; i < 9; i++) burst({ at: 0.03 * i + Math.random() * 0.03, length: 0.025, type: 'bandpass', freq: 1800 + Math.random() * 2000, q: 3, gain: 0.25 });
-        [60, 64, 67, 72, 76].forEach((m, i) => tone({ at: 0.05 * i, freq: NOTE(m + 12), length: 0.5, type: 'triangle', gain: 0.08 }));
+        for (const at of [0, 0.08]) burst({ at, length: 0.03, type: 'bandpass', freq: 3200, q: 4, gain: 0.5 });
+        [52, 59, 64, 67, 71].forEach((m, i) => tone({ at: 0.12 + 0.04 * i, freq: NOTE(m), length: 0.7, type: 'sawtooth', gain: 0.06 }));
       }
     },
 
@@ -252,11 +251,11 @@ export function createAudio() {
       tone({ at: 0.35, freq: NOTE(79), length: 0.18, type: 'triangle', gain: 0.12 });
     },
 
-    /** A clapperboard picked up: the sticks snap shut. */
-    clapper() {
-      burst({ length: 0.04, type: 'bandpass', freq: 2600, q: 1.2, gain: 0.8 });
-      tone({ freq: 900, to: 300, length: 0.05, type: 'square', gain: 0.12 });
-      [72, 76, 79].forEach((n, i) => tone({ at: 0.15 + i * 0.07, freq: NOTE(n), length: 0.4, type: 'triangle', gain: 0.09 }));
+    /** A lighter: the flint, the flame catching, and the crowd's hopes going up. */
+    lighter() {
+      burst({ length: 0.03, type: 'highpass', freq: 5000, gain: 0.5 });
+      burst({ at: 0.06, length: 0.35, type: 'bandpass', freq: 600, sweep: 1800, q: 1, gain: 0.25 });
+      [72, 76, 79].forEach((n, i) => tone({ at: 0.2 + i * 0.08, freq: NOTE(n), length: 0.5, type: 'triangle', gain: 0.1 }));
     },
 
     pass() {
@@ -264,11 +263,11 @@ export function createAudio() {
       tone({ at: 0.09, freq: NOTE(95), length: 0.2, type: 'square', gain: 0.07 });
     },
 
-    /** A golden reel: a fanfare. */
-    reel() {
-      [72, 76, 79, 84].forEach((n, i) => tone({ at: i * 0.09, freq: NOTE(n), length: 0.6, type: 'triangle', gain: 0.13 }));
-      fanfare(60, 1.2, 0.35, 0.06);
-      cheer(0.7, 1.8);
+    /** A snow globe: the little music box in its base, playing, and a cheer. */
+    globe() {
+      [84, 88, 91, 88, 93, 91, 96].forEach((n, i) => tone({ at: i * 0.11, freq: NOTE(n), length: 0.45, type: 'sine', gain: 0.1, attack: 0.002 }));
+      [72, 79].forEach((n) => tone({ freq: NOTE(n), length: 1.1, type: 'triangle', gain: 0.06 }));
+      cheer(0.6, 1.6);
     },
 
     gate() {
@@ -321,24 +320,24 @@ export function createAudio() {
       tone({ at: 0.02, freq: 560, to: 1500, length: 0.1, type: 'triangle', gain: 0.15 });
     },
 
-    /** Take two: the clapperboard, a chord, the crew getting back to it. */
-    retake() {
-      burst({ length: 0.05, type: 'bandpass', freq: 2600, q: 1.2, gain: 0.9 });
-      cheer(0.8, 1.8);
-      fanfare(57, 1.2, 0.15, 0.08);
+    /** An encore: the crowd roaring him back, the lighters up, the band coming back in. */
+    encore() {
+      cheer(1.4, 2.6);
+      burst({ length: 2.2, type: 'bandpass', freq: 1400, q: 0.4, gain: 0.35 });
+      fanfare(45, 1.2, 0.1, 0.1);
       [76, 81, 85].forEach((n, i) => tone({ at: 0.5 + i * 0.1, freq: NOTE(n), length: 0.8, type: 'triangle', gain: 0.1 }));
     },
 
-    /** The scene's name on screen: the film leader counting down, three beeps and a pop, and the projector running. */
+    /** The stop's name on screen: the cabin chime, and the plane coming in to land. */
     descend() {
-      [0, 0.45, 0.9].forEach((at) => tone({ at, freq: 1000, length: 0.12, type: 'sine', gain: 0.16, attack: 0.002 }));
-      burst({ at: 1.35, length: 0.04, type: 'bandpass', freq: 3000, q: 2, gain: 0.4 });
-      for (let i = 0; i < 20; i++) burst({ at: i * 0.07, length: 0.03, type: 'bandpass', freq: 1400, q: 4, gain: 0.07 });
+      tone({ freq: NOTE(76), length: 0.7, type: 'sine', gain: 0.14 });
+      tone({ at: 0.45, freq: NOTE(72), length: 1, type: 'sine', gain: 0.14 });
+      burst({ at: 0.2, length: 1.8, type: 'bandpass', freq: 500, sweep: 220, q: 0.6, gain: 0.18 });
     },
 
-    /** Cut: a clap, and the brass. */
+    /** At the stage door: the band kicks in, and the crowd goes up. */
     clear() {
-      burst({ length: 0.05, type: 'bandpass', freq: 2600, q: 1.2, gain: 0.9 });
+      tone({ freq: 60, to: 40, length: 0.2, gain: 0.9 });
       fanfare(60, 1.8, 0.05, 0.12);
       fanfare(67, 1.8, 0.07, 0.08);
       burst({ length: 2, type: 'highpass', freq: 5000, gain: 0.25 });
@@ -346,9 +345,9 @@ export function createAudio() {
       cheer(1.6, 3.2);
     },
 
-    /** Shattered: the film runs out and flaps on the reel, and the projector winds down. */
+    /** Shattered: a guitar dropped on the stage, the feedback, and the crowd going home. */
     over() {
-      for (let i = 0; i < 14; i++) burst({ at: i * (0.06 + i * 0.004), length: 0.03, type: 'bandpass', freq: 1500, q: 3, gain: 0.35 - i * 0.02 });
+      burst({ length: 0.15, type: 'bandpass', freq: 300, q: 1, gain: 0.7 });
       tone({ freq: 220, to: 50, length: 1.6, type: 'sawtooth', gain: 0.08 });
       tone({ at: 0.2, freq: 55, to: 28, length: 1.2, gain: 0.6 });
     },

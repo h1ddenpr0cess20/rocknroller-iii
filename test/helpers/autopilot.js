@@ -2,7 +2,7 @@
  * An autopilot for the sets. It plans its own way through — tile by tile,
  * over floor it can roll onto, down drops it can survive, across on the
  * dollies and trams, never onto live floor — fetches the passes before the
- * closed sets and the golden reels behind the breakaways, running at a
+ * border gates and the snow globes behind the breakaways, running at a
  * breakaway fast enough to go through it, then rolls Rock along the plan
  * with the same push the controls give. It waits for sandbags to go up,
  * effects to die down and lifts to come, and whoever it runs into, it runs
@@ -240,11 +240,11 @@ function waypoints(gig, moves, from) {
 }
 
 /**
- * Drive set `index` to Rock's mark (picking up the passes and reels on the way, or with `everything`, every last thing). Returns whether it got there, how
+ * Drive set `index` to Rock's mark (picking up the passports and snow globes on the way, or with `everything`, every last thing). Returns whether it got there, how
  * long it took, every way Rock was lost or hurt, the people he ran into, and
  * the gig as it came out.
  */
-export function drive(index, { limit = 1200, sample = null, reels = true, duel = true, from = null, everything = false } = {}) {
+export function drive(index, { limit = 1200, sample = null, globes = true, duel = true, from = null, everything = false } = {}) {
   const gig = createGig(GFX, index);
   const venue = gig.venue;
   const net = graph(venue);
@@ -264,7 +264,7 @@ export function drive(index, { limit = 1200, sample = null, reels = true, duel =
 
   const exits = [];
   for (let z = 0; z < venue.rows; z++) for (let x = 0; x < venue.cols; x++) if (venue.cell(x, z)?.kind === 'exit') exits.push([x, z]);
-  const goals = gig.actors.pickups.filter((p) => everything || p.kind === 'pass' || (reels && p.kind === 'reel'));
+  const goals = gig.actors.pickups.filter((p) => everything || p.kind === 'pass' || (globes && p.kind === 'globe'));
   const tileOf = (p) => [Math.floor(p.x), Math.floor(p.z)];
 
   const here = () => [Math.floor(b.x), Math.floor(b.z)];
@@ -276,7 +276,7 @@ export function drive(index, { limit = 1200, sample = null, reels = true, duel =
     if (!reaches.has(k)) reaches.set(k, plan(gig, net, tileOf(a), tileOf(c), 99) !== null);
     return reaches.get(k);
   };
-  /** Where to go next: the most upstream pass or reel not yet picked up, nearest first, then Rock's mark. */
+  /** Where to go next: the most upstream passport or snow globe not yet picked up, nearest first, then Rock's mark. */
   const goal = () => {
     const left = goals.filter((p) => !p.taken);
     const upstream = left.filter((p) => !left.some((q) => q !== p && canReach(q, p)));

@@ -7,8 +7,8 @@ import { collideBalls, createBall, PUSH, stepBall } from './physics.js';
  * annoying people, sandbags and rigs that drop on the beat, effects that
  * fire from the floor, lifts (dollies and trams over the dark, platforms
  * down shafts), closed sets (a pass lifts their shutters), breakaways
- * (speed breaks them), bumpers, and what lies about — popcorn, buckets of
- * it, gaffer tape, clapperboards, passes and golden reels.
+ * (speed breaks them), bumpers, and what lies about — picks, suitcases of
+ * them, gaffer tape, lighters, passports and snow globes.
  */
 
 const CRUSHER_HEIGHT = 0.9;
@@ -20,10 +20,10 @@ const DOOR_THICKNESS = 0.18;
 const SLEEP = 26;
 
 /** How far each turning pickup's model is let down to touch the floor (its lowest point, as sculpted, is above it). */
-const SETTLE = Object.freeze({ tape: -0.014, pass: -0.078, reel: -0.062, clapper: 0.005 });
+const SETTLE = Object.freeze({ tape: -0.014, pass: -0.078, globe: -0.03, lighter: 0.005 });
 
 /** Pickups that lie on the floor rather than float. */
-const STILL = new Set(['popcorn', 'bucket']);
+const STILL = new Set(['pick', 'suitcase']);
 
 /** How long a foe that has taken a knock can't be hit again, and how hard a knock throws it. */
 const GUARD = Object.freeze({ foe: 0.9, boss: 1.5 });
@@ -212,7 +212,7 @@ export function createActors(GFX, venue, world, { killY }) {
     mesh.add(spin);
     const look = createPickupMesh(GFX, p.kind, { amount: p.amount });
     spin.add(look.group);
-    // Popcorn and buckets sit where they were left, at whatever angle; the rest float and turn.
+    // Picks and suitcases sit where they were left, at whatever angle; the rest float and turn.
     if (STILL.has(p.kind)) spin.rotation.y = (i * 2.399963) % (Math.PI * 2);
     const ground = venue.heightAt(p.x, p.z) ?? 0;
     mesh.position.set(p.x, ground, p.z);

@@ -11,7 +11,7 @@ import { World } from './physics.js';
  * (`zap`), Rock's mark (the exit), and everything that lives or lies about
  * in it: the annoying people, sandbags and lighting rigs that drop and
  * effects that fire on the beat, dollies and trams, closed sets and their
- * passes, popcorn and gaffer tape, the lamps and the light rig, and the props
+ * passports, picks and gaffer tape, the lamps and the light rig, and the props
  * that dress it.
  *
  * x runs down-right across the screen and z down-left; the camera looks from
@@ -402,15 +402,15 @@ export class Venue {
     return this;
   }
 
-  /** A handful of popcorn, to roll over: it is the buzz. */
-  popcorn(x, z, amount = 10) {
-    this.pickups.push({ kind: 'popcorn', x: x + 0.5, z: z + 0.5, amount });
+  /** A pile of guitar picks, to roll over: they are the hype. */
+  pick(x, z, amount = 10) {
+    this.pickups.push({ kind: 'pick', x: x + 0.5, z: z + 0.5, amount });
     return this;
   }
 
-  /** A bucket of popcorn, the big one from the concession stand. */
-  bucket(x, z, amount = 60) {
-    this.pickups.push({ kind: 'bucket', x: x + 0.5, z: z + 0.5, amount });
+  /** A suitcase, sprung open on a heap of picks. */
+  suitcase(x, z, amount = 60) {
+    this.pickups.push({ kind: 'suitcase', x: x + 0.5, z: z + 0.5, amount });
     return this;
   }
 
@@ -420,21 +420,21 @@ export class Venue {
     return this;
   }
 
-  /** A clapperboard: when Rock is done for, the director calls take two and he gets up. */
-  clapper(x, z) {
-    this.pickups.push({ kind: 'clapper', x: x + 0.5, z: z + 0.5, amount: 1 });
+  /** A lighter, held up: when Rock is done for, the crowd calls for an encore and he gets up. */
+  lighter(x, z) {
+    this.pickups.push({ kind: 'lighter', x: x + 0.5, z: z + 0.5, amount: 1 });
     return this;
   }
 
-  /** A studio pass, for the closed sets. */
+  /** A passport, for the border gates and the stage door. */
   pass(x, z) {
     this.pickups.push({ kind: 'pass', x: x + 0.5, z: z + 0.5, amount: 1 });
     return this;
   }
 
-  /** A golden reel: three are hidden on every set. */
-  reel(x, z) {
-    this.pickups.push({ kind: 'reel', x: x + 0.5, z: z + 0.5, amount: 100 });
+  /** A snow globe, a souvenir: three are hidden at every stop. */
+  globe(x, z) {
+    this.pickups.push({ kind: 'globe', x: x + 0.5, z: z + 0.5, amount: 100 });
     return this;
   }
 

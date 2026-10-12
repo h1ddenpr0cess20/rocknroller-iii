@@ -15,23 +15,24 @@ import { BOARD_DETAIL } from './foes.js';
 import { VENUES } from './venues/index.js';
 
 /**
- * The game: the sets of the shoot, one after another, each a scene. Rock
- * rolls through it, smashing the people in the way at speed, picking up
- * popcorn and gaffer tape and passes, and keeping out from under sandbags,
- * out of the effects and off live floor, until he hits his mark; the
- * dailies after it give stars, and the next set opens. At no integrity he
- * is shattered, unless he has a clapperboard and the director calls take two.
+ * The game: the stops of the world tour, one after another. At each, Rock
+ * rolls through the town on the way to the show, smashing the people in the
+ * way at speed, picking up picks and gaffer tape and his passport, and
+ * keeping out from under whatever comes down, out of the effects and off live
+ * floor, until he gets to the stage door; the review after it gives stars,
+ * and the next stop opens. At no integrity he is shattered, unless he has a
+ * lighter and the crowd calls him back for an encore.
  *
- * It keeps the screens and the state: `title`, `ready` (the scene's name
- * on screen), `play`, `lost` (off an edge or flattened: back in a moment),
- * `clear` (the dailies) and `over` (shattered). The rules are in gig.js.
+ * It keeps the screens and the state: `title`, `ready` (the stop's name on
+ * screen), `play`, `lost` (off an edge or flattened: back in a moment),
+ * `clear` (the review) and `over` (shattered). The rules are in gig.js.
  */
 
-/** Buzz for every scene wrapped, by how far into the shoot it was. */
+/** Hype for every stop played, by how far into the tour it was. */
 export const CLEAR_BONUS = 100;
 
 const BANNERS = {
-  fell: 'OFF THE SET!',
+  fell: 'OFF THE EDGE!',
   zapped: 'ZAPPED!',
   crushed: 'FLATTENED!',
   burnt: 'SINGED!',
@@ -71,7 +72,7 @@ export function createGame({ stage, hud, input, audio, storage }) {
 
   const settings = () => storage.load().settings;
   const flashing = () => settings().flashing;
-  /** How Rock talks on this set: flatly, as a rule; hard-boiled, in the noir. */
+  /** How Rock talks at this stop: flatly, as a rule, unless the stop has a voice of its own. */
   const voice = () => gig?.venue.look.voice ?? null;
 
   function setVenue(index) {
@@ -168,7 +169,7 @@ export function createGame({ stage, hud, input, audio, storage }) {
     enter('ready');
     const venue = gig.venue;
     hud.play(venue);
-    hud.banner(`REEL ${venue.act}\n${venue.name.toUpperCase()}`, 'big', venue.intro);
+    hud.banner(`STOP ${venue.act}\n${venue.name.toUpperCase()}`, 'big', venue.intro);
     hud.hype(0);
     hud.integrity(gig.rock);
     hud.carried({});
@@ -230,14 +231,14 @@ export function createGame({ stage, hud, input, audio, storage }) {
     storage.cleared(currentIndex, result);
     saved = storage.load();
     result.hasNext = !last;
-    effects.popcorn(b.x, b.y, b.z, 30);
+    effects.picks(b.x, b.y, b.z, 30);
     effects.confetti(b.x, b.y + 0.4, b.z, 80);
     audio.stopMusic();
     audio.clear();
     rock.react('proud', 99);
-    hud.banner(last ? `THAT'S A WRAP!` : `CUT!\nPRINT IT`, 'big', `+${bonus} buzz`);
+    hud.banner(last ? `THAT'S THE TOUR!` : `WHAT A SHOW!`, 'big', `+${bonus} hype`);
     hud.hype(gig.hype.score, { pulse: true });
-    hud.say(say(last ? 'wrap' : 'clear', voice()), 'Rock', 3);
+    hud.say(say(last ? 'tour' : 'clear', voice()), 'Rock', 3);
     setTimeout(() => { if (state === 'clear') hud.review(result); }, 2200);
   }
 
@@ -289,15 +290,15 @@ export function createGame({ stage, hud, input, audio, storage }) {
       hud.banner('SMASHED THROUGH!', 'normal');
       hud.say(say('broke', voice()), 'Rock', 2.6);
     }
-    if (out.door === 'opened') { audio.gate(); hud.banner('SET OPEN'); hud.carried(carriedNow()); }
-    if (out.door === 'locked') { audio.locked(); hud.banner('CLOSED SET\nfind the studio pass'); hud.say(say('locked', voice()), 'Rock', 2.6); }
+    if (out.door === 'opened') { audio.gate(); hud.banner('WAVED THROUGH'); hud.carried(carriedNow()); }
+    if (out.door === 'locked') { audio.locked(); hud.banner('PASSPORT, PLEASE\nfind the passport'); hud.say(say('locked', voice()), 'Rock', 2.6); }
     if (out.door === 'sturdy') { audio.locked(); hud.say(say('sturdy', voice()), 'Rock', 2.6); }
-    if (out.retake) {
+    if (out.encore) {
       effects.sparkle(b.x, b.y, b.z, '#ffffff');
-      effects.sparkle(b.x, b.y, b.z, '#ffe08a');
-      audio.retake();
-      hud.banner('TAKE TWO!\nfrom the top', 'big');
-      hud.say(say('retake', voice()), 'Rock', 3);
+      effects.sparkle(b.x, b.y, b.z, '#ffb84a');
+      audio.encore();
+      hud.banner('ENCORE!\nthe crowd wants more', 'big');
+      hud.say(say('encore', voice()), 'Rock', 3);
       rock.react('proud', 1.4);
       hud.integrity(gig.rock);
       hud.carried(carriedNow());
@@ -365,41 +366,41 @@ export function createGame({ stage, hud, input, audio, storage }) {
 
   function picked(p) {
     const at = screenOf(p.x, p.y + 0.5, p.z);
-    if (p.kind === 'popcorn' || p.kind === 'bucket') {
-      effects.popcorn(p.x, p.y, p.z, p.kind === 'bucket' ? 22 : 7);
-      audio.popcorn(p.kind === 'bucket');
+    if (p.kind === 'pick' || p.kind === 'suitcase') {
+      effects.picks(p.x, p.y, p.z, p.kind === 'suitcase' ? 22 : 7);
+      audio.pick(p.kind === 'suitcase');
       hud.pop(at.x, at.y, `+${p.amount}`, 'pick');
       hud.hype(gig.hype.score, { combo: comboAt(gig.hype, gig.time), multiplier: Math.min(5, comboAt(gig.hype, gig.time)), left: windowLeft(gig.hype, gig.time) });
-      if (p.kind === 'bucket') hud.banner(`A BUCKET OF POPCORN\n+${p.amount}`, 'normal');
+      if (p.kind === 'suitcase') hud.banner(`A SUITCASE OF PICKS\n+${p.amount}`, 'normal');
     } else if (p.kind === 'tape') {
       effects.sparkle(p.x, p.y, p.z, '#cfd6e2');
       audio.tape();
       hud.integrity(gig.rock);
       hud.banner(`GAFFER TAPE\n+${p.amount} integrity`, 'normal');
       hud.say(say('tape', voice()), 'Rock', 2.4);
-    } else if (p.kind === 'clapper') {
-      effects.sparkle(p.x, p.y, p.z, '#ffffff');
-      audio.clapper();
-      hud.banner('A CLAPPERBOARD\nfor take two', 'normal');
-      hud.say(say('clapper', voice()), 'Rock', 2.8);
+    } else if (p.kind === 'lighter') {
+      effects.sparkle(p.x, p.y, p.z, '#ffb84a');
+      audio.lighter();
+      hud.banner('A LIGHTER\nfor an encore', 'normal');
+      hud.say(say('lighter', voice()), 'Rock', 2.8);
     } else if (p.kind === 'pass') {
       effects.sparkle(p.x, p.y, p.z, '#ffcf4a');
       audio.pass();
-      hud.banner('STUDIO PASS');
+      hud.banner('PASSPORT');
       hud.say(say('pass', voice()), 'Rock', 2.4);
-    } else if (p.kind === 'reel') {
-      effects.sparkle(p.x, p.y, p.z, '#ffd23a');
-      effects.popcorn(p.x, p.y, p.z, 14);
+    } else if (p.kind === 'globe') {
+      effects.sparkle(p.x, p.y, p.z, '#e8f4ff');
+      effects.picks(p.x, p.y, p.z, 14);
       effects.confetti(p.x, p.y, p.z, 30);
-      audio.reel();
-      hud.banner(`GOLDEN REEL\n${gig.stats.reels} of 3`, 'normal');
-      hud.say(say('reel', voice()), 'Rock', 3);
+      audio.globe();
+      hud.banner(`SNOW GLOBE\n${gig.stats.globes} of 3`, 'normal');
+      hud.say(say('globe', voice()), 'Rock', 3);
       hud.hype(gig.hype.score, { pulse: true });
     }
     hud.carried(carriedNow());
   }
 
-  const carriedNow = () => ({ reels: gig.stats.reels, passes: gig.passes, takes: gig.rock.takes });
+  const carriedNow = () => ({ globes: gig.stats.globes, passes: gig.passes, encores: gig.rock.encores });
 
   /** Sparks off the zap floor near Rock, a few a second. */
   function zapSparks(dt) {
