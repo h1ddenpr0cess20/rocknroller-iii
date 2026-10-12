@@ -31,7 +31,7 @@ export function noir() {
     name: 'The Noir', act: 7, cols: 146, rows: 138, palette: NOIR, tempo: 84,
     intro: 'It was raining. In this town, it is always raining. The rain is a hose.',
     look: {
-      genre: 'Film Noir', grade: 'noir', weather: 'rain', voice: 'noir', theme: 'noir',
+      genre: 'Film Noir', grade: 'noir', weather: 'rain', voice: 'noir', theme: 'tokyo',
       floor: 'asphalt', wall: 'brick', lamp: 'bulb', crusher: 'crate', lift: 'raft', pyro: 'steam', gate: null,
       hemi: ['#c8ccd8', '#202024', 0.95], key: '#e8ecff', keyK: 1.15, lantern: '#f0f0f4',
       skyColors: ['#020204', '#06060a', '#0c0c10', '#141418', '#1c1c22'], skyline: '#040406',

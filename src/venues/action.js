@@ -30,7 +30,7 @@ export function action() {
     name: 'The Action Picture', act: 9, cols: 142, rows: 140, palette: ACTION, tempo: 150,
     intro: 'Rock does his own stunts. Rock is his own stunt.',
     look: {
-      genre: 'Action', theme: 'action', floor: 'concrete', wall: 'corrugated', lamp: 'bulb', buzz: true, crusher: 'boulder', lift: 'forklift',
+      genre: 'Action', theme: 'sydney', floor: 'concrete', wall: 'corrugated', lamp: 'bulb', buzz: true, crusher: 'boulder', lift: 'forklift',
       hemi: ['#c8d4ec', '#3a3430', 1.1], key: '#fff0d8', keyK: 1.1, lantern: '#ffe0a8',
       skyColors: ['#04040c', '#0a0c1c', '#141a30', '#2a1e2a', '#4a2418'], stars: true, skyline: '#05060a',
       reflect: BLAST, ceiling: '#1e2230',

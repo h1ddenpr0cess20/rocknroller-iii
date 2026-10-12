@@ -29,7 +29,7 @@ export function pirate() {
     name: 'The Swashbuckler', act: 8, cols: 136, rows: 140, palette: PIRATE, tempo: 112,
     intro: 'Rock has been asked to walk the plank. Rock is a boulder. The plank has views.',
     look: {
-      genre: 'Swashbuckler', theme: 'pirate', floor: 'planks', wall: 'clapboard', lamp: 'bulb', crusher: 'crate', lift: 'raft',
+      genre: 'Swashbuckler', theme: 'venice', floor: 'planks', wall: 'clapboard', lamp: 'bulb', crusher: 'crate', lift: 'raft',
       hemi: ['#c8d8f0', '#3a2a20', 1.1], key: '#fff0d8', keyK: 1.1, lantern: '#ffe0b0',
       skyColors: ['#02040c', '#060c1c', '#0c1830', '#14243e', '#203048'], stars: true,
       reflect: SEA, ceiling: '#1a2030',

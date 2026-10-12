@@ -30,7 +30,7 @@ export function casting() {
     name: 'The Casting Call', act: 1, cols: 92, rows: 84, palette: CASTING, tempo: 118,
     intro: 'Rock has been cast. Rock did not audition.',
     look: {
-      genre: 'Screen Test', theme: 'casting', floor: 'checker', wall: 'stucco', lamp: 'bulb', crusher: 'sandbag', lift: 'dolly',
+      genre: 'Screen Test', theme: 'london', floor: 'checker', wall: 'stucco', lamp: 'bulb', crusher: 'sandbag', lift: 'dolly',
       hemi: ['#e8dcc8', '#5a4a40', 1.05], key: '#fff0e0', keyK: 1.15, lantern: '#ffe6c8',
       skyColors: ['#04060e', '#0a0e1c', '#121a30', '#1c2440', '#2a2c48'], stars: true, skyline: '#06070c',
       reflect: OFFICE, ceiling: '#2a2a38',

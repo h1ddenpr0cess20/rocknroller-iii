@@ -29,7 +29,7 @@ export function musical() {
     name: 'The Musical', act: 4, cols: 126, rows: 132, palette: MUSICAL, tempo: 140,
     intro: 'Five, six, seven, eight. Rock does not dance. Rock rolls.',
     look: {
-      genre: 'Musical', grade: 'technicolor', theme: 'musical', floor: 'planks', wall: 'curtain', lamp: 'bulb', crusher: 'rig', lift: 'riser',
+      genre: 'Musical', grade: 'technicolor', theme: 'paris', floor: 'planks', wall: 'curtain', lamp: 'bulb', crusher: 'rig', lift: 'riser',
       hemi: ['#ffd8e8', '#3a2040', 1.15], key: '#fff0f0', keyK: 1.1, lantern: '#ffe0d0',
       skyColors: ['#06020e', '#10061e', '#1c0a30', '#2c1040', '#3a1448'],
       reflect: COLOUR, ceiling: '#2a1438',

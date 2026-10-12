@@ -30,7 +30,7 @@ export function horror() {
     name: 'The Horror Picture', act: 6, cols: 130, rows: 136, palette: HORROR, tempo: 92,
     intro: 'It was a dark and stormy night. The storm is a fan and a hose.',
     look: {
-      genre: 'Horror', grade: 'horror', theme: 'horror', floor: 'cobble', wall: 'stone', lamp: 'bulb', crusher: 'chandelier', lift: 'riser',
+      genre: 'Horror', grade: 'horror', theme: 'egypt', floor: 'cobble', wall: 'stone', lamp: 'bulb', crusher: 'chandelier', lift: 'riser',
       hemi: ['#b8d0c8', '#2a2028', 1.0], key: '#d8e8ff', keyK: 1.0, lantern: '#d8e0ff',
       skyColors: ['#020204', '#06060c', '#0c0c16', '#14121e', '#1c1824'], stars: false, skyline: '#030305',
       reflect: GLOOM, ceiling: '#141018',

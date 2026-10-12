@@ -15,8 +15,8 @@ import { createBand, THEMES } from './music.js';
 
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);
 
-/** How fast the main title goes over the title screen. */
-const TITLE_TEMPO = 146;
+/** How fast the main title (the stadium anthem) goes over the title screen. */
+const TITLE_TEMPO = 136;
 
 /**
  * A number the game hands the audio, made safe for an AudioParam: Web Audio
@@ -99,7 +99,7 @@ export function createAudio() {
     cg.gain.value = crowd.base;
 
     band = createBand(ctx, music, noise);
-    if (wantTitle) band.start(THEMES.hollywood, TITLE_TEMPO);
+    if (wantTitle) band.start(THEMES.worldtour, TITLE_TEMPO);
   }
 
   const now = () => ctx.currentTime;
@@ -380,7 +380,7 @@ export function createAudio() {
     /** The main title, over the title screen: now, or as soon as the page has had a click and there is sound. */
     title() {
       wantTitle = true;
-      if (band && band.theme !== THEMES.hollywood) band.start(THEMES.hollywood, TITLE_TEMPO);
+      if (band && band.theme !== THEMES.worldtour) band.start(THEMES.worldtour, TITLE_TEMPO);
     },
 
     /** Where the band is, in beats from the downbeat; null if it isn't playing. */

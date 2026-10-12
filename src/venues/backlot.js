@@ -29,7 +29,7 @@ export function backlot() {
     name: 'The Backlot', act: 2, cols: 130, rows: 126, palette: BACKLOT, tempo: 146,
     intro: 'The tour tram leaves every twenty minutes. Rock is not on it.',
     look: {
-      genre: 'Studio Tour', theme: 'hollywood', floor: 'asphalt', wall: 'stucco', lamp: 'bulb', crusher: 'rig', lift: 'tram',
+      genre: 'Studio Tour', theme: 'worldtour', floor: 'asphalt', wall: 'stucco', lamp: 'bulb', crusher: 'rig', lift: 'tram',
       hemi: ['#b8c4e8', '#3a3448', 1.1], key: '#e8ecff', keyK: 1.05, lantern: '#ffe2b8',
       skyColors: ['#020410', '#060a1e', '#0e1430', '#1c2040', '#30284a'], stars: true, skyline: '#05060c',
       reflect: LOT, ceiling: '#1a1e30',

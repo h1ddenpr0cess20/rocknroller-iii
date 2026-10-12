@@ -30,7 +30,7 @@ export function western() {
     name: 'The Western', act: 3, cols: 130, rows: 130, palette: WESTERN, tempo: 132,
     intro: 'This town ain\'t big enough for the both of us. Rock is very big.',
     look: {
-      genre: 'Western', grade: 'sepia', theme: 'western', floor: 'dirt', wall: 'clapboard', lamp: 'bulb', crusher: 'crate', lift: 'cart',
+      genre: 'Western', grade: 'sepia', theme: 'spain', floor: 'dirt', wall: 'clapboard', lamp: 'bulb', crusher: 'crate', lift: 'cart',
       hemi: ['#f0d8b8', '#5a3a28', 1.1], key: '#ffe8c8', keyK: 1.1, lantern: '#ffd8a8',
       skyColors: ['#0a0614', '#1a0e22', '#3a1a2a', '#6a2a22', '#a8481a'], stars: true, skyline: '#140a0a',
       reflect: DUSK, ceiling: '#3a2418',

@@ -30,7 +30,7 @@ export function scifi() {
     name: 'The Space Picture', act: 5, cols: 136, rows: 134, palette: SCIFI, tempo: 126,
     intro: 'In space, no one can hear Rock roll. On Stage 12, everyone can.',
     look: {
-      genre: 'Science Fiction', grade: 'scifi', theme: 'scifi', floor: 'grate', wall: 'hull', lamp: 'bulb', crusher: 'piston', lift: 'saucer', pyro: 'steam',
+      genre: 'Science Fiction', grade: 'scifi', theme: 'rio', floor: 'grate', wall: 'hull', lamp: 'bulb', crusher: 'piston', lift: 'saucer', pyro: 'steam',
       hemi: ['#c8e0ff', '#2a2440', 1.1], key: '#e0f0ff', keyK: 1.05, lantern: '#d8f0ff',
       skyColors: ['#000004', '#02020c', '#060418', '#0c0624', '#140a30'], stars: true,
       reflect: SPACE, ceiling: '#141a2a',

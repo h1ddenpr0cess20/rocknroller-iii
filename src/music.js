@@ -1,20 +1,22 @@
 /**
- * The score. Every set has its picture's music playing over it, made on the
- * spot with Web Audio, no samples: drums (kick, snare or brushes, hats or a
- * ride, toms, crash, a rim click), a bass (electric, upright or synth), a
- * rhythm part (guitars through a distortion and a cabinet, clean or twangy
- * guitars, piano, brass, an organ or strings), a lead (a rock lead, a sax,
- * a muted trumpet, a whistle, a theremin, a fiddle, vibes), and synths where
- * the picture wants them, all in a small room of reverb. Each plays its part
- * in a style the set picks — its key, a chord progression, a drum pattern,
- * a way of comping, a swing — as a song (`FORM`): an intro, verses,
- * choruses with the lead on top, a breakdown and a solo, with a fill into
- * every change.
+ * The tour's music. Every stop has the band playing in the local style, made
+ * on the spot with Web Audio, no samples: drums (kick, snare or brushes,
+ * hats or a ride, toms and taiko, crash, rim clicks and claps), a bass
+ * (electric, upright or synth), a rhythm part (guitars through a distortion
+ * and a cabinet, clean, twangy or nylon guitars, a cavaquinho, a mandolin
+ * in tremolo, an accordion, piano, brass, an organ or strings), a lead (a
+ * rock lead, an accordion, a mandolin, an alphorn, an oud, a koto, a sax, a
+ * trumpet, a whistle, a fiddle), a didgeridoo where it belongs, and synths
+ * where the city wants them, all in a small room of reverb. Each plays its
+ * part in a style the stop picks — its key, a chord progression, a drum
+ * pattern, a way of comping, a swing — as a song (`FORM`): an intro,
+ * verses, choruses with the lead on top, a breakdown and a solo, with a
+ * fill into every change.
  *
- * The main title (`hollywood`) is a night drive: a bass pumping eighth notes
- * under it, stepping into each change, a piano hammering away and the
- * guitars on top. It plays over the title, on the backlot, and comes back
- * for the premiere.
+ * The main title (`worldtour`) is a stadium anthem: the guitars wide open,
+ * a bass driving eighth notes under them, stepping into each change. It
+ * plays over the title, and comes back with the brass for the last night,
+ * in New York.
  *
  * The score keeps time for everything else in the game. `beatAt(now)` is how
  * many beats from the downbeat the music is, and the light show and the
@@ -35,6 +37,7 @@ const SCALES = {
   phrygian: [0, 1, 3, 5, 7, 8, 10, 12],
   mixolydian: [0, 2, 4, 5, 7, 9, 10, 12],
   harmonic: [0, 2, 3, 5, 7, 8, 11, 12],
+  hijaz: [0, 1, 4, 5, 7, 8, 10, 12],
 };
 
 /** Each mode's notes, semitones above the key: for keeping a chord's third in the key. */
@@ -46,6 +49,7 @@ const KEYS = {
   phrygian: [0, 1, 3, 5, 7, 8, 10],
   mixolydian: [0, 2, 4, 5, 7, 9, 10],
   harmonic: [0, 2, 3, 5, 7, 8, 11],
+  hijaz: [0, 1, 4, 5, 7, 8, 10],
 };
 
 /**
@@ -66,6 +70,13 @@ const DRUMS = {
   train: { kick: [0, 8], snare: [0, 2, 4, 6, 8, 10, 12, 14], accent: [4, 12], hat: [], open: [], kicksLate: [], brush: true },
   march: { kick: [0, 8], snare: [0, 3, 4, 6, 8, 11, 12, 14], accent: [4, 12], hat: [2, 6, 10, 14], open: [], kicksLate: [] },
   creep: { kick: [0, 10], snare: [], hat: [], ride: [0, 6, 12], rim: [8], open: [], kicksLate: [], soft: 0.5 },
+  // The tour's: an oom-pah, a tarantella's tambourine, a rumba's palmas, the darbuka's maqsum, taiko, a samba school.
+  polka: { kick: [0, 4, 8, 12], snare: [2, 6, 10, 14], hat: [], open: [], kicksLate: [], accent: [2, 6, 10, 14], soft: 0.85 },
+  tarantella: { kick: [0, 8], snare: [4, 12], hat: [0, 2, 4, 6, 8, 10, 12, 14], open: [6, 14], kicksLate: [6], clap: [4, 12] },
+  rumba: { kick: [0, 6, 8, 14], snare: [], hat: [0, 4, 8, 12], open: [], kicksLate: [], clap: [3, 6, 10, 12], rim: [2, 8, 14], soft: 0.8 },
+  maqsum: { kick: [0, 6, 8], snare: [], hat: [], open: [], kicksLate: [14], rim: [2, 4, 10, 12, 14], soft: 0.9 },
+  taiko: { kick: [0, 6, 8, 12], snare: [4, 12], hat: [0, 2, 4, 6, 8, 10, 12, 14], open: [14], kicksLate: [10], tom: [3, 11, 14, 15] },
+  samba: { kick: [4, 12], kicksLate: [0, 8], snare: [], hat: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], open: [], rim: [0, 3, 6, 8, 10, 13], clap: [], soft: 0.75 },
 };
 
 /** How the rhythm part comps: 0 nothing, 1 a short stab or a muted chug, 2 a chord that rings. */
@@ -82,13 +93,16 @@ const STRUMS = {
   bossa: [2, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
   hold: [2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
   whole: [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  rasgueado: [2, 0, 1, 1, 0, 1, 2, 0, 1, 1, 0, 1, 2, 0, 1, 1],
+  samba: [2, 0, 1, 1, 0, 1, 0, 1, 2, 0, 1, 1, 0, 1, 1, 0],
 };
 
 /**
  * The themes, by name (a set's `look.theme`): key (MIDI of the tonic, low),
  * scale for the lead, a progression (a chord a bar, as semitones above the
  * key), drums, how the `rhythm` part is played (`rhythm`: 'drive', 'clean',
- * 'twang', 'piano', 'brass', 'organ', 'strings' or 'none') and its `strum`,
+ * 'twang', 'piano', 'brass', 'organ', 'strings', 'accordion', 'mandolin',
+ * 'nylon', 'cavaco' or 'none') and its `strum`,
  * the `bass` line ('eighths', 'drive', 'octave', 'walk', 'boom', 'bossa' or
  * 'pedal') and its `tone` ('electric', 'upright' or 'synth'), the lead's
  * riff (steps and scale degrees over two bars) and its voice, how much the
@@ -96,65 +110,71 @@ const STRUMS = {
  * chords take their sevenths, and which extras play.
  */
 export const THEMES = {
-  // The main title: a night drive down the boulevard.
-  hollywood: {
-    key: 40, scale: 'major', prog: [0, 0, 5, 5, 10, 10, 7, 7], drums: 'drive', rhythm: 'piano', strum: 'pump', bass: 'drive', tone: 'electric', guitars: true,
-    riff: [[0, 4, 2], [2, 4, 1], [3, 5, 3], [6, 4, 2], [8, 2, 4], [12, 1, 2], [14, 2, 2], [16, 4, 3], [19, 2, 1], [20, 1, 4], [24, 0, 6], [30, 1, 2]],
+  // The main title: a stadium anthem, the guitars wide open, the bass driving under them.
+  worldtour: {
+    key: 40, scale: 'major', prog: [0, 0, 7, 7, 9, 9, 5, 5], drums: 'rock', rhythm: 'drive', strum: 'eighths', bass: 'drive', tone: 'electric',
+    riff: [[0, 4, 2], [2, 5, 2], [4, 4, 4], [8, 2, 2], [10, 3, 2], [12, 4, 4], [16, 5, 3], [19, 4, 1], [20, 3, 2], [22, 2, 2], [24, 1, 4], [28, 0, 4]],
     lead: 'saw', gain: 1,
   },
-  // The premiere: the main title again, with the brass and the strings out.
+  // New York, the last night: the anthem again, with the brass and the strings out.
   finale: {
-    key: 40, scale: 'major', prog: [0, 0, 5, 5, 10, 10, 7, 7], drums: 'drive', rhythm: 'brass', strum: 'stabs', bass: 'drive', tone: 'electric', guitars: true, pad: true,
-    riff: [[0, 4, 2], [2, 4, 1], [3, 5, 3], [6, 4, 2], [8, 2, 4], [12, 1, 2], [14, 2, 2], [16, 4, 3], [19, 2, 1], [20, 1, 4], [24, 0, 6], [30, 1, 2]],
+    key: 40, scale: 'major', prog: [0, 0, 7, 7, 9, 9, 5, 5], drums: 'rock', rhythm: 'brass', strum: 'stabs', bass: 'drive', tone: 'electric', guitars: true, pad: true,
+    riff: [[0, 4, 2], [2, 5, 2], [4, 4, 4], [8, 2, 2], [10, 3, 2], [12, 4, 4], [16, 5, 3], [19, 4, 1], [20, 3, 2], [22, 2, 2], [24, 1, 4], [28, 0, 4]],
     lead: 'trumpet', gain: 1.05,
   },
-  // The casting call: what plays while you are on hold.
-  casting: {
-    key: 41, scale: 'major', prog: [0, 0, 2, 7, 0, 9, 2, 7], drums: 'bossa', rhythm: 'piano', strum: 'bossa', bass: 'bossa', tone: 'upright', sevenths: true,
-    riff: [[0, 4, 3], [3, 3, 1], [4, 2, 4], [10, 1, 2], [12, 2, 4], [16, 3, 3], [19, 4, 1], [20, 5, 4], [26, 4, 2], [28, 2, 4]],
-    lead: 'vibes', gain: 0.95,
+  // London: Britpop, jangling guitars and a big chorus.
+  london: {
+    key: 38, scale: 'major', prog: [0, 0, 5, 5, 9, 9, 7, 7], drums: 'rock', rhythm: 'clean', strum: 'eighths', bass: 'eighths', tone: 'electric', guitars: true,
+    riff: [[0, 2, 2], [2, 3, 2], [4, 4, 3], [7, 3, 1], [8, 2, 4], [14, 1, 2], [16, 2, 2], [18, 3, 2], [20, 5, 4], [26, 4, 2], [28, 2, 4]],
+    lead: 'tube', gain: 1,
   },
-  // The western: a train beat, an oom-pah bass, twangy guitars at a gallop and a whistle over the plain.
-  western: {
-    key: 45, scale: 'minor', prog: [0, 0, 10, 10, 8, 8, 7, 7], drums: 'train', rhythm: 'twang', strum: 'gallop', bass: 'boom', tone: 'electric',
-    riff: [[0, 0, 2], [2, 2, 2], [4, 3, 6], [10, 4, 2], [12, 3, 4], [16, 2, 2], [18, 1, 2], [20, 2, 8], [28, 0, 4]],
-    lead: 'whistle', gain: 1,
+  // Paris: a musette, the accordion out front, the guitars keeping la pompe, swinging.
+  paris: {
+    key: 45, scale: 'harmonic', prog: [0, 0, 5, 5, 7, 7, 0, 7], drums: 'swing', rhythm: 'nylon', strum: 'offbeat', bass: 'boom', tone: 'upright', swing: 0.55, sevenths: true, dominant: true,
+    riff: [[0, 4, 1], [1, 5, 1], [2, 6, 2], [4, 4, 2], [6, 3, 2], [8, 2, 4], [12, 3, 1], [13, 4, 1], [14, 5, 2], [16, 6, 3], [19, 5, 1], [20, 4, 2], [22, 3, 2], [24, 2, 6], [30, 1, 2]],
+    lead: 'accordion', gain: 1, drumLevel: 1.3,
   },
-  // The musical: a big band, swinging, brass stabs and a trumpet out front.
-  musical: {
-    key: 46, scale: 'major', prog: [0, 9, 2, 7, 0, 9, 2, 7], drums: 'swing', rhythm: 'brass', strum: 'charleston', bass: 'walk', tone: 'upright', swing: 0.6, sevenths: true,
-    riff: [[0, 2, 2], [2, 3, 2], [4, 4, 4], [8, 5, 2], [10, 4, 2], [12, 2, 4], [16, 3, 2], [18, 4, 2], [20, 5, 3], [23, 6, 1], [24, 7, 8]],
-    lead: 'trumpet', gain: 1, drumLevel: 1.6,
+  // Venice: a tarantella, mandolins in tremolo, the tambourine going, flat out.
+  venice: {
+    key: 38, scale: 'harmonic', prog: [0, 0, 7, 7, 7, 7, 0, 0], drums: 'tarantella', rhythm: 'mandolin', strum: 'pump', bass: 'boom', tone: 'upright', swing: 0.67, dominant: true,
+    riff: [[0, 0, 1], [1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 2], [6, 3, 2], [8, 2, 2], [10, 1, 2], [12, 0, 4], [16, 4, 1], [17, 5, 1], [18, 6, 1], [19, 5, 1], [20, 4, 2], [22, 3, 2], [24, 4, 2], [26, 6, 2], [28, 7, 4]],
+    lead: 'mandolin', gain: 1,
   },
-  // The space picture: four on the floor, an arpeggio round the chord, a pad, a square lead.
-  scifi: {
-    key: 38, scale: 'minor', prog: [0, 0, 8, 8, 3, 3, 10, 10], drums: 'disco', rhythm: 'none', strum: 'offbeat', bass: 'octave', tone: 'synth', arp: true, pad: true,
-    riff: [[0, 4, 2], [3, 5, 2], [6, 4, 2], [8, 2, 3], [12, 3, 2], [16, 5, 2], [19, 6, 2], [22, 5, 2], [24, 4, 6]],
-    lead: 'square', gain: 1,
+  // The Alps: a polka, oom-pah, an accordion squeezing the chords and an alphorn over it all.
+  alps: {
+    key: 43, scale: 'major', prog: [0, 0, 7, 7, 7, 7, 0, 0], drums: 'polka', rhythm: 'accordion', strum: 'offbeat', bass: 'boom', tone: 'upright',
+    riff: [[0, 2, 4], [4, 3, 2], [6, 4, 2], [8, 5, 6], [14, 4, 2], [16, 3, 4], [20, 2, 2], [22, 1, 2], [24, 0, 8]],
+    lead: 'horn', gain: 1,
   },
-  // The horror picture: an organ, a theremin, a heartbeat of a kick, and not much else.
-  horror: {
-    key: 36, scale: 'harmonic', prog: [0, 0, 1, 1, 0, 0, 11, 7], drums: 'creep', rhythm: 'organ', strum: 'whole', bass: 'pedal', tone: 'synth', pad: true,
-    riff: [[0, 4, 4], [4, 5, 2], [6, 4, 2], [8, 6, 6], [14, 5, 2], [16, 4, 8], [24, 3, 4], [28, 2, 4]],
-    lead: 'theremin', gain: 1,
+  // Spain: a rumba, guitars in rasgueado, palmas, down the Andalusian cadence.
+  spain: {
+    key: 45, scale: 'harmonic', prog: [0, 0, 10, 10, 8, 8, 7, 7], drums: 'rumba', rhythm: 'nylon', strum: 'rasgueado', bass: 'bossa', tone: 'upright', dominant: true,
+    riff: [[0, 7, 1], [1, 6, 1], [2, 5, 1], [3, 4, 1], [4, 5, 2], [6, 4, 2], [8, 3, 4], [12, 2, 2], [14, 1, 2], [16, 4, 1], [17, 3, 1], [18, 2, 1], [19, 1, 1], [20, 2, 2], [22, 1, 2], [24, 0, 8]],
+    lead: 'guitar', gain: 1, drumLevel: 1.3,
   },
-  // The noir: brushes, a walking bass, a piano comping, a sax in the rain.
-  noir: {
-    key: 36, scale: 'blues', prog: [0, 0, 5, 5, 8, 7, 0, 7], drums: 'swing', rhythm: 'piano', strum: 'charleston', bass: 'walk', tone: 'upright', swing: 0.62, sevenths: true, dominant: true,
-    riff: [[0, 4, 3], [4, 3, 1], [6, 5, 6], [14, 4, 2], [16, 3, 4], [20, 2, 2], [22, 1, 2], [24, 0, 8]],
-    lead: 'sax', gain: 1, drumLevel: 1.3,
+  // Egypt: the darbuka's maqsum, strings swelling, an oud in the hijaz mode.
+  egypt: {
+    key: 45, scale: 'hijaz', prog: [0, 0, 1, 1, 0, 0, 10, 0], drums: 'maqsum', rhythm: 'strings', strum: 'hold', bass: 'boom', tone: 'upright', pad: true,
+    riff: [[0, 0, 2], [2, 1, 2], [4, 2, 4], [8, 3, 2], [10, 2, 2], [12, 1, 4], [16, 2, 1], [17, 3, 1], [18, 4, 2], [20, 5, 2], [22, 4, 2], [24, 2, 4], [28, 1, 2], [30, 0, 2]],
+    lead: 'oud', gain: 1, drumLevel: 1.4,
   },
-  // The pirate picture: a march on the snare, a fiddle, the strings sawing away.
-  pirate: {
-    key: 38, scale: 'dorian', prog: [0, 0, 10, 10, 0, 0, 7, 7], drums: 'march', rhythm: 'strings', strum: 'gallop', bass: 'boom', tone: 'upright',
-    riff: [[0, 4, 1], [1, 3, 1], [2, 2, 2], [4, 0, 2], [6, 2, 2], [8, 4, 2], [10, 5, 2], [12, 4, 4], [16, 3, 1], [17, 2, 1], [18, 1, 2], [20, 3, 2], [22, 2, 2], [24, 0, 8]],
-    lead: 'fiddle', gain: 1,
+  // Tokyo: city pop down the royal road, a synth bass popping octaves, taiko under it, a koto on top.
+  tokyo: {
+    key: 45, scale: 'major', prog: [5, 5, 7, 7, 4, 4, 9, 9], drums: 'taiko', rhythm: 'clean', strum: 'stabs', bass: 'octave', tone: 'synth', sevenths: true, arp: true,
+    riff: [[0, 4, 2], [2, 5, 2], [4, 7, 4], [8, 6, 2], [10, 5, 2], [12, 4, 4], [16, 2, 2], [18, 4, 2], [20, 5, 3], [23, 4, 1], [24, 2, 6], [30, 1, 2]],
+    lead: 'koto', gain: 1,
   },
-  // The action picture: guitars through the distortion, chugging, and double kick.
-  action: {
-    key: 40, scale: 'phrygian', prog: [0, 0, 1, 0, 0, 0, 10, 1], drums: 'metal', rhythm: 'drive', strum: 'chug', bass: 'eighths', tone: 'electric', pad: true,
-    riff: [[0, 3, 1], [1, 3, 1], [2, 4, 2], [6, 3, 2], [8, 2, 4], [16, 3, 1], [17, 3, 1], [18, 5, 2], [22, 4, 2], [24, 2, 6]],
-    lead: 'saw', gain: 1,
+  // Rio: a samba school, the surdos booming, a cavaquinho chopping, the whistle.
+  rio: {
+    key: 50, scale: 'major', prog: [0, 0, 9, 9, 2, 2, 7, 7], drums: 'samba', rhythm: 'cavaco', strum: 'samba', bass: 'boom', tone: 'upright', sevenths: true,
+    riff: [[0, 4, 1], [2, 5, 1], [3, 4, 2], [6, 2, 2], [8, 4, 3], [11, 2, 1], [12, 1, 4], [16, 2, 1], [18, 4, 1], [19, 5, 2], [22, 4, 2], [24, 2, 4], [28, 0, 4]],
+    lead: 'whistle', gain: 1, drumLevel: 1.3,
+  },
+  // Sydney: surf rock, twanging at a gallop, a lead picked as fast as it goes, and a didgeridoo under it all.
+  sydney: {
+    key: 40, scale: 'dorian', prog: [0, 0, 10, 10, 0, 0, 5, 7], drums: 'drive', rhythm: 'twang', strum: 'gallop', bass: 'drive', tone: 'electric', didge: true,
+    riff: [[0, 0, 1], [1, 0, 1], [2, 1, 1], [3, 1, 1], [4, 2, 2], [6, 3, 2], [8, 4, 4], [12, 3, 2], [14, 2, 2], [16, 4, 1], [17, 4, 1], [18, 5, 1], [19, 5, 1], [20, 4, 2], [22, 3, 2], [24, 2, 4], [28, 0, 4]],
+    lead: 'tube', gain: 1,
   },
 };
 
@@ -457,6 +477,72 @@ export function createBand(ctx, out, noise) {
     for (const n of notes) for (const d of [-8, 0, 8]) osc('sawtooth', NOTE(n), when, end, f, d);
   }
 
+  /**
+   * An accordion: two reeds a hair out of tune with each other (the musette's
+   * shimmer), squeezed in with the bellows, through a reedy band.
+   */
+  function accordion(when, notes, length, level = 1) {
+    const f = ctx.createBiquadFilter();
+    f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 0.6;
+    const g = voice(0.05 * level);
+    f.connect(g);
+    const end = env(g, when, 1, 0.025, Math.max(0.03, length * 0.75), 0.09);
+    for (const n of notes) {
+      osc('square', NOTE(n), when, end, f, -9);
+      osc('sawtooth', NOTE(n), when, end, f, 11);
+    }
+  }
+
+  /** A plucked string: the attack bright and the note falling away, a little bend up into it (`bend` cents) and a body (`tone`, where its filter closes to). */
+  function pluck(when, note, length, { level = 1, bend = 0, tone = 2400 } = {}) {
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass'; f.Q.value = 2;
+    f.frequency.setValueAtTime(tone * 1.8, when);
+    f.frequency.exponentialRampToValueAtTime(tone * 0.5, when + 0.25);
+    const g = voice(0.09 * level);
+    f.connect(g);
+    const amp = ctx.createGain();
+    amp.connect(f);
+    const stop = env(amp, when, 1, 0.002, 0.01, Math.min(1.2, 0.18 + length * 0.9));
+    const a = osc('sawtooth', NOTE(note), when, stop, amp);
+    const b = osc('triangle', NOTE(note), when, stop, amp, 5);
+    if (bend) {
+      a.detune.setValueAtTime(-bend, when); a.detune.linearRampToValueAtTime(0, when + 0.06);
+      b.detune.setValueAtTime(-bend + 5, when); b.detune.linearRampToValueAtTime(5, when + 0.06);
+    }
+  }
+
+  /** A mandolin in tremolo: each note picked over and over, fast, for as long as it is held. */
+  function mandolin(when, notes, length, level = 1) {
+    const picks = Math.max(1, Math.round(length / 0.06));
+    for (let k = 0; k < picks; k++) for (const n of notes) pluck(when + k * 0.06 + (k % 2) * 0.004, n, 0.05, { level: level * (k === 0 ? 1 : 0.6), tone: 3200 });
+  }
+
+  /** A nylon-strung guitar, strummed hard and fast with the fingers fanned (a rasgueado), or (`cavaco`) a cavaquinho, small and bright. */
+  function nylon(when, notes, length, { level = 1, open = false, cavaco = false } = {}) {
+    const spread = cavaco ? 0.006 : 0.014;
+    notes.forEach((n, i) => pluck(when + i * spread, cavaco ? n + 12 : n, open ? length : length * 0.4, { level: level * (cavaco ? 0.55 : 0.75), tone: cavaco ? 3400 : 1900 }));
+    if (open && !cavaco) noiseHit(when, { freq: 3000, type: 'bandpass', q: 1, level: 0.03, length: 0.04 });
+  }
+
+  /** A didgeridoo: a low drone that breathes, its mouth shaping it, with a bark now and then. */
+  function didge(when, note, length) {
+    const f = ctx.createBiquadFilter();
+    f.type = 'bandpass'; f.Q.value = 5;
+    f.frequency.setValueAtTime(320, when);
+    const wah = ctx.createOscillator();
+    wah.frequency.value = 1.6;
+    const depth = ctx.createGain();
+    depth.gain.value = 160;
+    wah.connect(depth).connect(f.frequency);
+    const g = voice(0.22);
+    f.connect(g);
+    const end = env(g, when, 1, 0.12, Math.max(0.1, length - 0.3), 0.2);
+    osc('sawtooth', NOTE(note), when, end, f);
+    osc('sawtooth', NOTE(note), when, end, f, 9);
+    wah.start(when); wah.stop(end);
+  }
+
   /** The bass: an electric (a filtered saw over a sine), an upright (a plucked sine and triangle) or a synth (a square through a squelch). */
   function bass(when, note, length, level = 1, tone = 'electric') {
     if (tone === 'upright') {
@@ -561,6 +647,31 @@ export function createBand(ctx, out, noise) {
       return;
     }
     leadRig.lp.frequency.setValueAtTime(kind === 'muted' ? 1800 : kind === 'whistle' || kind === 'theremin' ? 4000 : 3000, when);
+    if (kind === 'accordion') {
+      accordion(when, [note], length, 3.2 * level);
+      lastLead = note;
+      return;
+    }
+    if (kind === 'mandolin' || kind === 'oud' || kind === 'koto' || kind === 'guitar') {
+      // Plucked: a mandolin tremolos its long notes; an oud, a koto and a Spanish guitar bend up into theirs.
+      if (kind === 'mandolin' && length > 0.25) mandolin(when, [note], length, 2.4 * level);
+      else pluck(when, note, length, { level: 2.6 * level, bend: kind === 'mandolin' ? 0 : kind === 'oud' ? 70 : kind === 'guitar' ? 20 : 45, tone: kind === 'oud' ? 1500 : kind === 'koto' ? 3600 : kind === 'guitar' ? 2200 : 3000 });
+      lastLead = note;
+      return;
+    }
+    if (kind === 'horn') {
+      // An alphorn: round and soft, a slow swell, the note a little flat as it starts.
+      const end = env(gain, when, 2.4 * level, 0.09, Math.max(0.05, length * 0.85), 0.25);
+      const a = osc('sine', NOTE(note), when, end, gain);
+      const body = ctx.createGain();
+      body.gain.value = 0.3;
+      body.connect(gain);
+      const b = osc('triangle', NOTE(note) * 2, when, end, body);
+      a.detune.setValueAtTime(-25, when); a.detune.linearRampToValueAtTime(0, when + 0.15);
+      vibrato([a, b], 4.6, 8, 0.4).stop(end);
+      lastLead = note;
+      return;
+    }
     if (kind === 'vibes') {
       const end = env(gain, when, 3.2 * level, 0.002, 0.02, Math.min(1.4, 0.3 + length));
       const a = osc('sine', NOTE(note), when, end, gain);
@@ -710,6 +821,8 @@ export function createBand(ctx, out, noise) {
         }
         if (drums.clap?.includes(i)) clap(t, 0.9);
         if (drums.rim?.includes(i)) rim(t, 0.8);
+        // Taiko: a big low drum, struck.
+        if (drums.tom?.includes(i)) tom(t, i % 4 === 3 ? 95 : 70, 0.95);
         if (drums.ride?.includes(i)) ride(t, i % 4 === 0 ? 0.9 : 0.6);
         if (drums.hat.includes(i)) hat(t, (i % 4 === 0 ? 1 : 0.7) * (drums.ride ? 0.6 : soft), drums.open.includes(i) && loud);
       }
@@ -747,6 +860,9 @@ export function createBand(ctx, out, noise) {
       for (let i = 0; i < 16; i += 2) bass(at(i), bassNote, step * 1.6, i === 0 ? 1.05 : 0.9, tone);
     }
 
+    // ——— the didgeridoo, where it belongs: a drone on the key, a bar at a time.
+    if (theme.didge && !(name === 'intro' && of < length / 2)) didge(when, theme.key, beat * 4);
+
     // ——— the rhythm part: the chord, comped, by whoever is playing it.
     const kind = theme.rhythm ?? 'drive';
     const voicing = chord.map((n) => root + 24 + n);
@@ -761,6 +877,10 @@ export function createBand(ctx, out, noise) {
       else if (kind === 'brass') brass(t, voicing.map((n) => n + 12), len, level * g);
       else if (kind === 'organ') organ(t, voicing, len, level * g);
       else if (kind === 'strings') strings(t, voicing.map((n) => n + 12), len, level * g);
+      else if (kind === 'accordion') accordion(t, voicing, len, level * g);
+      else if (kind === 'mandolin') mandolin(t, voicing.slice(1).map((n) => n + 12), len, level * g * 0.5);
+      else if (kind === 'nylon') nylon(t, [root + 12, ...voicing], len, { level: level * g, open });
+      else if (kind === 'cavaco') nylon(t, voicing, len, { level: level * g, open, cavaco: true });
     };
     if (kind === 'none') {
       // Nothing.
