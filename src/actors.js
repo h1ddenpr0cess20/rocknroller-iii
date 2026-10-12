@@ -159,8 +159,10 @@ export function createActors(GFX, venue, world, { killY }) {
 
   // Lifts.
   const lifts = venue.lifts.map((l) => {
-    const look = createLiftMesh(GFX, { w: l.w, d: l.d, thickness: LIFT_THICKNESS, style: l.style ?? venue.look.lift ?? 'dolly', venue });
+    const look = createLiftMesh(GFX, { w: l.w, d: l.d, thickness: LIFT_THICKNESS, style: l.style ?? venue.look.lift ?? 'dolly', lift: l, venue });
     group.add(look.group);
+    // What stays where it is while the ride goes along it: a cable car's cable.
+    if (look.fixed) group.add(look.fixed);
     const box = {
       solid: true, kind: 'lift', vx: 0, vy: 0, vz: 0,
       min: [l.x, l.h - LIFT_THICKNESS, l.z], max: [l.x + l.w, l.h, l.z + l.d],

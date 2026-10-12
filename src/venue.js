@@ -381,6 +381,12 @@ export class Venue {
     return this;
   }
 
+  /** Ice — a frozen pond, a glacier, a rink — where Rock slides: little grip, and he barely slows. */
+  ice(x, z, w, d) {
+    this._fx(x, z, w, d, 'ice');
+    return this;
+  }
+
   /** A conveyor belt over the tiles, carrying whatever is on it along `heading` ('+x', '-x', '+z' or '-z'). */
   belt(x, z, w, d, heading) {
     this._fx(x, z, w, d, 'belt', { heading });
@@ -596,7 +602,7 @@ export function bakeLight(venue) {
 /**
  * Everything drawn and everything collided with, from the tiles: the tops
  * (one quad per tile, with the whole floor texture; a layer for each kind
- * of floor), sticky floor, belts and electrified floor (each its own mesh,
+ * of floor), sticky floor, ice, belts and electrified floor (each its own mesh,
  * with its own material), the walls down the sides (cut into bands a tile
  * high, so the bricks line up; a layer for each kind of wall), and a World
  * holding all of it as triangles for the physics.
@@ -609,12 +615,13 @@ export function buildVenue(venue) {
     if (!map.has(key)) map.set(key, blank());
     return map.get(key);
   };
-  const sticky = blank(), belts = blank(), zap = blank();
+  const sticky = blank(), ice = blank(), belts = blank(), zap = blank();
   const palette = venue.palette;
   const tileColours = palette.tiles.map(linearRGB);
   const exitColour = linearRGB(palette.exit ?? '#2a2a36');
   const trapColour = linearRGB(palette.trap ?? '#3a3a40');
   const stickyColour = linearRGB(palette.sticky ?? '#8a6a3a');
+  const iceColour = linearRGB(palette.ice ?? '#cfe6f4');
   const wallColours = (palette.walls ?? palette.tiles).map(linearRGB);
   const light = bakeLight(venue);
 
@@ -689,12 +696,13 @@ export function buildVenue(venue) {
       else if (c.kind === 'zap') base = [1, 1, 1];
       else if (c.trap) base = trapColour;
       else if (c.fx === 'sticky') base = stickyColour;
+      else if (c.fx === 'ice') base = iceColour;
       else base = c.kind === 'wall' ? colourAt(CAP) : colourAt(c.color);
       const vary = palette.vary ?? 0.1;
       const tint = c.kind === 'zap' ? 1 : (checker ? 1 - vary * 0.3 : 1) * (1 - vary * 0.5 + vary * grain(x, z));
       const col = base.map((v) => v * tint);
       const A = [x, h00, z], B = [x + 1, h10, z], C = [x, h01, z + 1], D = [x + 1, h11, z + 1];
-      const out = c.kind === 'zap' ? zap : c.fx === 'sticky' ? sticky : c.fx === 'belt' ? belts : layer(floors, c.tex ?? 'floor');
+      const out = c.kind === 'zap' ? zap : c.fx === 'sticky' ? sticky : c.fx === 'ice' ? ice : c.fx === 'belt' ? belts : layer(floors, c.tex ?? 'floor');
       const shadeOf = (p) => (c.kind === 'zap' ? col : lit(col, p));
       // Each flagstone, plank or tile turned and flipped its own way, so the floor doesn't repeat.
       const spin = Math.floor(grain(z, x) * 8);
@@ -764,7 +772,7 @@ export function buildVenue(venue) {
   world.finish();
   const typed = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, new Float32Array(v)]));
   const typedLayers = (map) => Object.fromEntries([...map].map(([k, o]) => [k, typed(o)]));
-  return { floors: typedLayers(floors), walls: typedLayers(wallLayers), sticky: typed(sticky), belts: typed(belts), zap: typed(zap), world };
+  return { floors: typedLayers(floors), walls: typedLayers(wallLayers), sticky: typed(sticky), ice: typed(ice), belts: typed(belts), zap: typed(zap), world };
 }
 
 /** The part of a polygon of [t, y] points where `inside(p) >= 0` (Sutherland–Hodgman, against one line). */

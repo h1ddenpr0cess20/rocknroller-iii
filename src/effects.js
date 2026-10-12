@@ -3,8 +3,10 @@
  * chips off Rock, sparks off pyro, steam, confetti, dust when he lands hard,
  * a glitter for a passport or a lighter, and a ring that goes out from a
  * big hit. Each bit is ballistic, bounces off the floor or settles on it,
- * and shrinks away. And the weather, on a set that has it: rain, falling
- * round Rock in streaks and splashing where it lands.
+ * and shrinks away. And the weather, at a stop that has it (`look.weather`):
+ * rain, falling round Rock in streaks and splashing where it lands; a
+ * sandstorm, blowing across in streaks; snow, drifting down in flakes; or
+ * cherry blossom, its petals turning over as they fall.
  */
 
 const GRAVITY = 18;
@@ -14,6 +16,19 @@ const PICKS = ['#ff3a8a', '#2ad0ff', '#ffd23a', '#8a4be8', '#3ae88a', '#ff7a1a',
 
 /** The rain: how many streaks, how far round Rock they fall, how long each is and how fast it falls. */
 const RAIN = Object.freeze({ drops: 900, reach: 11, height: 9, length: 0.5, speed: 16 });
+
+/**
+ * Weather in streaks (rain, and sand blowing across) and in flakes (snow,
+ * petals): colour, how see-through, which way and how fast it goes
+ * ([x, y, z] tiles a second), how long a streak is along that way, or how
+ * big a flake is and how much it wanders and turns, and whether it splashes.
+ */
+const WEATHER = Object.freeze({
+  rain: { streaks: true, color: '#c8d4e4', opacity: 0.45, velocity: [1.3, -16, 0], length: 0.5, splash: true },
+  sand: { streaks: true, color: '#e0c088', opacity: 0.4, velocity: [9, -0.6, 2.5], length: 0.7, splash: false },
+  snow: { flakes: 650, color: '#ffffff', opacity: 0.92, velocity: [0.3, -1.4, 0.1], size: 0.07, wander: 0.5, turn: 1 },
+  petals: { flakes: 380, color: '#ffb8d4', opacity: 0.95, velocity: [0.6, -0.9, 0.2], size: 0.1, wander: 0.9, turn: 4 },
+});
 
 export function createEffects(GFX, scene) {
   const group = new GFX.Group();
@@ -63,7 +78,7 @@ export function createEffects(GFX, scene) {
   const rings = [];
   const ringMaterial = (colour) => new GFX.MeshBasicMaterial({ name: 'ring', color: new GFX.Color(colour), transparent: true, opacity: 0.9, depthWrite: false, toneMapped: false, blending: GFX.AdditiveBlending });
 
-  // The rain: one set of line segments, every streak a pair of points, moved each frame.
+  // The rain (and the sand): one set of line segments, every streak a pair of points, moved each frame.
   const rain = (() => {
     const positions = new Float32Array(RAIN.drops * 6);
     const geometry = new GFX.BufferGeometry();
@@ -75,7 +90,22 @@ export function createEffects(GFX, scene) {
     lines.visible = false;
     group.add(lines);
     const drops = Array.from({ length: RAIN.drops }, () => ({ x: 0, y: 0, z: 0 }));
-    return { lines, drops, positions, attribute, on: false, seeded: false };
+    return { lines, material, drops, positions, attribute, on: false, seeded: false, kind: null };
+  })();
+  // Snow and petals: one mesh of little quads, two triangles each, turned and moved each frame.
+  const flakes = (() => {
+    const most = Math.max(...Object.values(WEATHER).map((w) => w.flakes ?? 0));
+    const positions = new Float32Array(most * 18);
+    const geometry = new GFX.BufferGeometry();
+    const attribute = new GFX.BufferAttribute(positions, 3);
+    geometry.setAttribute('position', attribute);
+    const material = new GFX.MeshBasicMaterial({ name: 'flakes', color: new GFX.Color('#ffffff'), transparent: true, opacity: 0.9, side: GFX.DoubleSide, depthWrite: false, toneMapped: false });
+    const mesh = new GFX.Mesh(geometry, material);
+    mesh.frustumCulled = false;
+    mesh.visible = false;
+    group.add(mesh);
+    const list = Array.from({ length: most }, () => ({ x: 0, y: 0, z: 0, a: 0, b: 0, s: 1, p: Math.random() * 7 }));
+    return { mesh, material, list, positions, attribute, on: false, seeded: false, kind: null, n: 0, time: 0 };
   })();
   const splashes = [];
   const splashGeometry = new GFX.TorusGeometry(1, 0.04, 4, 16);
@@ -89,6 +119,41 @@ export function createEffects(GFX, scene) {
     d.y = y + height * RAIN.height;
   };
 
+  /** Snow or petals round (x, y, z), once a frame: each drifts down, wanders and turns over, and comes round again past Rock. */
+  function drift(dt, x, y, z) {
+    const { list, positions, kind, n } = flakes;
+    flakes.time += dt;
+    const t = flakes.time;
+    const [vx, vy, vz] = kind.velocity;
+    if (!flakes.seeded) {
+      for (let i = 0; i < n; i++) reseed(list[i], x, y - 2, z);
+      flakes.seeded = true;
+    }
+    for (let i = 0; i < n; i++) {
+      const f = list[i];
+      f.x += (vx + Math.sin(t * 0.9 + f.p) * kind.wander) * dt;
+      f.y += vy * dt;
+      f.z += (vz + Math.cos(t * 0.7 + f.p * 1.3) * kind.wander) * dt;
+      const ground = venue?.heightAt(f.x, f.z);
+      if (f.y < (ground ?? y - 8)) reseed(f, x, y - 2, z, 1);
+      if (Math.abs(f.x - x) > RAIN.reach || Math.abs(f.z - z) > RAIN.reach) reseed(f, x, y - 2, z);
+      // A little square, turned over about two axes as it goes.
+      const a = t * kind.turn + f.p, b = t * kind.turn * 0.7 + f.p * 2;
+      const s = kind.size * (0.7 + (f.p % 1) * 0.6);
+      const ux = Math.cos(a) * s, uy = Math.sin(a) * Math.sin(b) * s, uz = Math.sin(a) * Math.cos(b) * s;
+      const wx = -Math.sin(b) * s * 0.3, wy = Math.cos(b) * s, wz = Math.sin(b) * s * 0.7;
+      const k = i * 18;
+      const put = (o, px, py, pz) => { positions[k + o] = px; positions[k + o + 1] = py; positions[k + o + 2] = pz; };
+      put(0, f.x - ux - wx, f.y - uy - wy, f.z - uz - wz);
+      put(3, f.x + ux - wx, f.y + uy - wy, f.z + uz - wz);
+      put(6, f.x + ux + wx, f.y + uy + wy, f.z + uz + wz);
+      put(9, f.x - ux - wx, f.y - uy - wy, f.z - uz - wz);
+      put(12, f.x + ux + wx, f.y + uy + wy, f.z + uz + wz);
+      put(15, f.x - ux + wx, f.y - uy + wy, f.z - uz + wz);
+    }
+    flakes.attribute.needsUpdate = true;
+  }
+
   return {
     setVenue(v) {
       venue = v;
@@ -98,9 +163,24 @@ export function createEffects(GFX, scene) {
       rings.length = 0;
       for (const sp of splashes) group.remove(sp.mesh);
       splashes.length = 0;
-      rain.on = v.look?.weather === 'rain';
+      const w = WEATHER[v.look?.weather];
+      rain.on = Boolean(w?.streaks);
+      rain.kind = w?.streaks ? w : null;
       rain.lines.visible = rain.on;
       rain.seeded = false;
+      if (rain.kind) { rain.material.color.set(rain.kind.color); rain.material.opacity = rain.kind.opacity; }
+      flakes.on = Boolean(w?.flakes);
+      flakes.kind = w?.flakes ? w : null;
+      flakes.mesh.visible = flakes.on;
+      flakes.seeded = false;
+      if (flakes.kind) {
+        flakes.n = flakes.kind.flakes;
+        flakes.material.color.set(flakes.kind.color);
+        flakes.material.opacity = flakes.kind.opacity;
+        // Nothing drawn past the flakes this weather has.
+        flakes.positions.fill(0);
+        flakes.mesh.geometry.setDrawRange?.(0, flakes.n * 6);
+      }
     },
 
     /**
@@ -108,21 +188,25 @@ export function createEffects(GFX, scene) {
      * the floor and splashing there, or on down into the dark.
      */
     weather(dt, x, y, z) {
+      if (flakes.on) drift(dt, x, y, z);
       if (!rain.on) return;
       const { drops, positions } = rain;
+      const { velocity: [vx, vy, vz], length, splash } = rain.kind;
+      const speed = Math.hypot(vx, vy, vz);
+      const [lx, ly, lz] = [-vx / speed * length, -vy / speed * length, -vz / speed * length];
       if (!rain.seeded) {
         for (const d of drops) reseed(d, x, y - 2, z);
         rain.seeded = true;
       }
-      const fall = RAIN.speed * dt;
       for (let i = 0; i < drops.length; i++) {
         const d = drops[i];
-        d.y -= fall;
-        d.x += fall * 0.08;
+        d.y += vy * dt;
+        d.x += vx * dt;
+        d.z += vz * dt;
         const ground = venue?.heightAt(d.x, d.z);
         const floor = ground ?? y - 8;
         if (d.y < floor) {
-          if (ground != null && splashes.length < 40 && Math.abs(d.x - x) < 7 && Math.abs(d.z - z) < 7 && Math.random() < 0.25) {
+          if (splash && ground != null && splashes.length < 40 && Math.abs(d.x - x) < 7 && Math.abs(d.z - z) < 7 && Math.random() < 0.25) {
             const mesh = new GFX.Mesh(splashGeometry, splashMat);
             mesh.rotation.x = -Math.PI / 2;
             mesh.position.set(d.x, ground + 0.02, d.z);
@@ -136,7 +220,7 @@ export function createEffects(GFX, scene) {
         if (Math.abs(d.x - x) > RAIN.reach || Math.abs(d.z - z) > RAIN.reach) reseed(d, x, y - 2, z);
         const k = i * 6;
         positions[k] = d.x; positions[k + 1] = d.y; positions[k + 2] = d.z;
-        positions[k + 3] = d.x - RAIN.length * 0.08; positions[k + 4] = d.y + RAIN.length; positions[k + 5] = d.z;
+        positions[k + 3] = d.x + lx; positions[k + 4] = d.y + ly; positions[k + 5] = d.z + lz;
       }
       rain.attribute.needsUpdate = true;
       for (let i = splashes.length - 1; i >= 0; i--) {

@@ -1,7 +1,7 @@
 import { createActors } from './actors.js';
 import { createHype, earn, smashed } from './hype.js';
 import { encore, heal, hurt, createIntegrity, HARM, shattered } from './integrity.js';
-import { BREAK_SPEED, createBall, placeBall, PUSH, stepBall, TOP_SPEED } from './physics.js';
+import { BREAK_SPEED, createBall, placeBall, PUSH, ROLL_DRAG, stepBall, TOP_SPEED } from './physics.js';
 import { createRoll, ROCK_RADIUS, stepRoll } from './roll.js';
 import { closingSpeed, resolveImpact } from './smash.js';
 import { buildVenue, DEPTH, HEADING } from './venue.js';
@@ -32,6 +32,9 @@ export const REV = Object.freeze({ push: 1.5, topSpeed: 13, drain: 55, regen: 26
 
 /** Sticky floor (mud, fake blood, wet paint): he pushes less well, tops out slow, and slows by itself. */
 export const STICKY = Object.freeze({ push: 0.5, topSpeed: 4.2, drag: 1.8 });
+
+/** Ice: how much of his push grips (very little), and how much of the rolling drag it takes away (most of it). */
+export const ICE = Object.freeze({ push: 0.3, glide: 0.85 });
 
 /** A belt carries whatever is on it up to this speed, as hard as this. */
 export const BELT = Object.freeze({ speed: 3.4, accel: 16 });
@@ -140,6 +143,11 @@ export function stepGig(gig, push, dt = STEP, { live = true, moving = true, rev 
     options.push = (options.push ?? PUSH) * STICKY.push;
     options.topSpeed = Math.min(options.topSpeed ?? TOP_SPEED, gig.revving ? 6 : STICKY.topSpeed);
     const k = Math.max(0, 1 - STICKY.drag * dt);
+    ball.vx *= k; ball.vz *= k;
+  } else if (onFloor0 && under.fx === 'ice') {
+    options.push = (options.push ?? PUSH) * ICE.push;
+    // The rolling drag the physics will take off, nearly all of it given back: he slides.
+    const k = 1 + ROLL_DRAG * ICE.glide * dt;
     ball.vx *= k; ball.vz *= k;
   } else if (onFloor0 && under.fx === 'belt') {
     const [dx, dz] = HEADING[under.heading ?? '+x'];

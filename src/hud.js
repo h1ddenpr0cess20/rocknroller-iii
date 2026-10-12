@@ -256,7 +256,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
         const c = venue.cell(x, z);
         if (!c) continue;
         mapCtx.fillStyle = c.kind === 'wall' ? '#3d3850' : c.kind === 'zap' ? '#2de2ff' : c.kind === 'exit' ? '#ff3a4a'
-          : c.trap ? '#ff8a3a' : c.door ? '#b0b4bd' : c.fx === 'sticky' ? '#7a5a30' : '#9a94ad';
+          : c.trap ? '#ff8a3a' : c.door ? '#b0b4bd' : c.fx === 'sticky' ? '#7a5a30' : c.fx === 'ice' ? '#bfe4ff' : '#9a94ad';
         mapCtx.fillRect(x * s, z * s, s, s);
       }
     }

@@ -1,6 +1,7 @@
 import { isBaked, ready } from './models/library.js';
 import { createStatic } from './models/model.js';
 import { PROPS } from './models/props/index.js';
+import { BUMPERS, BURSTS, DROPS, RIDES } from './travel.js';
 import { canvas, floorTexture, gaffTexture, glowTexture, grilleTexture, panelTexture, shutterTexture, texture, tiled } from './textures.js';
 
 /**
@@ -22,6 +23,7 @@ const dark = (GFX, hex, o = {}) => new GFX.MeshStandardMaterial({ color: new GFX
  */
 export function createDropMesh(GFX, { w, d, height, venue }) {
   const style = venue?.look?.crusher ?? 'sandbag';
+  if (DROPS[style]) return DROPS[style](GFX, { w, d, height });
   if (style === 'sandbag') return createSandbags(GFX, { w, d, height });
   if (style === 'rig') return createRig(GFX, { w, d, height });
   if (style === 'boulder') return createBoulder(GFX, { w, d, height });
@@ -297,17 +299,17 @@ function createChandelier(GFX, { w, d, height }) {
  * steam curling off it that, on the beat, blasts up white.
  */
 export function createPyroMesh(GFX, { x, z, w, d, venue }) {
-  const steam = venue?.look?.pyro === 'steam';
+  const kind = venue?.look?.pyro;
+  const burst = BURSTS[kind];
+  // Steam, and the tour's snow cannons, sand spouts and fountains, billow up off a round plate; flame and fireworks lick up through a grating.
+  const steam = kind === 'steam' || Boolean(burst?.billow);
+  const colours = burst ?? (steam ? { flame: '#c8d0dc', core: '#ffffff', halo: '#dce4ee' } : { flame: '#ff7a1a', core: '#fff2b0', halo: '#ffa050' });
   const group = new GFX.Group();
   const iron = dark(GFX, '#2b2b30', { metalness: 0.8, roughness: 0.4 });
-  const flameMat = steam
-    ? new GFX.MeshBasicMaterial({ color: new GFX.Color('#c8d0dc'), transparent: true, opacity: 0.45, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false })
-    : new GFX.MeshBasicMaterial({ color: new GFX.Color('#ff7a1a'), transparent: true, opacity: 0.85, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false });
-  const coreMat = steam
-    ? new GFX.MeshBasicMaterial({ color: new GFX.Color('#ffffff'), transparent: true, opacity: 0.5, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false })
-    : new GFX.MeshBasicMaterial({ color: new GFX.Color('#fff2b0'), transparent: true, opacity: 0.95, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false });
+  const flameMat = new GFX.MeshBasicMaterial({ color: new GFX.Color(colours.flame), transparent: true, opacity: steam ? 0.45 : 0.85, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false });
+  const coreMat = new GFX.MeshBasicMaterial({ color: new GFX.Color(colours.core), transparent: true, opacity: steam ? 0.5 : 0.95, toneMapped: false, blending: GFX.AdditiveBlending, depthWrite: false });
   const glow = glowTexture(GFX).map;
-  const haloMat = glow ? new GFX.SpriteMaterial({ map: glow, color: new GFX.Color(steam ? '#dce4ee' : '#ffa050'), blending: GFX.AdditiveBlending, depthWrite: false, opacity: 0.8 }) : null;
+  const haloMat = glow ? new GFX.SpriteMaterial({ map: glow, color: new GFX.Color(colours.halo), blending: GFX.AdditiveBlending, depthWrite: false, opacity: 0.8 }) : null;
   const jets = [];
   const flameGeometry = steam ? new GFX.CylinderGeometry(0.34, 0.16, 1, 12) : new GFX.ConeGeometry(0.18, 1, 10);
   const coreGeometry = steam ? new GFX.CylinderGeometry(0.2, 0.1, 1, 10) : new GFX.ConeGeometry(0.09, 1, 8);
@@ -371,7 +373,11 @@ export function createPyroMesh(GFX, { x, z, w, d, venue }) {
  * edge (`riser`), a raft of upraised arms (`crowd`: the fans carry Rock
  * across), or a forklift pallet on a pair of forks.
  */
-export function createLiftMesh(GFX, { w, d, thickness, style }) {
+export function createLiftMesh(GFX, { w, d, thickness, style, lift = null }) {
+  if (RIDES[style]) {
+    const ride = RIDES[style](GFX, { w, d, thickness, lift });
+    return { group: ride.group, fixed: ride.fixed ?? null, style, update(time) { ride.live?.(time); } };
+  }
   const group = new GFX.Group();
   const metal = dark(GFX, '#8a8f98', { metalness: 0.9, roughness: 0.35 });
   const side = dark(GFX, '#101012', { roughness: 0.8 });
@@ -589,6 +595,34 @@ export function createLiftMesh(GFX, { w, d, thickness, style }) {
 /** A closed set: a roll-up shutter of corrugated steel, stencilled CLOSED SET; or (`look` 'bars') a gate of iron bars. */
 export function createGateMesh(GFX, { span, height, thickness, across, look }) {
   const group = new GFX.Group();
+  if (look === 'border') {
+    // Passport control: two booms in red and white across the way, a post at each end, a STOP sign in the middle.
+    const red = dark(GFX, '#d81c2a', { roughness: 0.4 });
+    const white = dark(GFX, '#f4f2ee', { roughness: 0.4 });
+    const post = dark(GFX, '#3a3e48', { metalness: 0.6, roughness: 0.4 });
+    const n = Math.max(4, Math.round(span * 3));
+    for (const y of [-height * 0.12, -height * 0.38]) {
+      for (let i = 0; i < n; i++) {
+        const seg = new GFX.Mesh(new GFX.BoxGeometry(across === 'x' ? span / n : 0.1, 0.1, across === 'x' ? 0.1 : span / n), i % 2 ? white : red);
+        const a = -span / 2 + (span * (i + 0.5)) / n;
+        seg.position.set(across === 'x' ? a : 0, y, across === 'x' ? 0 : a);
+        seg.castShadow = true;
+        group.add(seg);
+      }
+    }
+    for (const e of [-1, 1]) {
+      const p = new GFX.Mesh(new GFX.CylinderGeometry(0.06, 0.06, height, 8), post);
+      p.position.set(across === 'x' ? e * (span / 2 - 0.06) : 0, 0, across === 'x' ? 0 : e * (span / 2 - 0.06));
+      group.add(p);
+    }
+    const sign = new GFX.Mesh(new GFX.CylinderGeometry(0.22, 0.22, 0.03, 8), red);
+    sign.rotation[across === 'x' ? 'x' : 'z'] = Math.PI / 2;
+    sign.position.y = -height * 0.25;
+    const band = new GFX.Mesh(new GFX.BoxGeometry(across === 'x' ? 0.26 : 0.035, 0.06, across === 'x' ? 0.035 : 0.26), white);
+    band.position.y = -height * 0.25;
+    group.add(sign, band);
+    return { group, update() {} };
+  }
   if (look === 'bars') {
     const iron = dark(GFX, '#2a2a30', { metalness: 0.85, roughness: 0.4 });
     const along = (m, a) => (across === 'x' ? m.position.setX(a) : m.position.setZ(a));
@@ -651,7 +685,13 @@ export function createBumperMesh(GFX, { radius, look = 'post' }) {
   const parts = [];
   let flashColour = [1, 0.23, 0.54], rest = [1, 0.23, 0.54];
   const ringMat = new GFX.MeshBasicMaterial({ color: new GFX.Color(...rest), toneMapped: false });
-  if (look === 'rope') {
+  if (BUMPERS[look]) {
+    const made = BUMPERS[look](GFX, { radius, ringMat });
+    group.add(...made.objects);
+    parts.push(...made.parts);
+    rest = made.rest;
+    flashColour = made.flash;
+  } else if (look === 'rope') {
     const brass = dark(GFX, '#d8a848', { metalness: 0.9, roughness: 0.25 });
     const base = new GFX.Mesh(new GFX.CylinderGeometry(radius * 0.55, radius * 0.7, 0.08, 18), brass);
     base.position.y = 0.04;

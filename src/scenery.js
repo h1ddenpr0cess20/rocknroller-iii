@@ -26,6 +26,13 @@ const FLOOR = {
   dirt: { roughness: 0.95, bump: 2.6 },
   grate: { roughness: 0.4, metalness: 0.7, bump: 3.2 },
   cobble: { roughness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.25, bump: 3.4 },
+  snow: { roughness: 0.7, sheen: 0.6, bump: 1.6 },
+  sand: { roughness: 0.95, bump: 1.8 },
+  tatami: { roughness: 0.85, sheen: 0.3, bump: 1.2 },
+  terracotta: { roughness: 0.7, clearcoat: 0.15, bump: 2.0 },
+  marble: { roughness: 0.18, clearcoat: 0.9, clearcoatRoughness: 0.08, bump: 0.3 },
+  mosaic: { roughness: 0.5, clearcoat: 0.3, bump: 2.2 },
+  scree: { roughness: 0.9, bump: 3.6 },
 };
 
 const WALL = {
@@ -34,6 +41,8 @@ const WALL = {
   block: { bump: 2 }, damask: { bump: 1.5 },
   clapboard: { bump: 2.4 }, stucco: { bump: 2.2 }, hull: { bump: 2, metalness: 0.55, roughness: 0.45 },
   stone: { bump: 3 }, wallpaper: { bump: 1.2 }, flats: { bump: 1.6 },
+  sandstone: { bump: 3, roughness: 0.95 }, cliff: { bump: 4.5, roughness: 0.95 }, shoji: { bump: 1.2, roughness: 0.9 },
+  timber: { bump: 3.5, roughness: 0.8 }, haussmann: { bump: 2.4 }, azulejo: { bump: 0.8, roughness: 0.3 }, hedge: { bump: 4, roughness: 1 },
 };
 
 export function createVenueMeshes(GFX, built, venue) {
@@ -86,6 +95,13 @@ export function createVenueMeshes(GFX, built, venue) {
     const tex = floorTexture(GFX, look.sticky ?? 'mud');
     add(new GFX.Mesh(geometry(built.sticky), new GFX.MeshPhysicalMaterial({
       name: 'sticky', vertexColors: true, map: tex.map, bumpMap: tex.bump, bumpScale: 3, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.12,
+    })));
+  }
+
+  if (built.ice.position.length) {
+    // Ice: glassy, pale blue, a little see-into, catching every light.
+    add(new GFX.Mesh(geometry(built.ice), new GFX.MeshPhysicalMaterial({
+      name: 'ice', vertexColors: true, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03, metalness: 0.05,
     })));
   }
 

@@ -384,7 +384,99 @@ function cobble(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-export const FLOORS = { concrete, planks, checker, carpet, plate, grass, panels, mud, asphalt, dirt, grate, cobble };
+
+// ——— the world tour's floors
+
+/** Snow, packed and fresh: soft drifts, a sparkle here and there, footprints of nobody. The Alps. */
+function snow(GFX) {
+  const n = fractal(401, 4, 4), g = fractal(403, 40, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const drift = n(u, v), glint = g(u, v) > 0.82 ? 0.06 : 0;
+    const k = relief ? 0.45 + drift * 0.5 : 0.93 + drift * 0.05 + glint;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Sand, rippled by the wind: fine grain in long curving ripples. The desert, the beach. */
+function sand(GFX) {
+  const n = fractal(411, 3, 3), g = fractal(413, 48, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const ripple = 0.5 + 0.5 * Math.sin((v + n(u, v) * 0.25) * Math.PI * 2 * 6);
+    const k = relief ? 0.4 + ripple * 0.4 + (g(u, v) - 0.5) * 0.2 : 0.84 + ripple * 0.08 + (g(u, v) - 0.5) * 0.1;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Tatami: woven rush mats, the weave running one way, a dark cloth binding down two edges. Tokyo. */
+function tatami(GFX) {
+  const n = fractal(421, 6, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const binding = u < 0.05 || u > 0.95;
+    const weave = 0.5 + 0.5 * Math.sin(v * Math.PI * 2 * 48) * (0.6 + 0.4 * Math.sin(u * Math.PI * 2 * 3));
+    const k = relief ? (binding ? 0.55 : 0.4 + weave * 0.35) : binding ? 0.32 : 0.82 + weave * 0.08 + n(u, v) * 0.06;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Terracotta: square clay tiles, four to the tile, each its own fired shade, in grout. Spain, Italy, the piazzas. */
+function terracotta(GFX) {
+  const n = fractal(431, 8, 3);
+  const rnd = random(433);
+  const tones = Array.from({ length: 16 }, () => 0.78 + rnd() * 0.2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const fu = (u * 2) % 1, fv = (v * 2) % 1;
+    const joint = Math.min(fu, fv, 1 - fu, 1 - fv) < 0.025;
+    const t = tones[Math.floor(u * 2) + Math.floor(v * 2) * 2];
+    const k = relief ? (joint ? 0 : 0.6 + n(u, v) * 0.2) : joint ? 0.62 : t * (0.92 + n(u, v) * 0.1);
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Marble: polished, with the veins running through it. Palaces, lobbies, St Mark's. */
+function marble(GFX) {
+  const n = fractal(441, 3, 5);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const vein = Math.abs(Math.sin((u * 2 + v + n(u, v) * 2.4) * Math.PI * 2));
+    const dark = smoothstep(0.08, 0.0, vein) * 0.35;
+    const k = relief ? 0.7 : 0.94 - dark + n(u, v) * 0.04;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Copacabana's promenade: the black-and-white waves in little stones. Rio. */
+function mosaic(GFX) {
+  const rnd = random(451);
+  const jitter = Array.from({ length: 1024 }, () => rnd());
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const wave = Math.sin((u + Math.sin(v * Math.PI * 2) * 0.12) * Math.PI * 2 * 2) > 0;
+    const cu = Math.floor(u * 32), cv = Math.floor(v * 32);
+    const fu = (u * 32) % 1, fv = (v * 32) % 1;
+    const joint = Math.min(fu, fv, 1 - fu, 1 - fv) < 0.09;
+    const j = jitter[(cu * 31 + cv) % jitter.length];
+    const k = relief ? (joint ? 0.2 : 0.7) : joint ? 0.45 : wave ? 0.12 + j * 0.06 : 0.92 + j * 0.06;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** A mountain path: broken rock and grit, darker in the cracks. */
+function scree(GFX) {
+  const n = fractal(461, 6, 4), m = fractal(463, 14, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const facet = Math.abs(n(u, v) - 0.5) * 2;
+    const crack = smoothstep(0.06, 0.0, facet) * 0.4;
+    const k = relief ? 0.3 + facet * 0.6 : 0.7 + facet * 0.2 + (m(u, v) - 0.5) * 0.12 - crack;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+export const FLOORS = { concrete, planks, checker, carpet, plate, grass, panels, mud, asphalt, dirt, grate, cobble, snow, sand, tatami, terracotta, marble, mosaic, scree };
 
 // ———————————————————————————————————————————————————————————— walls
 
@@ -702,11 +794,107 @@ function flats(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
+
+// ——— the world tour's walls
+
+/** Sandstone: great blocks, two courses, worn soft at the edges, the strata showing. Egypt. */
+function sandstone(GFX) {
+  const n = fractal(501, 6, 4), m = fractal(503, 2, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const course = Math.floor(v * 2), shift = course * 0.5;
+    const fu = ((u + shift) * 1) % 1, fv = (v * 2) % 1;
+    const edge = Math.min(fu, fv, 1 - fu, 1 - fv);
+    const joint = edge < 0.03;
+    const strata = 0.5 + 0.5 * Math.sin((v * 2 + n(u, v) * 0.3) * Math.PI * 2 * 5);
+    const k = relief ? (joint ? 0 : smoothstep(0.0, 0.08, edge) * (0.6 + n(u, v) * 0.3)) : joint ? 0.45 : 0.8 + strata * 0.08 + m(u, v) * 0.08;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** A cliff of mountain rock: strata slanting across, fissures, lichen and frost. The Alps. */
+function cliff(GFX) {
+  const n = fractal(511, 5, 5), m = fractal(513, 2, 3);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const strata = Math.abs(Math.sin((v + u * 0.3 + n(u, v) * 0.4) * Math.PI * 2 * 3));
+    const fissure = smoothstep(0.05, 0.0, strata) * 0.45;
+    const k = relief ? 0.25 + n(u, v) * 0.6 - fissure : 0.66 + n(u, v) * 0.22 + m(u, v) * 0.1 - fissure;
+    return grey(Math.round(255 * Math.min(1, Math.max(0, k))));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Shoji: paper panels in a lattice of thin wooden bars, lit from behind. Tokyo. */
+function shoji(GFX) {
+  const n = fractal(521, 8, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const fu = (u * 3) % 1, fv = (v * 4) % 1;
+    const bar = Math.min(fu, 1 - fu) < 0.04 || Math.min(fv, 1 - fv) < 0.04;
+    const frame = u < 0.04 || u > 0.96 || v > 0.9;
+    const k = relief ? (bar || frame ? 0.9 : 0.45) : frame ? 0.35 : bar ? 0.5 : 0.96 + n(u, v) * 0.03;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** A chalet's timber: round-edged logs laid one on another, the grain along them. The Alps. */
+function timber(GFX) {
+  const n = fractal(531, 2, 4);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const fv = (v * 5) % 1;
+    const round = Math.sin(fv * Math.PI);
+    const grain = 0.5 + 0.5 * Math.sin((v * 5 + n(u, v) * 0.6) * Math.PI * 2 * 8 + u * 2);
+    const k = relief ? 0.2 + round * 0.7 : (0.62 + round * 0.22) * (0.88 + grain * 0.12);
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Paris stone: pale ashlar, a tall window with its shutters and a wrought-iron balcony rail across. */
+function haussmann(GFX) {
+  const n = fractal(541, 6, 3);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const course = (v * 4) % 1, joint = course < 0.03;
+    const win = Math.abs(u - 0.5) < 0.18 && v > 0.12 && v < 0.78;
+    const shutter = !win && Math.abs(u - 0.5) < 0.27 && v > 0.12 && v < 0.78;
+    const rail = v > 0.66 && v < 0.72 && Math.abs(u - 0.5) < 0.3 && (Math.floor(u * 40) % 2 === 0 || v < 0.675);
+    const k = relief ? (win ? 0.1 : rail ? 0.9 : joint ? 0.3 : 0.65) : rail ? 0.15 : win ? 0.22 : shutter ? 0.55 : joint ? 0.7 : 0.9 + n(u, v) * 0.06;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** Azulejos: glazed tiles, sixteen to the tile, each with a four-petalled pattern. Spain. */
+function azulejo(GFX) {
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const fu = (u * 4) % 1, fv = (v * 4) % 1;
+    const joint = Math.min(fu, fv, 1 - fu, 1 - fv) < 0.03;
+    const x = fu - 0.5, y = fv - 0.5, r = Math.hypot(x, y), a = Math.atan2(y, x);
+    const petal = r < 0.18 + 0.14 * Math.abs(Math.cos(a * 2));
+    const corner = Math.hypot(Math.min(fu, 1 - fu), Math.min(fv, 1 - fv)) < 0.16;
+    const k = relief ? (joint ? 0.2 : 0.75) : joint ? 0.8 : petal || corner ? 0.35 : 0.97;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
+/** A hedge, clipped square: leaves on leaves. London's parks, a palace garden. */
+function hedge(GFX) {
+  const n = fractal(551, 12, 3), m = fractal(553, 3, 2);
+  const paint = (relief) => (size) => pixels(size, (u, v) => {
+    const leaf = n(u, v);
+    const k = relief ? 0.2 + leaf * 0.8 : 0.55 + leaf * 0.35 + m(u, v) * 0.1;
+    return grey(Math.round(255 * Math.min(1, k)));
+  });
+  return pair(GFX, 256, paint(false), paint(true));
+}
+
 export const WALLS = {
   brick: (GFX) => brick(GFX),
   posters: (GFX) => brick(GFX, { posters: true }),
   plywood, foam, curtain, corrugated, block, damask, canvas: canvasWall, fence,
   clapboard, stucco, hull, stone, wallpaper, flats,
+  sandstone, cliff, shoji, timber, haussmann, azulejo, hedge,
 };
 
 /** The floor texture called `name`, painted once. */
