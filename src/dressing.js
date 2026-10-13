@@ -1,16 +1,11 @@
 import { random } from './textures.js';
 
 /**
- * Set dressing: what the film sets are furnished with (see decor.js, which
- * these join). The waiting room's chairs and water cooler, the office's desk
- * and filing cabinets, the make-up mirror ringed with bulbs, the clothes
- * rails; the kit of a picture being made (cameras on tripods, lamps on
- * stands, the director's chair, craft services' table); the lot's cars,
- * golf carts and bins; and the props of the pictures themselves: the
- * Western's tombstones and trough, the horror picture's coffins and
- * bookcases, the sci-fi picture's sleep pods, the pirate picture's
- * cannons, wheel and treasure chests, the action picture's airbags and
- * rooftop plant, and the premiere's giant gold statue.
+ * Set dressing: the everyday furniture of the tour (see decor.js, which
+ * these join, and sights.js for the furniture of the places themselves):
+ * the folding chair, the chest, the water cooler, the buffet table, the
+ * packing crates, the desk, the lamp on its stand, the clothes rail and
+ * the car. It also lends sights.js its builder and materials.
  *
  * Each is built from plain shapes, standing on y = 0 over its footprint
  * (`w` by `d` tiles, centred on the origin) and, if it has a front, facing
@@ -51,208 +46,6 @@ const X = [0, 0, Math.PI / 2], Z = [Math.PI / 2, 0, 0];
 /** A seeded random source from where a prop stands, so each one is dressed the same every time. */
 const seeded = ({ x = 0, z = 0 }) => random(1 + Math.abs(Math.round(x * 31 + z * 17)));
 
-/** A stunt airbag: a big puffed-up blue cushion, yellow bands round it, a valve. */
-function airbag(GFX, { w = 1, d = 1, rise = 0.6 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const vinyl = std(GFX, '#2a5ad8', { roughness: 0.4 });
-  k.box([w * 0.88, rise * 0.78, d * 0.88], vinyl, [0, rise * 0.4, 0]);
-  const top = k.ball(0.5, vinyl, [0, rise * 0.78, 0], { seg: 20 });
-  top.scale.set(w * 0.88, 0.22, d * 0.88);
-  for (const s of [-1, 1]) {
-    k.cyl(0.07, 0.07, w * 0.86, vinyl, [0, rise * 0.76, s * d * 0.44], { rot: X });
-    k.cyl(0.07, 0.07, d * 0.86, vinyl, [s * w * 0.44, rise * 0.76, 0], { rot: Z });
-  }
-  k.box([w * 0.9, 0.06, d * 0.9], std(GFX, '#ffd23a', { roughness: 0.45 }), [0, rise * 0.35, 0]);
-  k.cyl(0.04, 0.04, 0.06, std(GFX, '#202024'), [0, rise * 0.2, d * 0.45], { rot: Z });
-  return { group };
-}
-
-/** A barrel: oak staves bellied in the middle, iron hoops. */
-function barrel(GFX, { rise = 0.7 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const oak = std(GFX, '#7a4a26', { roughness: 0.7 });
-  const iron = metal(GFX, '#3a3a40', 0.5);
-  k.cyl(0.36, 0.3, rise / 2, oak, [0, rise * 0.75, 0], { seg: 18 });
-  k.cyl(0.3, 0.36, rise / 2, oak, [0, rise * 0.25, 0], { seg: 18 });
-  for (const [y, r] of [[0.08, 0.31], [rise * 0.3, 0.35], [rise * 0.7, 0.35], [rise - 0.08, 0.31]]) k.ring(r, 0.016, iron, [0, y, 0], { rot: [Math.PI / 2, 0, 0] });
-  k.cyl(0.27, 0.27, 0.01, std(GFX, '#5a3418', { roughness: 0.8 }), [0, rise + 0.004, 0], { seg: 18 });
-  return { group };
-}
-
-/** A bookcase, full of books, a skull on a shelf and a candle on top: the one in the horror picture that turns round. */
-function bookcase(GFX, { w = 1, rise = 1.3, ...spec }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const rnd = seeded(spec);
-  const wood = std(GFX, '#4a2a16', { roughness: 0.55 });
-  const W = w * 0.9;
-  k.box([W, rise, 0.04], wood, [0, rise / 2, -0.2]);
-  for (const s of [-1, 1]) k.box([0.05, rise, 0.42], wood, [s * (W / 2 - 0.025), rise / 2, 0]);
-  const shelves = 4, gap = (rise - 0.08) / shelves;
-  for (let i = 0; i <= shelves; i++) k.box([W - 0.04, 0.04, 0.4], wood, [0, 0.04 + i * gap, 0]);
-  const spines = ['#7a1a1a', '#1a3a5a', '#2a4a2a', '#6a5a2a', '#3a1a3a', '#8a6a3a', '#1a1a1e'].map((c) => std(GFX, c, { roughness: 0.75 }));
-  const bone = std(GFX, '#e8e0c8', { roughness: 0.5 });
-  for (let i = 0; i < shelves; i++) {
-    const y0 = 0.06 + i * gap;
-    let x = -W / 2 + 0.06;
-    while (x < W / 2 - 0.1) {
-      // On the second shelf, a gap with a skull in it.
-      if (i === 2 && Math.abs(x) < 0.1) {
-        k.ball(0.07, bone, [x + 0.04, y0 + 0.07, 0.02]);
-        k.box([0.08, 0.04, 0.06], bone, [x + 0.04, y0 + 0.02, 0.05]);
-        x += 0.16;
-        continue;
-      }
-      const t = 0.035 + rnd() * 0.045, h = gap * (0.62 + rnd() * 0.28);
-      const lean = rnd() < 0.12 ? 0.2 : 0;
-      k.box([t, h, 0.26], spines[Math.floor(rnd() * spines.length)], [x + t / 2, y0 + h / 2, -0.03], { rot: [0, 0, lean] });
-      x += t + 0.004 + lean * 0.1;
-    }
-  }
-  // A candle on top, lit.
-  k.cyl(0.03, 0.03, 0.16, std(GFX, '#f0ead8', { roughness: 0.5 }), [W * 0.3, rise + 0.08, 0]);
-  k.ball(0.025, glow(GFX, '#ffb84a'), [W * 0.3, rise + 0.19, 0], { shadow: false });
-  return { group };
-}
-
-/** Filing cabinets, two side by side: olive steel, four drawers each, one left open with the files showing. */
-function cabinet(GFX, { rise = 1.2 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const steel = std(GFX, '#5a6a5a', { metalness: 0.6, roughness: 0.45 });
-  const chrome = metal(GFX, '#d6d9e0', 0.25);
-  const card = std(GFX, '#f2eedc', { roughness: 0.8 });
-  for (const s of [-1, 1]) {
-    const x = s * 0.22;
-    k.box([0.42, rise, 0.55], steel, [x, rise / 2, -0.12]);
-    const h = (rise - 0.08) / 4;
-    for (let i = 0; i < 4; i++) {
-      const y = 0.05 + h * (i + 0.5);
-      const open = s > 0 && i === 2 ? 0.22 : 0;
-      k.box([0.38, h - 0.03, 0.03], steel, [x, y, 0.17 + open]);
-      if (open) for (let f = 0; f < 5; f++) k.box([0.34, h - 0.06, 0.006], card, [x, y + 0.02, 0.17 + open - 0.03 - f * 0.04], { rot: [0.1 * (f % 2), 0, 0] });
-      k.box([0.1, 0.022, 0.02], chrome, [x, y, 0.19 + open]);
-      k.box([0.06, 0.03, 0.006], card, [x, y + 0.045, 0.188 + open]);
-    }
-  }
-  return { group };
-}
-
-/**
- * A film camera on a tripod, the way they looked: a box of a body, the lens
- * and its matte box forward, a two-reel magazine on top like a pair of ears,
- * a crank on the side. The reels turn while it rolls.
- */
-function camera(GFX, { rise = 1.0 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const black = std(GFX, '#202024', { roughness: 0.45 });
-  const wood = std(GFX, '#8a5a32', { roughness: 0.5 });
-  const chrome = metal(GFX, '#c8ccd4', 0.25);
-  const head = rise * 0.72;
-  // The tripod: three legs from the head down to the floor.
-  for (let i = 0; i < 3; i++) {
-    const a = (i / 3) * Math.PI * 2 + Math.PI;
-    const foot = [Math.sin(a) * 0.36, 0, Math.cos(a) * 0.36];
-    const mid = [foot[0] / 2, head / 2, foot[2] / 2];
-    const len = Math.hypot(foot[0], head, foot[2]);
-    const leg = k.cyl(0.022, 0.016, len, wood, mid);
-    // Pointed from the head down to the foot.
-    leg.quaternion.setFromUnitVectors(new GFX.Vector3(0, -1, 0), new GFX.Vector3(foot[0], -head, foot[2]).normalize());
-  }
-  k.cyl(0.06, 0.06, 0.06, black, [0, head, 0]);
-  const y = head + 0.17;
-  k.box([0.22, 0.24, 0.36], black, [0, y, 0]);
-  k.cyl(0.055, 0.055, 0.14, black, [0, y, 0.24], { rot: Z });
-  k.cyl(0.04, 0.04, 0.01, glass(GFX, '#203048', 0.9), [0, y, 0.315], { rot: Z });
-  k.box([0.2, 0.15, 0.08], black, [0, y, 0.36]);
-  k.cyl(0.03, 0.03, 0.12, black, [-0.15, y + 0.05, -0.1], { rot: Z });
-  k.box([0.03, 0.08, 0.02], chrome, [0.13, y - 0.02, 0.02]);
-  k.cyl(0.012, 0.012, 0.06, chrome, [0.15, y - 0.06, 0.02], { rot: X });
-  // The magazine: two reels, front and back, turning.
-  const reels = [];
-  for (const [z, dy] of [[0.08, 0.15], [-0.17, 0.17]]) {
-    const hub = new GFX.Group();
-    hub.position.set(0, y + 0.12 + dy, z);
-    group.add(hub);
-    k.cyl(0.14, 0.14, 0.07, black, [0, 0, 0], { rot: X, into: hub, seg: 22 });
-    for (const s of [-1, 1]) {
-      k.box([0.075, 0.22, 0.03], chrome, [s * 0.038, 0, 0], { into: hub });
-      k.box([0.075, 0.03, 0.22], chrome, [s * 0.038, 0, 0], { into: hub });
-    }
-    reels.push(hub);
-  }
-  return {
-    group,
-    update(time) {
-      reels.forEach((r, i) => { r.rotation.x = time * (2.2 + i * 0.4); });
-    },
-  };
-}
-
-/** A pirate cannon on its wooden carriage, run out: the muzzle at the back (out through the rail), a stack of shot beside. */
-function cannon(GFX, { rise = 0.8 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const oak = std(GFX, '#6a4426', { roughness: 0.7 });
-  const iron = std(GFX, '#1c1c20', { metalness: 0.7, roughness: 0.4 });
-  k.box([0.42, 0.14, 0.7], oak, [0, 0.2, 0]);
-  for (const s of [-1, 1]) {
-    k.box([0.06, 0.3, 0.6], oak, [s * 0.19, 0.3, 0.02]);
-    for (const z of [-0.24, 0.24]) {
-      k.cyl(0.12, 0.12, 0.06, oak, [s * 0.26, 0.12, z], { rot: X });
-      k.cyl(0.03, 0.03, 0.08, iron, [s * 0.26, 0.12, z], { rot: X });
-    }
-  }
-  const y = rise * 0.56;
-  k.cyl(0.085, 0.13, 0.88, iron, [0, y, -0.12], { rot: [-Math.PI / 2, 0, 0], seg: 18 });
-  k.ring(0.095, 0.022, iron, [0, y, -0.56], { seg: 18 });
-  k.ball(0.06, iron, [0, y, 0.36]);
-  for (const s of [-1, 1]) k.cyl(0.03, 0.03, 0.1, iron, [s * 0.15, y, 0.0], { rot: X });
-  // Shot, three and one on top.
-  for (const [x, yy, z] of [[0.28, 0.07, 0.36], [0.4, 0.07, 0.3], [0.36, 0.07, 0.43], [0.35, 0.18, 0.37]]) k.ball(0.07, iron, [x, yy, z]);
-  return { group };
-}
-
-/** A studio golf cart: white, a canopy on four posts, a bench seat, an orange light going round on the roof. */
-function cart(GFX, { w = 1, d = 2 }) {
-  const group = new GFX.Group();
-  const car = new GFX.Group();
-  if (w > d) car.rotation.y = Math.PI / 2;
-  group.add(car);
-  const k = kit(GFX, car);
-  const L = Math.max(w, d) * 0.86, W = Math.min(w, d) * 0.78;
-  const white = gloss(GFX, '#f2f0ea');
-  const black = std(GFX, '#16161a', { roughness: 0.8 });
-  const seat = std(GFX, '#7a1a1a', { roughness: 0.55 });
-  k.box([W, 0.28, L], white, [0, 0.33, 0]);
-  k.box([W * 0.94, 0.26, 0.32], white, [0, 0.58, L / 2 - 0.18]);
-  k.box([W * 0.9, 0.1, 0.38], seat, [0, 0.54, -0.02]);
-  k.box([W * 0.9, 0.3, 0.08], seat, [0, 0.74, -0.2]);
-  k.box([W * 0.9, 0.08, 0.5], white, [0, 0.54, -L / 2 + 0.3]);
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-    k.cyl(0.15, 0.15, 0.1, black, [sx * (W / 2 - 0.02), 0.15, sz * (L / 2 - 0.24)], { rot: X });
-    k.cyl(0.018, 0.018, 0.78, metal(GFX, '#c8ccd4'), [sx * (W / 2 - 0.05), 1.06, sz * (L / 2 - 0.22)]);
-  }
-  k.box([W + 0.06, 0.05, L * 0.82], white, [0, 1.46, 0]);
-  k.box([W * 0.9, 0.03, 0.02], std(GFX, '#c81c24'), [0, 0.4, L / 2 + 0.002]);
-  k.ring(0.08, 0.012, black, [0, 0.82, L / 2 - 0.28], { rot: [-0.9, 0, 0] });
-  k.cyl(0.012, 0.012, 0.2, black, [0, 0.74, L / 2 - 0.22], { rot: [0.6, 0, 0] });
-  for (const s of [-1, 1]) k.ball(0.04, glow(GFX, '#fff4d0'), [s * W * 0.32, 0.5, L / 2 + 0.01], { shadow: false });
-  // The light on the roof, and its beam going round.
-  const beacon = k.cyl(0.06, 0.07, 0.08, glow(GFX, '#ffa020'), [0, 1.53, L * 0.2], { shadow: false });
-  const lamp = beacon.material;
-  return {
-    group,
-    update(time) {
-      const on = 0.55 + 0.45 * Math.max(0, Math.sin(time * 9));
-      lamp.color.setRGB(1 * on, 0.6 * on, 0.1 * on);
-    },
-  };
-}
-
 /** The director's chair: tall, a wooden X-frame each side, black canvas seat and back, a gold name strip across the back. */
 function chair(GFX, { rise = 0.9 }) {
   const group = new GFX.Group();
@@ -270,24 +63,6 @@ function chair(GFX, { rise = 0.9 }) {
   k.box([0.44, 0.03, 0.38], canvasMat, [0, seatY, 0]);
   k.box([0.46, 0.2, 0.02], canvasMat, [0, seatY + 0.42, -0.19]);
   k.box([0.3, 0.05, 0.004], std(GFX, '#e8c060', { metalness: 0.6, roughness: 0.35 }), [0, seatY + 0.42, -0.178]);
-  return { group };
-}
-
-/** Waiting-room seating: two orange plastic chairs on a steel beam, a magazine left on one. */
-function chairs(GFX, { rise = 0.8 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const steel = metal(GFX, '#9aa0aa', 0.35);
-  const plastic = std(GFX, '#e8742a', { roughness: 0.35 });
-  k.box([0.92, 0.05, 0.06], steel, [0, 0.3, 0]);
-  for (const s of [-1, 1]) {
-    k.cyl(0.02, 0.02, 0.3, steel, [s * 0.42, 0.15, 0]);
-    k.box([0.06, 0.02, 0.4], steel, [s * 0.42, 0.01, 0]);
-    k.box([0.4, 0.04, 0.4], plastic, [s * 0.23, rise * 0.56, 0.02]);
-    k.box([0.4, 0.36, 0.04], plastic, [s * 0.23, rise * 0.56 + 0.2, -0.19], { rot: [-0.12, 0, 0] });
-    k.cyl(0.015, 0.015, 0.18, steel, [s * 0.23, 0.38, 0]);
-  }
-  k.box([0.18, 0.012, 0.24], std(GFX, '#3a9ad8', { roughness: 0.6 }), [0.24, rise * 0.56 + 0.026, 0.04], { rot: [0, 0.3, 0] });
   return { group };
 }
 
@@ -309,35 +84,6 @@ function chest(GFX, { rise = 0.7 }) {
   const coin = new GFX.CylinderGeometry(0.035, 0.035, 0.01, 12);
   const rnd = random(7);
   for (let i = 0; i < 9; i++) k.put(coin, gold, [(rnd() - 0.5) * 0.6, 0.006 + (i % 3) * 0.01, 0.3 + rnd() * 0.15], { rot: [rnd() * 0.3, 0, rnd() * 0.3] });
-  return { group };
-}
-
-/** A coffin: six-sided, dark and polished, brass handles, the lid pushed askew and the red satin showing. */
-function coffin(GFX, { rise = 0.6 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const outline = (s) => {
-    const shape = new GFX.Shape();
-    const pts = [[-0.17, 0.46], [0.17, 0.46], [0.28, 0.2], [0.19, -0.46], [-0.19, -0.46], [-0.28, 0.2]].map(([x, y]) => [x * s, y * s]);
-    shape.moveTo(...pts[0]);
-    for (const p of pts.slice(1)) shape.lineTo(...p);
-    shape.lineTo(...pts[0]);
-    return shape;
-  };
-  const wood = gloss(GFX, '#3a1e12');
-  const h = rise * 0.6;
-  const box = new GFX.ExtrudeGeometry(outline(1), { depth: h, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.015, bevelSegments: 1 });
-  k.put(box, wood, [0, 0.015, 0], { rot: [-Math.PI / 2, 0, 0] });
-  const satin = new GFX.ExtrudeGeometry(outline(0.9), { depth: 0.01, bevelEnabled: false });
-  k.put(satin, std(GFX, '#a8102a', { roughness: 0.3 }), [0, h + 0.02, 0], { rot: [-Math.PI / 2, 0, 0] });
-  const lid = new GFX.ExtrudeGeometry(outline(1.02), { depth: 0.05, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.01, bevelSegments: 1 });
-  const askew = new GFX.Group();
-  askew.position.set(0.12, h + 0.035, 0.04);
-  askew.rotation.y = 0.12;
-  group.add(askew);
-  k.put(lid, wood, [0, 0, 0], { rot: [-Math.PI / 2, 0, 0], into: askew });
-  const brass = metal(GFX, '#d8b050', 0.3);
-  for (const s of [-1, 1]) for (const z of [-0.2, 0.1]) k.cyl(0.012, 0.012, 0.14, brass, [s * (0.255 - (z < 0 ? 0.04 : -0.02)), h * 0.5, z], { rot: Z });
   return { group };
 }
 
@@ -486,49 +232,6 @@ function lamp(GFX, { rise = 1.2 }) {
   return { group };
 }
 
-/** A make-up station: a dressing table, a mirror ringed with bulbs, the brushes and the powder. */
-function mirror(GFX, { rise = 1.0 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const table = std(GFX, '#e8dcc8', { roughness: 0.5 });
-  const top = rise * 0.72;
-  k.box([0.88, top - 0.04, 0.42], table, [0, (top - 0.04) / 2, -0.02]);
-  k.box([0.92, 0.04, 0.46], table, [0, top - 0.02, 0]);
-  k.box([0.78, 0.62, 0.04], std(GFX, '#2a2420', { roughness: 0.5 }), [0, top + 0.36, -0.2]);
-  k.box([0.68, 0.52, 0.01], std(GFX, '#e0e8f0', { metalness: 1, roughness: 0.04 }), [0, top + 0.36, -0.176]);
-  const bulb = glow(GFX, '#fff0c0');
-  for (let i = 0; i < 5; i++) k.ball(0.028, bulb, [-0.3 + i * 0.15, top + 0.66, -0.17], { shadow: false });
-  for (const s of [-1, 1]) for (let i = 0; i < 4; i++) k.ball(0.028, bulb, [s * 0.36, top + 0.14 + i * 0.15, -0.17], { shadow: false });
-  k.cyl(0.05, 0.05, 0.03, std(GFX, '#f0d0c0', { roughness: 0.9 }), [-0.2, top + 0.015, 0.05]);
-  for (const [x, c] of [[0.1, '#c8102a'], [0.16, '#101014'], [0.22, '#c8a070']]) k.cyl(0.012, 0.012, 0.12, std(GFX, c, { roughness: 0.4 }), [x, top + 0.06, 0.06]);
-  return { group };
-}
-
-/** A sleep pod from the space picture: a white capsule, a lit window with someone asleep behind it, lights blinking on the base. */
-function pod(GFX, { rise = 1.2 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const shell = gloss(GFX, '#e8ecf4');
-  const body = rise * 0.78;
-  k.cyl(0.38, 0.4, 0.1, std(GFX, '#5a6070', { metalness: 0.6, roughness: 0.4 }), [0, 0.05, 0], { seg: 24 });
-  k.cyl(0.32, 0.34, body - 0.1, shell, [0, 0.1 + (body - 0.1) / 2, 0], { seg: 24 });
-  k.put(new GFX.SphereGeometry(0.32, 24, 8, 0, Math.PI * 2, 0, Math.PI / 2), shell, [0, body, 0]);
-  const window = k.box([0.34, body * 0.7, 0.04], glow(GFX, '#5ae8ff'), [0, 0.12 + body * 0.4, 0.31], { shadow: false });
-  const sleeper = k.ball(0.5, std(GFX, '#1a3a4a'), [0, 0.12 + body * 0.42, 0.335], { shadow: false });
-  sleeper.scale.set(0.14, body * 0.55, 0.01);
-  k.ball(0.06, std(GFX, '#1a3a4a'), [0, 0.12 + body * 0.72, 0.335], { shadow: false }).scale.set(1, 1.1, 0.15);
-  const lights = ['#ff3a3a', '#3aff6a', '#ffd23a'].map((c, i) => k.ball(0.022, glow(GFX, c), [-0.1 + i * 0.1, 0.07, 0.38], { shadow: false }));
-  const glowMat = window.material;
-  return {
-    group,
-    update(time) {
-      const p = 0.75 + 0.25 * Math.sin(time * 1.6);
-      glowMat.color.setRGB(0.35 * p, 0.91 * p, 1 * p);
-      lights.forEach((l, i) => { l.visible = Math.sin(time * (2 + i) + i * 2) > -0.3; });
-    },
-  };
-}
-
 /** Paint for the cars on the lot, by the picture they are parked in. */
 const PAINT = {
   Noir: ['#141418', '#2a2a30', '#3a3a40'],
@@ -577,134 +280,6 @@ function sedan(GFX, { w = 2, d = 3, venue, ...spec }) {
   return { group };
 }
 
-/** The giant gold statue: a black marble plinth, and on it a gold figure holding a film reel up over its head. */
-function statue(GFX, { w = 3, d = 2, rise = 2.0 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const marble = gloss(GFX, '#141418');
-  const gold = metal(GFX, '#f0c040', 0.22);
-  const plinth = Math.min(0.7, rise * 0.35);
-  k.box([w * 0.82, 0.12, d * 0.82], marble, [0, 0.06, 0]);
-  k.box([w * 0.62, plinth, d * 0.62], marble, [0, 0.12 + plinth / 2, 0]);
-  k.box([w * 0.64, 0.05, d * 0.64], gold, [0, 0.12 + plinth - 0.06, 0]);
-  k.box([w * 0.3, 0.16, 0.02], gold, [0, 0.12 + plinth * 0.45, d * 0.31 + 0.01]);
-  const base = 0.12 + plinth;
-  // The figure: feet together, a long robe tapering to them, the chest, the head; arms up, the reel held high.
-  k.cyl(0.24, 0.16, 1.0, gold, [0, base + 0.5, 0], { seg: 18 });
-  k.cyl(0.3, 0.24, 0.62, gold, [0, base + 1.3, 0], { seg: 18 });
-  k.ball(0.3, gold, [0, base + 1.6, 0], { seg: 18 }).scale.set(1.05, 0.5, 0.85);
-  k.cyl(0.08, 0.1, 0.12, gold, [0, base + 1.76, 0]);
-  k.ball(0.17, gold, [0, base + 1.94, 0.01], { seg: 18 });
-  for (const s of [-1, 1]) {
-    const arm = k.cyl(0.07, 0.08, 0.62, gold, [s * 0.32, base + 1.95, 0]);
-    arm.rotation.z = s * -0.35;
-  }
-  const reel = new GFX.Group();
-  reel.position.set(0, base + 2.48, 0);
-  group.add(reel);
-  k.ring(0.3, 0.05, gold, [0, 0, 0], { into: reel, seg: 32 });
-  k.cyl(0.07, 0.07, 0.1, gold, [0, 0, 0], { rot: Z, into: reel });
-  for (let i = 0; i < 3; i++) k.box([0.6, 0.05, 0.04], gold, [0, 0, 0], { into: reel, rot: [0, 0, (i * Math.PI) / 3] });
-  return { group };
-}
-
-/** A headstone: rounded grey stone, a darker panel where the name was, a mound in front. In the Western, a wooden cross on Boot Hill. */
-function tombstone(GFX, { rise = 0.7, venue }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const dirt = std(GFX, '#4a3a28', { roughness: 0.95 });
-  k.put(new GFX.SphereGeometry(0.5, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2), dirt, [0, 0, 0.2]).scale.set(0.5, 0.2, 0.7);
-  if (venue?.look?.genre === 'Western') {
-    const board = std(GFX, '#8a6a48', { roughness: 0.9 });
-    const cross = new GFX.Group();
-    cross.position.set(0, 0, -0.18);
-    cross.rotation.z = 0.12;
-    group.add(cross);
-    k.box([0.08, rise + 0.1, 0.05], board, [0, (rise + 0.1) / 2, 0], { into: cross });
-    k.box([0.42, 0.08, 0.05], board, [0, rise * 0.72, 0], { into: cross });
-    return { group };
-  }
-  const stone = std(GFX, '#8a8a8e', { roughness: 0.9 });
-  const slab = new GFX.Group();
-  slab.position.set(0, 0, -0.2);
-  slab.rotation.set(-0.06, 0, 0.05);
-  group.add(slab);
-  const body = rise * 0.62;
-  k.box([0.5, body, 0.12], stone, [0, body / 2, 0], { into: slab });
-  k.cyl(0.25, 0.25, 0.12, stone, [0, body, 0], { rot: Z, into: slab, seg: 20 });
-  k.box([0.34, body * 0.5, 0.01], std(GFX, '#5a5a60', { roughness: 0.95 }), [0, body * 0.62, 0.062], { into: slab });
-  return { group };
-}
-
-/** A dented galvanised bin, the lid knocked askew, rubbish spilling. */
-function trash(GFX, { rise = 0.8 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const tin = std(GFX, '#9aa0a8', { metalness: 0.75, roughness: 0.45 });
-  const h = rise * 0.86;
-  k.cyl(0.26, 0.22, h, tin, [0, h / 2, 0], { seg: 18 });
-  for (const y of [0.15, h / 2, h - 0.12]) k.ring(0.24 + (y / h) * 0.03, 0.012, tin, [0, y, 0], { rot: [Math.PI / 2, 0, 0], seg: 18 });
-  const lid = new GFX.Group();
-  lid.position.set(0.08, h + 0.04, 0.02);
-  lid.rotation.set(0.3, 0, -0.25);
-  group.add(lid);
-  k.cyl(0.28, 0.28, 0.04, tin, [0, 0, 0], { into: lid, seg: 18 });
-  k.ring(0.06, 0.014, tin, [0, 0.04, 0], { into: lid, seg: 10, arc: Math.PI });
-  const paper = std(GFX, '#e8e4d8', { roughness: 0.9 });
-  k.ball(0.06, paper, [-0.1, h + 0.03, -0.05]);
-  k.ball(0.05, paper, [0.3, 0.05, 0.22]);
-  k.ball(0.045, std(GFX, '#c83a2a', { roughness: 0.6 }), [0.2, 0.04, 0.32]);
-  return { group };
-}
-
-/** A water trough: a wooden box on legs, full to near the top, a hand pump at one end. */
-function trough(GFX, { rise = 0.6 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const wood = std(GFX, '#7a5a3a', { roughness: 0.85 });
-  const iron = std(GFX, '#2a2a2e', { metalness: 0.6, roughness: 0.5 });
-  const top = rise * 0.9;
-  for (const s of [-1, 1]) {
-    k.box([0.86, top - 0.12, 0.04], wood, [0, 0.12 + (top - 0.12) / 2, s * 0.21]);
-    k.box([0.04, top - 0.12, 0.42], wood, [s * 0.43, 0.12 + (top - 0.12) / 2, 0]);
-    for (const z of [-0.18, 0.18]) k.box([0.05, 0.14, 0.05], wood, [s * 0.38, 0.07, z]);
-  }
-  k.box([0.86, 0.04, 0.42], wood, [0, 0.14, 0]);
-  k.box([0.82, 0.02, 0.38], std(GFX, '#2a5a7a', { roughness: 0.05, metalness: 0.3 }), [0, top - 0.06, 0], { shadow: false });
-  k.cyl(0.04, 0.05, 0.5, iron, [0.36, top + 0.2, -0.24]);
-  k.cyl(0.015, 0.015, 0.18, iron, [0.36, top + 0.3, -0.13], { rot: Z });
-  k.cyl(0.012, 0.012, 0.3, iron, [0.36, top + 0.5, -0.32], { rot: [-0.9, 0, 0] });
-  return { group };
-}
-
-/** A ship's wheel on its pedestal: eight spokes through a rim, handles past it, a brass boss; it turns a little, back and forth. */
-function wheel(GFX, { rise = 0.9 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const oak = std(GFX, '#7a4a26', { roughness: 0.5 });
-  const brass = metal(GFX, '#d8b050', 0.3);
-  const hub = rise + 0.05;
-  k.box([0.22, hub - 0.05, 0.3], oak, [0, (hub - 0.05) / 2, -0.06]);
-  k.box([0.32, 0.06, 0.4], oak, [0, 0.03, -0.06]);
-  const spin = new GFX.Group();
-  spin.position.set(0, hub, 0.14);
-  group.add(spin);
-  k.ring(0.32, 0.03, oak, [0, 0, 0], { into: spin, seg: 28 });
-  k.ring(0.12, 0.02, oak, [0, 0, 0], { into: spin, seg: 18 });
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2;
-    k.cyl(0.018, 0.018, 0.3, oak, [Math.sin(a) * 0.17, Math.cos(a) * 0.17, 0], { into: spin, rot: [0, 0, -a] });
-    k.cyl(0.024, 0.016, 0.12, oak, [Math.sin(a) * 0.4, Math.cos(a) * 0.4, 0], { into: spin, rot: [0, 0, -a] });
-  }
-  k.cyl(0.06, 0.06, 0.08, brass, [0, 0, 0], { into: spin, rot: Z });
-  return {
-    group,
-    update(time) {
-      spin.rotation.z = Math.sin(time * 0.7) * 0.6;
-    },
-  };
-}
-
 /**
  * A rolling clothes rail: two uprights on castored feet, a bar across, and
  * the costumes hanging off it on wire hangers. At the premiere it is the
@@ -736,30 +311,6 @@ function rail(GFX, { rise = 1.1, venue, ...spec }) {
   return { group };
 }
 
-/** The plant on the roof: a grey air-conditioning box with a grille, a fan going round on top, a pipe off it. */
-function vent(GFX, { rise = 1.0 }) {
-  const group = new GFX.Group();
-  const k = kit(GFX, group);
-  const steel = std(GFX, '#8a9098', { metalness: 0.6, roughness: 0.45 });
-  const body = rise * 0.8;
-  k.box([0.86, body, 0.7], steel, [0, body / 2, 0]);
-  for (let i = 0; i < 6; i++) k.box([0.7, 0.02, 0.02], std(GFX, '#3a3e44'), [0, 0.15 + i * (body - 0.25) / 5, 0.355]);
-  k.cyl(0.3, 0.3, 0.08, steel, [0, body + 0.04, 0], { seg: 24 });
-  const fan = new GFX.Group();
-  fan.position.set(0, body + 0.1, 0);
-  group.add(fan);
-  for (let i = 0; i < 4; i++) k.box([0.5, 0.01, 0.1], std(GFX, '#2a2e34'), [0, 0, 0], { into: fan, rot: [0.3, (i * Math.PI) / 4, 0] });
-  k.ring(0.28, 0.02, steel, [0, body + 0.12, 0], { rot: [Math.PI / 2, 0, 0], seg: 24 });
-  k.cyl(0.06, 0.06, 0.5, steel, [-0.3, body * 0.5, -0.4], { rot: X });
-  return {
-    group,
-    update(time) {
-      fan.rotation.y = time * 8;
-    },
-  };
-}
+export const DRESSING = { chair, chest, cooler, craft, crate, desk, lamp, rail, sedan };
 
-export const DRESSING = {
-  airbag, barrel, bookcase, cabinet, camera, cannon, cart, chair, chairs, chest, coffin, cooler, craft, crate,
-  desk, lamp, mirror, pod, rail, sedan, statue, tombstone, trash, trough, vent, wheel,
-};
+export { glass, glow, gloss, kit, metal, seeded, std, X, Z };

@@ -77,10 +77,14 @@ test('the building is not furniture: crowd barriers and the stands do not break'
 const tilesOf = (p) => Array.from({ length: p.w * p.d }, (_, k) => [p.x + (k % p.w), p.z + Math.floor(k / p.w)]);
 
 test('a prop with a front faces open floor, and one against a wall turns its back to it', () => {
-  const casting = loadVenue(0);
-  const chairs = casting.props.filter((p) => p.kind === 'chairs');
-  assert.ok(chairs.length > 1);
-  for (const a of chairs) assert.deepEqual(openSide(casting, a), [1, 0], `the chairs at ${a.x},${a.z} face into the waiting room`);
+  const london = loadVenue(0);
+  const wall = (x, z) => london.cell(x, z)?.kind === 'wall' && !london.cell(x, z).prop;
+  const benches = london.props.filter((p) => p.kind === 'bench' && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dz]) => wall(p.x + dx, p.z + dz)));
+  assert.ok(benches.length > 1, 'London has benches against a wall');
+  for (const b of benches) {
+    const [dx, dz] = openSide(london, b);
+    assert.ok(wall(b.x - dx, b.z - dz), `the bench at ${b.x},${b.z} sits with its back to the wall`);
+  }
   for (let i = 0; i < VENUES.length; i++) {
     const v = loadVenue(i);
     for (const p of v.props.filter((q) => FACING.has(q.kind))) {

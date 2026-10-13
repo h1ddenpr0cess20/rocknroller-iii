@@ -58,9 +58,9 @@ export function rio() {
 
   // The samba school's hall: the drum section rehearsing along the back, the dancers, the flags.
   const quadra = d.room(15, 13, { floor: 'panels', wall: 'stucco' });
-  g.block(...quadra.rect(3, 9, quadra.back * 6, 1), 0.85, { prop: 'drums' });
+  g.block(...quadra.rect(3, 9, quadra.back * 6, 1), 0.85, { prop: 'surdo' });
   g.pillar(...quadra.tile(8, -1), 0.9, { prop: 'chair' });
-  for (const [a, b] of [[4, 3], [11, 3]]) g.block(...quadra.rect(a, 2, b, 1), 0.85, { prop: 'drums' });
+  for (const [a, b] of [[4, 3], [11, 3]]) g.block(...quadra.rect(a, 2, b, 1), 0.85, { prop: 'surdo' });
   g.foe('sambista', ...quadra.tile(5, -3), { range: 6 }).foe('sambista', ...quadra.tile(11, -2), { range: 6 });
   g.foe('capoeira', ...quadra.tile(13, 4), { range: 5 });
   g.pick(...quadra.tile(2, 0), 10).pick(...quadra.tile(7, -4), 10).pick(...quadra.tile(13, -4), 10);
