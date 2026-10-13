@@ -23,11 +23,7 @@ import { createRecorder } from './core.js';
  * autopilot at the wheel, rolling Rock through a stop on a phone.
  */
 
-/** How close a boss has to be for the fight to count as begun, in tiles. */
-const FIGHT = 9;
-
 let stage = null;
-let near = false, down = false;
 
 createRecorder({
   async ready() {
@@ -61,8 +57,6 @@ createRecorder({
   },
 
   start(game, level) {
-    near = false;
-    down = false;
     game.startVenue(level);
     // The camera from its corner every time, wherever the last set left it.
     Object.assign(stage.view.aim, HOME);
@@ -78,20 +72,6 @@ createRecorder({
   steering: (game) => game.state === 'play',
   // A thumb on REV while the autopilot charges a boss.
   button: { selector: '#rev-button', held: (game, move) => game.state === 'play' && Boolean(move?.rev) },
-
-  /** A boss coming into range, and going down: no sound says so. */
-  notes(game) {
-    const foes = game.debug.gig.actors.foes.filter((f) => f.stats.boss);
-    const b = game.debug.ball;
-    const close = foes.some((f) => !f.dead && Math.hypot(f.x - b.x, f.z - b.z) < FIGHT);
-    const dead = foes.some((f) => f.dead);
-    const notes = [];
-    if (close && !near) notes.push('boss');
-    if (dead && !down) notes.push('bossdown');
-    near = close;
-    down = dead;
-    return notes;
-  },
 
   // The score for the reel from `from` bars into the song, so it opens on the chorus and not a build.
   music: (audio, m) => audio.startMusic(
