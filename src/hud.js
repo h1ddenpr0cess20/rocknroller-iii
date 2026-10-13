@@ -16,7 +16,7 @@ const SEGMENTS = 24;
 /** The stops' names and poster colours, read once. */
 const INFO = VENUES.map((make) => {
   const v = make();
-  return { name: v.name, act: v.act, intro: v.intro, country: v.look.country ?? v.look.genre ?? '', tint: v.look.poster ?? v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
+  return { name: v.name, act: v.act, intro: v.intro, country: v.look.country ?? '', tint: v.look.poster ?? v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
 });
 
 const el = (tag, className = '', html = '') => {
@@ -311,7 +311,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
         b.type = 'button';
         b.style.setProperty('--tint', v.tint);
         b.disabled = i > saved.reached;
-        b.innerHTML = `<span class="num">${i + 1}</span><span class="genre">${v.country}</span><span class="name">${v.name}</span><span class="line">${v.intro}</span>`
+        b.innerHTML = `<span class="num">${i + 1}</span><span class="country">${v.country}</span><span class="name">${v.name}</span><span class="line">${v.intro}</span>`
           + `<span class="foot"><span class="stars">${stars(s.stars)}</span><span>${s.best ? grand(s.best) : b.disabled ? 'locked' : 'new'}</span></span>`;
         b.addEventListener('click', (e) => { e.stopPropagation(); onStart?.(i); });
         return b;
@@ -335,7 +335,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
     play(venue) {
       hideScreens();
       hud.hidden = false;
-      plate.querySelector('.act').textContent = `Stop ${venue.act}${(venue.look.country ?? venue.look.genre) ? ` · ${venue.look.country ?? venue.look.genre}` : ''}`;
+      plate.querySelector('.act').textContent = `Stop ${venue.act}${venue.look.country ? ` · ${venue.look.country}` : ''}`;
       plate.querySelector('.name').textContent = venue.name;
       revButton.classList.add('available');
     },

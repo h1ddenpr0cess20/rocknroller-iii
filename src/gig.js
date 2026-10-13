@@ -12,12 +12,12 @@ import { groundAxes } from './view.js';
 export const PROP_HYPE = 15;
 
 /**
- * One set as it is played, without anything drawn or heard: the set, what
+ * One stop as it is played, without anything drawn or heard: the stop, what
  * moves and lies about on it, Rock, and the rules — what costs him
  * integrity, what he smashes and what bounces him back, what he can pick up,
  * what the floor does to him, and where he goes back to after a fall. The
  * game draws it and keeps the screens; the tests drive it with an autopilot.
- * (The engine still calls a set a venue, and playing one a gig: it came from
+ * (The engine still calls a stop a venue, and playing one a gig: it came from
  * Rock 'n' Roller, where they were.)
  */
 

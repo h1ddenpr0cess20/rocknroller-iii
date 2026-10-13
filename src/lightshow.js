@@ -20,12 +20,12 @@ import { canvas, cached, copyOf, glowTexture, random, texture } from './textures
  *            in tiles), sagging, the bulbs taking turns in `colors`.
  *   neon     a neon sign: a word in tube, flickering.
  *   klieg    a searchlight on the ground, its beam up into the night sky,
- *            sweeping: the premiere, the backlot.
+ *            sweeping: Times Square, the bridge climb.
  *   blinds   light through a venetian blind: a shaft down from high on a
  *            wall (`aim`, an offset in tiles), laying bars of light across
- *            the floor. The noir. `program` 'pulse' blinks it with a sign
+ *            the floor. Back rooms and hotel rooms. `program` 'pulse' blinks it with a sign
  *            outside.
- *   marquee  a cinema marquee: black letters on a lit board, fixed to a
+ *   marquee  a theatre marquee: black letters on a lit board, fixed to a
  *            wall as a neon sign is, with a border of bulbs chasing round it.
  *   streetlamp  an iron lamp post, a lantern on top and a cone of light
  *            under it.
@@ -918,7 +918,7 @@ export function createLightshow(GFX, venue) {
     };
   }
 
-  // ——— a cinema marquee: black letters on a lit board, bulbs chasing round its edge.
+  // ——— a theatre marquee: black letters on a lit board, bulbs chasing round its edge.
   function marquee(f) {
     const text = f.text ?? 'NOW SHOWING';
     const colour = f.color ?? '#ffd890';

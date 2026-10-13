@@ -1,5 +1,5 @@
 /**
- * An autopilot for the sets. It plans its own way through — tile by tile,
+ * An autopilot for the stops. It plans its own way through — tile by tile,
  * over floor it can roll onto, down drops it can survive, across on the
  * dollies and trams, never onto live floor — fetches the passes before the
  * border gates and the snow globes behind the breakaways, running at a
@@ -7,7 +7,7 @@
  * with the same push the controls give. It waits for sandbags to go up,
  * effects to die down and lifts to come, and whoever it runs into, it runs
  * into, as a player does. If it can get Rock to his mark in one piece, a
- * person can: the tests hold every set to that.
+ * person can: the tests hold every stop to that.
  */
 
 import * as GFX from '../../src/vendor/gfx/index.js';
@@ -240,7 +240,7 @@ function waypoints(gig, moves, from) {
 }
 
 /**
- * Drive set `index` to Rock's mark (picking up the passports and snow globes on the way, or with `everything`, every last thing). Returns whether it got there, how
+ * Drive stop `index` to the stage door (picking up the passports and snow globes on the way, or with `everything`, every last thing). Returns whether it got there, how
  * long it took, every way Rock was lost or hurt, the people he ran into, and
  * the gig as it came out.
  */

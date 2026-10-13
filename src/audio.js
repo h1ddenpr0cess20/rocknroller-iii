@@ -362,7 +362,7 @@ export function createAudio() {
 
     /**
      * Starts the score for `venue` (it plays the theme its look asks for, at
-     * the set's tempo) in step with `gig`'s clock.
+     * the stop's tempo) in step with `gig`'s clock.
      */
     startMusic(venue, { gig = null } = {}) {
       wantTitle = false;

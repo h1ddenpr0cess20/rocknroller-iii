@@ -1,10 +1,10 @@
 /**
- * A set as text, for laying one out: `node scripts/map.js 3` (sets count
+ * A stop as text, for laying one out: `node scripts/map.js 3` (stops count
  * from 1), `--heights` for the floor heights instead of what is where, and
  * `--overlaps` to say where one piece was dug over another.
  *
- *   .  floor     #  wall      ~  electrified floor      E  Rock's mark     S  start
- *   ^  pyro or steam      X  a drop      |  closed set      /  breakaway      L  lift
+ *   .  floor     #  wall      ~  electrified floor      E  stage door      S  start
+ *   ^  pyro or steam      X  a drop      |  passport control      /  breakaway      L  lift
  *   k  passport  $  picks or a suitcase      +  gaffer tape      !  lighter      G  snow globe
  *   m  someone walking     o  someone crawling or flying      s  sticky     >  belt     O  bumper
  */
@@ -17,7 +17,7 @@ const args = process.argv.slice(2);
 const heights = args.includes('--heights');
 const n = Number(args.find((a) => /^\d+$/.test(a)) ?? 1);
 if (!(n >= 1 && n <= VENUES.length)) {
-  console.error(`sets are 1 to ${VENUES.length}`);
+  console.error(`stops are 1 to ${VENUES.length}`);
   process.exit(1);
 }
 // Floor laid where there was floor already: two pieces dug over each other.

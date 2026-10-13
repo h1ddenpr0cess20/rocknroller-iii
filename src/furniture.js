@@ -2,8 +2,8 @@ import { canvas, cached, texture, tiled } from './textures.js';
 
 /**
  * More of what venues are furnished with (see decor.js, which these join):
- * a studio's mixing desk and rack of gear, the opera house's velvet seats and
- * grand piano, the festival's hay bales, portable loos and tents.
+ * a mixing desk and a rack of gear, an arena's seats, pianos grand and
+ * upright, hay bales, portable loos and tents.
  */
 
 const std = (GFX, hex, o = {}) => new GFX.MeshStandardMaterial({ color: new GFX.Color(hex), roughness: 0.6, ...o });
@@ -145,8 +145,9 @@ function upright(GFX, { w = 2, d = 1, rise = 0.88, venue }) {
   if (d > w) inner.rotation.y = Math.PI / 2;
   group.add(inner);
   const long = Math.min(1.7, Math.max(w, d) * 0.86), tall = rise + 0.42;
-  const western = venue?.look?.genre === 'Western';
-  const body = western ? std(GFX, '#5a3420', { roughness: 0.4 }) : new GFX.MeshPhysicalMaterial({ color: new GFX.Color('#0e0e12'), roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08 });
+  // In Spain, an old one in wood; everywhere else, black and glossy.
+  const wooden = venue?.look?.country === 'Spain';
+  const body = wooden ? std(GFX, '#5a3420', { roughness: 0.4 }) : new GFX.MeshPhysicalMaterial({ color: new GFX.Color('#0e0e12'), roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08 });
   const add = (mesh, x, y, z) => inner.add(shadowed(place(mesh, x, y, z)));
   add(new GFX.Mesh(new GFX.BoxGeometry(long, tall, 0.46), body), 0, tall / 2, -0.14);
   add(new GFX.Mesh(new GFX.BoxGeometry(long + 0.04, 0.04, 0.5), body), 0, tall + 0.02, -0.14);

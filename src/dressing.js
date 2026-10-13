@@ -46,7 +46,7 @@ const X = [0, 0, Math.PI / 2], Z = [Math.PI / 2, 0, 0];
 /** A seeded random source from where a prop stands, so each one is dressed the same every time. */
 const seeded = ({ x = 0, z = 0 }) => random(1 + Math.abs(Math.round(x * 31 + z * 17)));
 
-/** The director's chair: tall, a wooden X-frame each side, black canvas seat and back, a gold name strip across the back. */
+/** A director's chair: tall, a wooden X-frame each side, black canvas seat and back, a gold name strip across the back. */
 function chair(GFX, { rise = 0.9 }) {
   const group = new GFX.Group();
   const k = kit(GFX, group);
@@ -232,10 +232,10 @@ function lamp(GFX, { rise = 1.2 }) {
   return { group };
 }
 
-/** Paint for the cars on the lot, by the picture they are parked in. */
+/** Paint for the cars, by the country they are parked in: Tokyo's black cabs and green ones, New York's yellow. */
 const PAINT = {
-  Noir: ['#141418', '#2a2a30', '#3a3a40'],
-  Action: ['#c81c24', '#e8e4dc', '#1a2a5a', '#16161a'],
+  Japan: ['#16161a', '#2a5a3a', '#e8e4dc'],
+  USA: ['#f0c020'],
   default: ['#2a8a8a', '#e8d8b0', '#8a1a2a', '#1a3a6a', '#f0c860'],
 };
 
@@ -251,7 +251,7 @@ function sedan(GFX, { w = 2, d = 3, venue, ...spec }) {
   group.add(car);
   const k = kit(GFX, car);
   const L = Math.max(w, d) * 0.92, W = Math.min(Math.min(w, d) * 0.86, 1.3);
-  const colours = PAINT[venue?.look?.genre] ?? PAINT.default;
+  const colours = PAINT[venue?.look?.country] ?? PAINT.default;
   const paint = gloss(GFX, colours[Math.abs(Math.round((spec.x ?? 0) * 7 + (spec.z ?? 0) * 3)) % colours.length]);
   const chrome = metal(GFX, '#e0e4ec', 0.15);
   const tyre = std(GFX, '#121214', { roughness: 0.85 });
@@ -282,8 +282,8 @@ function sedan(GFX, { w = 2, d = 3, venue, ...spec }) {
 
 /**
  * A rolling clothes rail: two uprights on castored feet, a bar across, and
- * the costumes hanging off it on wire hangers. At the premiere it is the
- * coat check, and they are coats.
+ * the costumes hanging off it on wire hangers. In New York it is the
+ * arena's coat check, and they are coats.
  */
 function rail(GFX, { rise = 1.1, venue, ...spec }) {
   const group = new GFX.Group();
@@ -297,7 +297,7 @@ function rail(GFX, { rise = 1.1, venue, ...spec }) {
     for (const z of [-0.22, 0.22]) k.ball(0.03, std(GFX, '#16161a'), [s * 0.44, 0.03, z]);
   }
   k.cyl(0.016, 0.016, 0.92, chrome, [0, bar, 0], { rot: [0, 0, Math.PI / 2] });
-  const coats = venue?.look?.genre === 'Premiere';
+  const coats = venue?.look?.country === 'USA';
   const colours = coats ? ['#16161a', '#3a3036', '#2a2a3a', '#4a3a2a', '#1a1a1e'] : ['#c81c34', '#e8c060', '#2a5ad8', '#16161a', '#3a8a4a', '#d860a8', '#f4f0e8'];
   for (let i = 0; i < 7; i++) {
     const x = -0.36 + i * 0.12;

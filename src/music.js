@@ -617,8 +617,8 @@ export function createBand(ctx, out, noise) {
   /**
    * The lead: a single line, in its voice. The rock voices ('saw', 'square',
    * 'tube') go through the lead's distortion; the rest are played clean: a
-   * sax ('sax', breathy, with a growl), a trumpet ('trumpet', muted for the
-   * noir as 'muted'), a whistle, a theremin sliding from note to note, a
+   * sax ('sax', breathy, with a growl), a trumpet ('trumpet', muted for a
+   * ballad as 'muted'), a whistle, a theremin sliding from note to note, a
    * fiddle, and vibes, struck and shimmering.
    */
   function lead(when, note, length, kind = 'saw', level = 1) {

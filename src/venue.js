@@ -6,7 +6,7 @@ import { World } from './physics.js';
  * channels, with a wall down to whatever is next to it. Where there is no
  * tile there is the dark, and Rock falls into it.
  *
- * On top of that a venue (here, a film set) has walls — tiles raised well
+ * On top of that a venue (here, a stop on the tour) has walls — tiles raised well
  * above the floor beside them, which nothing rolls over — electrified floor
  * (`zap`), Rock's mark (the exit), and everything that lives or lies about
  * in it: the annoying people, sandbags and lighting rigs that drop and

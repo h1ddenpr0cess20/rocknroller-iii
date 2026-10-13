@@ -4,8 +4,8 @@
  * and shadows, and a perspective camera that starts at the isometric corner
  * and can be turned, tilted and zoomed round Rock (`view.js`).
  *
- * The lighting is for a night shoot: a dim wash that takes its colour from
- * the set; a weak key light from high up for the shadows; a lantern over
+ * The lighting is for a night out: a dim wash that takes its colour from
+ * the stop; a weak key light from high up for the shadows; a lantern over
  * Rock; and the real, coloured, flashing lights of the rig's fixtures
  * nearest him (`lightshow.js` drives those; they are lights this
  * stage owns, a fixed number, so no shader ever has to change). Every other

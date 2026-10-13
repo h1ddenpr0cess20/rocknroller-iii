@@ -325,7 +325,7 @@ function belt(GFX) {
   return { map: t, bump: null };
 }
 
-/** Wet asphalt: fine black aggregate, a crack or two, and puddles that shine. The noir's streets, the backlot. */
+/** Wet asphalt: fine black aggregate, a crack or two, and puddles that shine. New York's streets, and London's in the rain. */
 function asphalt(GFX) {
   const n = fractal(131, 6, 4), grit = fractal(137, 48, 2), wet = fractal(139, 3, 3);
   const paint = (relief) => (size) => pixels(size, (u, v) => {
@@ -337,7 +337,7 @@ function asphalt(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-/** Packed dirt: ruts, hoofprints and pebbles. The western's main street. */
+/** Packed dirt: ruts, hoofprints and pebbles. The bull pen and the stables. */
 function dirt(GFX) {
   const a = fractal(149, 4, 5), b = fractal(151, 20, 3);
   const rnd = random(157);
@@ -366,7 +366,7 @@ function grate(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-/** Cobbles: rounded setts in rows, each a little different, dark between. The noir's alleys, the castle yard. */
+/** Cobbles: rounded setts in rows, each a little different, dark between. Old town streets all over Europe. */
 function cobble(GFX) {
   const n = fractal(167, 8, 3);
   const rnd = random(173);
@@ -480,10 +480,10 @@ export const FLOORS = { concrete, planks, checker, carpet, plate, grass, panels,
 
 // ———————————————————————————————————————————————————————————— walls
 
-/** Titles, for the posters on the walls: the pictures the studio has made, and the one Rock is making. */
-const PICTURES = ['LIKE A ROCK', 'HOLLYWOOD NIGHTS', 'THE MALTESE PEBBLE', 'A FISTFUL OF GRAVEL', 'STONE COLD', 'GONE WITH THE GRIND', 'ROCKY ROAD', 'THE BIG ROLL', 'GRANITE', 'SLAB', 'NIGHT MOVES', 'CITIZEN QUARRY'];
+/** Names, for the gig posters on the walls: the tour, and the bands on the bill with it. */
+const BILLS = ['WORLD TOUR', 'BOULDER DASH', 'THE PEBBLES', 'LANDSLIDE', 'BEDROCK', 'THE SEDIMENTS', 'MAGMA', 'SCREE', 'GRANITE', 'SLAB', 'TECTONIC', 'HARD PLACE'];
 
-/** Bricks, a tile wide and a tile high: four courses, each set half a brick over from the last. With `posters`, papered with movie posters. */
+/** Bricks, a tile wide and a tile high: four courses, each set half a brick over from the last. With `posters`, papered with gig posters. */
 function brick(GFX, { posters = false } = {}) {
   const size = 256;
   const rnd = random(5);
@@ -542,8 +542,8 @@ function brick(GFX, { posters = false } = {}) {
       ctx.fillRect(w / 2 - 13, -h / 2 - 3, 18, 8);
       ctx.restore();
     };
-    flyer(10, 18, 104, 138, pick(['#c8302a', '#2a4a8a', '#e8a020']), '#ffffff', 'LIKE A ROCK', 'sun', -0.05);
-    flyer(134, 96, 112, 142, pick(['#1a1a20', '#3a5a3a', '#6a2a6a']), '#f0d070', pick(PICTURES.slice(1)), 'bolt', 0.04);
+    flyer(10, 18, 104, 138, pick(['#c8302a', '#2a4a8a', '#e8a020']), '#ffffff', 'ROCK · LIVE', 'sun', -0.05);
+    flyer(134, 96, 112, 142, pick(['#1a1a20', '#3a5a3a', '#6a2a6a']), '#f0d070', pick(BILLS), 'bolt', 0.04);
     flyer(150, 8, 80, 78, '#f5f0e6', '#d9232f', 'SOON', 'rings', 0.06);
   };
   return {
@@ -676,7 +676,7 @@ function fence(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-/** Clapboard: overlapping boards laid across, each shadowed under its lip, nailed at the studs. The western's false fronts. */
+/** Clapboard: overlapping boards laid across, each shadowed under its lip, nailed at the studs. Huts and boathouses. */
 function clapboard(GFX) {
   const grain = fractal(181, 3, 4);
   const paint = (relief) => (size) => {
@@ -695,7 +695,7 @@ function clapboard(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-/** Stucco: rough plaster, trowel marks, a hairline crack, a darker band at the foot. The backlot's façades. */
+/** Stucco: rough plaster, trowel marks, a hairline crack, a darker band at the foot. Paris and Seville, Venice and Rio. */
 function stucco(GFX) {
   const a = fractal(191, 10, 4), b = fractal(193, 3, 3);
   const paint = (relief) => (size) => pixels(size, (u, v) => {
@@ -750,7 +750,7 @@ function stone(GFX) {
   return pair(GFX, 256, paint(false), paint(true));
 }
 
-/** Striped wallpaper over dark wainscot, a dado rail between: the noir's offices and hotel corridors. */
+/** Striped wallpaper over dark wainscot, a dado rail between: hotel corridors and palazzo halls. */
 function wallpaper(GFX) {
   const n = fractal(229, 6, 2);
   const paint = (relief) => (size) => pixels(size, (u, v) => {

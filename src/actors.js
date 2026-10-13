@@ -28,7 +28,7 @@ const STILL = new Set(['pick', 'suitcase']);
 /** How long a foe that has taken a knock can't be hit again, and how hard a knock throws it. */
 const GUARD = Object.freeze({ foe: 0.9, boss: 1.5 });
 
-/** The Director's lunge and the Mogul's stomp: how often, from how far, how hard. */
+/** The Yeti's lunge and the Yokozuna's stomp: how often, from how far, how hard. */
 const LUNGE = Object.freeze({ every: 4.6, reach: 7, crouch: 0.55, rush: 0.55, winded: 1.5 });
 const STOMP = Object.freeze({ every: 4.2, reach: 4.5, windup: 0.6, throw: 9 });
 

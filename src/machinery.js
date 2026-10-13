@@ -371,7 +371,8 @@ export function createPyroMesh(GFX, { x, z, w, d, venue }) {
  * under a striped canopy), a log raft (`raft`), a mine cart (`cart`), a
  * flying saucer (`saucer`), a black stage riser with gaffer tape round its
  * edge (`riser`), a raft of upraised arms (`crowd`: the fans carry Rock
- * across), or a forklift pallet on a pair of forks.
+ * across), or a forklift pallet on a pair of forks; and the rides of the
+ * tour, from travel.js: gondolas, cable cars, feluccas, floats and the rest.
  */
 export function createLiftMesh(GFX, { w, d, thickness, style, lift = null }) {
   if (RIDES[style]) {

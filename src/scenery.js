@@ -3,7 +3,7 @@ import { canvas, texture, beltTexture, cached, floorTexture, wallTexture } from 
 import { createZapMaterial } from './zap.js';
 
 /**
- * The set as it is drawn: floors (a layer for each sort — concrete, stage
+ * The stop as it is drawn: floors (a layer for each sort — concrete, stage
  * planks, lino, carpet, wet asphalt, dirt, grating, cobbles), walls falling
  * away into the dark, belts with their chevrons running, the electrified
  * floor (zap.js), and Rock's mark at the end — a frame with a lit sign over
