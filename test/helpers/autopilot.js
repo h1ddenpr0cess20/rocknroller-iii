@@ -240,12 +240,14 @@ function waypoints(gig, moves, from) {
 }
 
 /**
- * Drive stop `index` to the stage door (picking up the passports and snow globes on the way, or with `everything`, every last thing). Returns whether it got there, how
- * long it took, every way Rock was lost or hurt, the people he ran into, and
- * the gig as it came out.
+ * The autopilot at the wheel of `gig`, a physics step at a time: `next()` is
+ * the push (and whether to rev) for the step about to be taken, `saw(out)` is
+ * told how the step went, and `stuck` says where it has got stuck, if it has.
+ * It picks up the passports and snow globes on the way to the stage door,
+ * or with `everything` every last thing. `drive()` below plays a stop through with it;
+ * the game takes it in as `debug.pilot`, so the reels can be filmed.
  */
-export function drive(index, { limit = 1200, sample = null, globes = true, duel = true, from = null, everything = false } = {}) {
-  const gig = createGig(GFX, index);
+export function createPilot(gig, { globes = true, duel = true, from = null, everything = false } = {}) {
   const venue = gig.venue;
   const net = graph(venue);
   openFloor = (x, z) => venue.cell(x, z)?.kind === 'floor';
@@ -260,7 +262,6 @@ export function drive(index, { limit = 1200, sample = null, globes = true, duel 
     for (const p of gig.actors.pickups) if (p.kind === 'pass') p.taken = true;
   }
   const b = gig.ball;
-  const losses = [], harms = [], hits = [];
 
   const exits = [];
   for (let z = 0; z < venue.rows; z++) for (let x = 0; x < venue.cols; x++) if (venue.cell(x, z)?.kind === 'exit') exits.push([x, z]);
@@ -296,96 +297,141 @@ export function drive(index, { limit = 1200, sample = null, globes = true, duel 
     wp = 0;
     return moves !== null;
   };
-  const result = (finished, extra = {}) => ({ finished, time: t, losses, harms, hits, gig, ...extra });
-  let t = 0;
-  if (!replan()) return result(false, { stuck: 'no way to the mark' });
 
-  let down = 0;
+  let stuck = replan() ? null : 'no way to the mark';
   let still = 0;
   let fight = null;
   let target = goal();
+  /** Rock was lost off the edge (or flattened, or zapped): once he is put back, plan the way again. */
+  let lost = false;
+  /** What the step now being taken is waiting on, and the boss it is charging. */
+  let waiting = false, boss = null;
 
+  return {
+    get stuck() { return stuck; },
+    /** Which waypoint of its route it is heading for. */
+    get wp() { return wp; },
+
+    /** The push, as the controls would give it (`[x, z]` along the ground), and whether to rev, for the next step. */
+    next() {
+      if (stuck) return { push: [0, 0], rev: false };
+      if (lost) { lost = false; replan(); }
+      let w, dx, dz, d;
+      for (;;) {
+        if (route.length === 0 || wp >= route.length) {
+          const next = goal();
+          if (!replan() || route.length === 0) {
+            stuck = { at: here(), goal: next };
+            return { push: [0, 0], rev: false };
+          }
+          target = next;
+        }
+        w = route[wp];
+        let [tx, tz] = w.at;
+        if (w.on !== undefined) {
+          const box = gig.actors.lifts[w.on].box;
+          tx = box.min[0] + w.at[0];
+          tz = box.min[2] + w.at[1];
+        }
+        dx = tx - b.x; dz = tz - b.z;
+        d = Math.hypot(dx, dz);
+        waiting = Boolean(w.until && !w.until(gig));
+        if (!waiting && d < (w.radius ?? 0.5)) { wp++; continue; }
+        break;
+      }
+
+      const speed = w.speed ?? 3.8;
+      const want = waiting || w.stop ? Math.min(speed, d * 2.5) : speed;
+      const vx = d > 1e-3 ? (dx / d) * want : 0;
+      const vz = d > 1e-3 ? (dz / d) * want : 0;
+      let px = (vx - b.vx) * 0.9;
+      let pz = (vz - b.vz) * 0.9;
+      if (w.charge && d > 1e-3) {
+        // Charging: full throttle along the way it is going, and only a little steering across it.
+        const ux = dx / d, uz = dz / d;
+        const along = Math.max(0, px * ux + pz * uz, b.vx * ux + b.vz * uz < want ? 1 : 0);
+        const cross = Math.max(-0.35, Math.min(0.35, px * -uz + pz * ux));
+        px = ux * along + -uz * cross;
+        pz = uz * along + ux * cross;
+      }
+      // A boss in the room: back off for a run-up, then charge it, and again.
+      let rev = false;
+      boss = duel ? gig.actors.foes.find((f) => f.stats.boss && !f.dead && Math.hypot(f.x - b.x, f.z - b.z) < 20 && Math.abs(f.y - b.y) < 2.5 && open(b, f)) ?? null : null;
+      if (boss) {
+        fight ??= { entry: [b.x, b.z], mode: 'back' };
+        const bd = Math.hypot(boss.x - b.x, boss.z - b.z);
+        const ed = Math.hypot(fight.entry[0] - b.x, fight.entry[1] - b.z);
+        if (fight.mode === 'back' && (ed < 1.5 || bd > 13)) fight.mode = 'charge';
+        if (fight.mode === 'charge') {
+          px = (boss.x - b.x) / bd;
+          pz = (boss.z - b.z) / bd;
+          rev = bd > 2.5;
+        } else {
+          const ex = fight.entry[0] - b.x, ez = fight.entry[1] - b.z, el = Math.hypot(ex, ez) || 1;
+          px = (ex / el) * 1;
+          pz = (ez / el) * 1;
+        }
+      } else if (fight) {
+        fight = null;
+        replan();
+      }
+      const l = Math.hypot(px, pz);
+      if (l > 1) { px /= l; pz /= l; }
+      return { push: [px, pz], rev };
+    },
+
+    /** How the step just taken went (`stepGig`'s answer). */
+    saw(out) {
+      if (stuck) return;
+      if (boss && fight && out.hits.some((h) => h.foe === boss)) fight.mode = 'back';
+      if (Math.hypot(b.vx, b.vz) < 0.05 && !waiting) still += STEP; else still = 0;
+      if (still > 20) { stuck = { at: here(), wp, of: route.length, goal: target }; return; }
+      if (out.outcome === 'exit' || out.outcome === 'shattered') return;
+      for (const p of out.picked) if (p.kind === 'pass') replan();
+      if (out.broke.length) replan();
+      if (out.outcome) lost = true;
+    },
+  };
+}
+
+/**
+ * Drive stop `index` to the stage door (picking up the passports and snow globes on the way, or with `everything`, every last thing). Returns whether it got there, how
+ * long it took, every way Rock was lost or hurt, the people he ran into, and
+ * the gig as it came out.
+ */
+export function drive(index, { limit = 1200, sample = null, ...options } = {}) {
+  const gig = createGig(GFX, index);
+  const pilot = createPilot(gig, options);
+  const b = gig.ball;
+  const losses = [], harms = [], hits = [];
+  const here = () => [Math.floor(b.x), Math.floor(b.z)];
+  let t = 0;
+  const result = (finished, extra = {}) => ({ finished, time: t, losses, harms, hits, gig, ...extra });
+  if (pilot.stuck) return result(false, { stuck: pilot.stuck });
+
+  let down = 0;
   while (t < limit) {
     t += STEP;
     if (down > 0) {
       down -= STEP;
       stepGig(gig, [0, 0], STEP, { live: false, moving: false });
-      if (down <= 0) { putBack(gig); replan(); }
+      if (down <= 0) putBack(gig);
       continue;
     }
-    if (route.length === 0 || wp >= route.length) {
-      const next = goal();
-      if (!replan() || route.length === 0) return result(false, { stuck: { at: here(), goal: next } });
-      target = next;
-    }
+    const { push, rev } = pilot.next();
+    if (pilot.stuck) return result(false, { stuck: pilot.stuck });
 
-    const w = route[wp];
-    let [tx, tz] = w.at;
-    if (w.on !== undefined) {
-      const box = gig.actors.lifts[w.on].box;
-      tx = box.min[0] + w.at[0];
-      tz = box.min[2] + w.at[1];
-    }
-    const dx = tx - b.x, dz = tz - b.z;
-    const d = Math.hypot(dx, dz);
-    const waiting = w.until && !w.until(gig);
-    if (!waiting && d < (w.radius ?? 0.5)) {
-      wp++;
-      continue;
-    }
-
-    const speed = w.speed ?? 3.8;
-    const want = waiting || w.stop ? Math.min(speed, d * 2.5) : speed;
-    const vx = d > 1e-3 ? (dx / d) * want : 0;
-    const vz = d > 1e-3 ? (dz / d) * want : 0;
-    let px = (vx - b.vx) * 0.9;
-    let pz = (vz - b.vz) * 0.9;
-    if (w.charge && d > 1e-3) {
-      // Charging: full throttle along the way it is going, and only a little steering across it.
-      const ux = dx / d, uz = dz / d;
-      const along = Math.max(0, px * ux + pz * uz, b.vx * ux + b.vz * uz < want ? 1 : 0);
-      const cross = Math.max(-0.35, Math.min(0.35, px * -uz + pz * ux));
-      px = ux * along + -uz * cross;
-      pz = uz * along + ux * cross;
-    }
-    // A boss in the room: back off for a run-up, then charge it, and again.
-    let rev = false;
-    const boss = duel ? gig.actors.foes.find((f) => f.stats.boss && !f.dead && Math.hypot(f.x - b.x, f.z - b.z) < 20 && Math.abs(f.y - b.y) < 2.5 && open(b, f)) : null;
-    if (boss) {
-      fight ??= { entry: [b.x, b.z], mode: 'back' };
-      const bd = Math.hypot(boss.x - b.x, boss.z - b.z);
-      const ed = Math.hypot(fight.entry[0] - b.x, fight.entry[1] - b.z);
-      if (fight.mode === 'back' && (ed < 1.5 || bd > 13)) fight.mode = 'charge';
-      if (fight.mode === 'charge') {
-        px = (boss.x - b.x) / bd;
-        pz = (boss.z - b.z) / bd;
-        rev = bd > 2.5;
-      } else {
-        const ex = fight.entry[0] - b.x, ez = fight.entry[1] - b.z, el = Math.hypot(ex, ez) || 1;
-        px = (ex / el) * 1;
-        pz = (ez / el) * 1;
-      }
-    } else if (fight) {
-      fight = null;
-      replan();
-    }
-    const l = Math.hypot(px, pz);
-    if (l > 1) { px /= l; pz /= l; }
-
-    const out = stepGig(gig, [px, pz], STEP, { rev });
-    if (boss && fight && out.hits.some((h) => h.foe === boss)) fight.mode = 'back';
+    const out = stepGig(gig, push, STEP, { rev });
+    pilot.saw(out);
     sample?.(gig);
-    if (Math.hypot(b.vx, b.vz) < 0.05 && !waiting) still += STEP; else still = 0;
-    if (still > 20) return result(false, { stuck: { at: here(), wp, of: route.length, goal: target } });
+    if (pilot.stuck) return result(false, { stuck: pilot.stuck });
 
     if (out.outcome === 'exit') return result(true);
     for (const h of out.hits) hits.push({ kind: h.foe.kind, grade: h.grade, speed: +h.speed.toFixed(1), damage: h.damage });
     if (out.hurt && out.hurt.how !== 'foe') harms.push({ how: out.hurt.how, at: here(), time: +t.toFixed(1) });
-    for (const p of out.picked) if (p.kind === 'pass') replan();
-    if (out.broke.length) replan();
     if (out.outcome === 'shattered') return result(false, { stuck: 'shattered' });
     if (out.outcome) {
-      losses.push({ how: out.outcome, at: [b.x.toFixed(1), b.y.toFixed(1), b.z.toFixed(1)], wp, time: t.toFixed(1) });
+      losses.push({ how: out.outcome, at: [b.x.toFixed(1), b.y.toFixed(1), b.z.toFixed(1)], wp: pilot.wp, time: t.toFixed(1) });
       down = 1.7;
     }
   }
