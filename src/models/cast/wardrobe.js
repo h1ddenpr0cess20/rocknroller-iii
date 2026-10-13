@@ -1,6 +1,6 @@
 /**
  * The costume department: hats and glasses that sit on the shared head
- * (humanoid.js), so the people of the pictures can share them. Each adds
+ * (humanoid.js), so the people of the tour can share them. Each adds
  * its shapes to the sculpt `s`, in the 'kit' part, on the head bone. The
  * head is about 0.1 across round (0, 0.67, 0); its crown is at about 0.775.
  */

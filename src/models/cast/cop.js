@@ -2,10 +2,10 @@ import { cloth, person } from './person.js';
 import { cap, moustache } from './wardrobe.js';
 
 /**
- * The Flatfoot: a beat cop off a back lot New York, in a double-breasted
- * blue coat with two rows of brass buttons, a peaked cap with a badge, a
- * star on his chest, a belt and a nightstick he taps in his palm. Has a
- * hunch. About 0.95 tiles tall and stout.
+ * The Flatfoot: a beat cop of the old school on Broadway, in a
+ * double-breasted blue coat with two rows of brass buttons, a peaked cap
+ * with a badge, a star on his chest, a belt and a nightstick he taps in
+ * his palm. Has a hunch. About 0.95 tiles tall and stout.
  */
 
 const blue = cloth('#1e2a4e', '#101830');

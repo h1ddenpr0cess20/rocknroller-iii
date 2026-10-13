@@ -2,9 +2,9 @@
  * A turntable for the models (models.html): one or a row of them on a
  * stage floor under stage light, to look at while sculpting. Not part of
  * the game. ?m=rat,orc&clip=walk&yaw=0.6&pitch=0.3&dist=1.4&time=0
- * (time fixed for a still; no time and it plays; detail=0.5 for the
- * board's mesh; ty=0.6 to look at that height). A model not yet in the cast
- * is loaded from its file.
+ * (time fixed for a still, t how far into the clip; no time and it plays;
+ * detail=0.5 for the board's mesh; ty=0.6 to look at that height). A model
+ * not yet in the cast is loaded from its file.
  */
 
 import * as GFX from '../vendor/gfx/index.js';
@@ -54,7 +54,7 @@ scene.add(floor);
 scene.background = null;
 
 let models = [];
-const state = { look: params.has('ty') ? Number(params.get('ty')) : null, clip: params.get('clip') ?? 'idle', t: 0, yaw: Number(params.get('yaw') ?? 0.6), pitch: Number(params.get('pitch') ?? 0.32), dist: Number(params.get('dist') ?? 1), time: params.has('time') ? Number(params.get('time')) : null, playing: !params.has('time') };
+const state = { look: params.has('ty') ? Number(params.get('ty')) : null, clip: params.get('clip') ?? 'idle', t: Number(params.get('t') ?? 0), yaw: Number(params.get('yaw') ?? 0.6), pitch: Number(params.get('pitch') ?? 0.32), dist: Number(params.get('dist') ?? 1), time: params.has('time') ? Number(params.get('time')) : null, playing: !params.has('time') };
 
 /** A definition by name: from the cast, or straight from its file while it is being sculpted. */
 const defs = new Map();
@@ -101,7 +101,7 @@ for (const clip of ['idle', 'walk', 'attack', 'hit', 'cast', 'ko', 'win']) {
 let clock = 0;
 function frame(dt) {
   clock += dt;
-  state.t += dt;
+  if (!params.has('t')) state.t += dt;
   const time = state.time ?? clock;
   const t = state.playing ? state.t % 1.6 : state.t;
   models.forEach((m, i) => {

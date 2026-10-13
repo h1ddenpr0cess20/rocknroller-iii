@@ -2,12 +2,13 @@ import { grainy } from '../skins.js';
 import { bones, joints, moveHumanoid, side } from './humanoid.js';
 
 /**
- * The Tin Robot: a man in a costume made out of a boiler, from the picture
- * about the robots. A box of a body with dials and a grille, a tin-can
- * head with two glowing eyes and an aerial, arms and legs of dryer hose,
- * pincers for hands, boots like toasters. Walks as if the joints were
- * rusted, because they are. Beep. Boop. Union break in five. About 1 tile
- * tall.
+ * The Robot Waiter: from the robot restaurant in Shinjuku, which is a man
+ * in a costume made out of a boiler. A box of a body with dials and a
+ * grille, a tin-can head with two glowing eyes and an aerial, arms and
+ * legs of dryer hose, pincers for hands, boots like toasters, and a tray
+ * held out on one pincer with a pot of tea on it. Walks as if the joints
+ * were rusted, because they are. Beep. Boop. Your table is ready. You are
+ * not. About 1 tile tall.
  */
 
 const B = 1.12;
@@ -77,6 +78,14 @@ export default {
       // The face: a grille for a mouth, an aerial with a ball on it.
       for (let i = 0; i < 4; i++) s.box([0, 0.625 + i * 0.01, 0.09], [0.03, 0.003, 0.004], 0.001, { color: '#2a2c30', mat: 'dark', bone: 'head', k: 0.001 });
       s.limb([0.03, 0.74, 0], [0.04, 0.84, 0], 0.004, 0.003, { color: TIN, mat: 'tin', bone: 'head', k: 0.002 });
+      // The tray on the left pincer, and the teapot on it. The forearm is held out level, so what is up for
+      // the tray is forward as sculpted.
+      const h = J.handL, up = (d, x = 0, y = 0) => [h[0] + x, h[1] - 0.03 + y, h[2] + 0.03 + d];
+      s.cylinder(up(0), 0.07, 0.004, { color: '#2a2c30', mat: 'dark', bone: 'handL', k: 0.002, round: 0.003, rot: [Math.PI / 2, 0, 0] });
+      s.sphere(up(0.035), 0.032, { color: '#c8402a', mat: 'glass', bone: 'handL', k: 0.006 });
+      s.limb(up(0.03, 0, -0.03), up(0.05, 0, -0.06), 0.007, 0.005, { color: '#c8402a', mat: 'glass', bone: 'handL', k: 0.003 });
+      s.sphere(up(0.07), 0.008, { color: '#c8402a', mat: 'glass', bone: 'handL', k: 0.002 });
+      s.cylinder(up(0.015, 0.04, 0.03), 0.012, 0.012, { color: '#f4f2ec', mat: 'glass', bone: 'handL', k: 0.002, round: 0.003, rot: [Math.PI / 2, 0, 0] });
     });
     s.part('fine', () => {
       for (const m of [1, -1]) {

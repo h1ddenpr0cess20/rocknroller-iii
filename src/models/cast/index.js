@@ -1,41 +1,69 @@
-import agent from './agent.js';
-import alien from './alien.js';
-import bat from './bat.js';
+import archaeologist from './archaeologist.js';
+import artist from './artist.js';
+import bobby from './bobby.js';
 import bouncer from './bouncer.js';
+import bull from './bull.js';
+import cabbie from './cabbie.js';
+import camel from './camel.js';
+import capoeira from './capoeira.js';
 import cop from './cop.js';
-import cowboy from './cowboy.js';
-import critic from './critic.js';
-import dame from './dame.js';
+import corgi from './corgi.js';
+import cosplayer from './cosplayer.js';
+import croc from './croc.js';
+import cyclist from './cyclist.js';
 import dancer from './dancer.js';
-import director from './director.js';
 import drone from './drone.js';
-import drunk from './drunk.js';
-import extra from './extra.js';
 import fan from './fan.js';
-import gangster from './gangster.js';
-import goon from './goon.js';
-import horse from './horse.js';
+import flamenco from './flamenco.js';
+import footballer from './footballer.js';
+import gent from './gent.js';
+import gondolier from './gondolier.js';
+import guardsman from './guardsman.js';
+import hawker from './hawker.js';
+import hotdog from './hotdog.js';
+import ibex from './ibex.js';
 import influencer from './influencer.js';
-import makeup from './makeup.js';
+import kangaroo from './kangaroo.js';
+import lifeguard from './lifeguard.js';
+import macaw from './macaw.js';
 import mascot from './mascot.js';
-import mogul from './mogul.js';
-import mrbig from './mrbig.js';
+import matador from './matador.js';
+import mime from './mime.js';
 import mummy from './mummy.js';
-import newsie from './newsie.js';
-import pa from './pa.js';
+import ninja from './ninja.js';
+import nonna from './nonna.js';
 import paparazzo from './paparazzo.js';
-import parrot from './parrot.js';
-import pirate from './pirate.js';
+import pigeon from './pigeon.js';
+import pizzaiolo from './pizzaiolo.js';
+import poodle from './poodle.js';
+import punk from './punk.js';
+import rat from './rat.js';
+import reveler from './reveler.js';
 import robot from './robot.js';
+import runner from './runner.js';
+import salaryman from './salaryman.js';
+import sambista from './sambista.js';
+import scarab from './scarab.js';
 import security from './security.js';
-import stuntman from './stuntman.js';
+import skier from './skier.js';
+import snowboarder from './snowboarder.js';
+import stbernard from './stbernard.js';
+import sumo from './sumo.js';
+import superfan from './superfan.js';
+import surfer from './surfer.js';
 import tourist from './tourist.js';
-import usher from './usher.js';
-import zombie from './zombie.js';
+import vendor from './vendor.js';
+import waiter from './waiter.js';
+import yeti from './yeti.js';
+import yodeler from './yodeler.js';
+import yokozuna from './yokozuna.js';
 
 /** Everyone sculpted, by name (see foes.js for who they are). */
 export const CAST = {
-  agent, alien, bat, bouncer, cop, cowboy, critic, dame, dancer, director, drone, drunk, extra, fan,
-  gangster, goon, horse, influencer, makeup, mascot, mogul, mrbig, mummy, newsie, pa, paparazzo,
-  parrot, pirate, robot, security, stuntman, tourist, usher, zombie,
+  archaeologist, artist, bobby, bouncer, bull, cabbie, camel, capoeira, cop, corgi, cosplayer,
+  croc, cyclist, dancer, drone, fan, flamenco, footballer, gent, gondolier, guardsman, hawker,
+  hotdog, ibex, influencer, kangaroo, lifeguard, macaw, mascot, matador, mime, mummy, ninja, nonna,
+  paparazzo, pigeon, pizzaiolo, poodle, punk, rat, reveler, robot, runner, salaryman, sambista,
+  scarab, security, skier, snowboarder, stbernard, sumo, superfan, surfer, tourist, vendor, waiter,
+  yeti, yodeler, yokozuna,
 };

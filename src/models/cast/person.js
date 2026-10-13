@@ -40,6 +40,12 @@ export function shade(hex, k) {
 
 export { mix, joints, skinTone };
 
+/** Sets bone `name`'s turn outright, over whatever the clip gave it: for a pose they hold whatever they are doing. */
+export function hold(k, name, x = 0, y = 0, z = 0) {
+  const r = k.bone(name).rot;
+  r[0] = x; r[1] = y; r[2] = z;
+}
+
 /**
  * `look` has `skin`, `torso`, `sleeve`, `cuff`, `hand`, `legs`, `boot` (each a
  * colour or a colour function); `mats` the material of each (default cloth,

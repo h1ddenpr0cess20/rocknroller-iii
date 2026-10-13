@@ -2,10 +2,11 @@ import { bands } from '../skins.js';
 import { cloth, person } from './person.js';
 
 /**
- * The Studio Tourist: a loud Hawaiian shirt, cargo shorts, socks with
- * sandals, a sun hat at night, a camera round the neck and a map of the lot
- * held open upside down. Paid for the tram. Got off the tram. About 0.9
- * tiles tall.
+ * The Tourist: on the same tour as Rock, as it happens, in every city a
+ * day ahead or a day behind: a loud Hawaiian shirt, cargo shorts, socks
+ * with sandals, a sun hat at night, a camera round the neck and the map of
+ * wherever this is held open upside down. Got off the bus. Cannot find the
+ * bus. About 0.9 tiles tall.
  */
 
 const shirt = bands(1, 0.06, '#ff8a3a', '#ffe14a', 0.5, 0.3);
@@ -25,7 +26,7 @@ export default person({
     after(k, { clip, time, seed }) {
       if (clip === 'ko' || clip === 'hit' || clip === 'attack') return;
       const T = time + seed;
-      // The map held open in front, both hands, the head going from it to the lot and back.
+      // The map held open in front, both hands, the head going from it to the street and back.
       k.turn('armR', -0.8, 0.3, -0.2);
       k.turn('foreR', -1.2, 0, 0);
       k.turn('armL', -0.8, -0.3, 0.2);
