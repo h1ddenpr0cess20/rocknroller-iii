@@ -386,7 +386,7 @@ kbd {
  */
 #view[data-grade="fog"] canvas { filter: saturate(0.72) contrast(0.9) brightness(1.06); }
 #view[data-grade="dusk"] canvas { filter: sepia(0.16) saturate(1.2) contrast(1.04); }
-#view[data-grade="alpine"] canvas { filter: saturate(1.1) brightness(1.05) contrast(1.06) hue-rotate(-4deg); }
+#view[data-grade="alpine"] canvas { filter: saturate(1.15) brightness(0.96) contrast(1.14) hue-rotate(-4deg); }
 #view[data-grade="warm"] canvas { filter: sepia(0.24) saturate(1.25) contrast(1.05) brightness(1.03); }
 #view[data-grade="neon"] canvas { filter: saturate(1.4) contrast(1.1); }
 #view[data-grade="tropical"] canvas { filter: saturate(1.3) contrast(1.04) brightness(1.03); }

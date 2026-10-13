@@ -247,47 +247,86 @@ export const DROPS = { phonebox, piano, flowerpot, snowball, bell, block, vendin
 
 // ———————————————————————————————————————————————— rides
 
-/** A long boat hull under a deck `w` by `d`, along its long side: a box with a raised, pointed end each way. */
-function hull(GFX, group, { w, d, thickness }, colour, { rise = 0.4, beak = 0.6 } = {}) {
-  const long = w >= d, L = long ? w : d, S = long ? d : w;
-  const paint = new GFX.MeshPhysicalMaterial({ color: new GFX.Color(colour), roughness: 0.3, clearcoat: 0.6 });
+/**
+ * A holder that points along the way the ride goes (`lift.to`; along its
+ * long side if it has none), so a boat goes bow first and a train nose
+ * first: +x in the holder is forward. `L` is the deck's length that way,
+ * `S` its width across.
+ */
+function heading(GFX, group, { w, d, lift }) {
+  const [tx = 0, , tz = 0] = lift?.to ?? [];
+  const alongX = tx || tz ? Math.abs(tx) >= Math.abs(tz) : w >= d;
+  const sign = (alongX ? tx : tz) < 0 ? -1 : 1;
   const holder = new GFX.Group();
-  if (!long) holder.rotation.y = Math.PI / 2;
+  holder.rotation.y = alongX ? (sign > 0 ? 0 : Math.PI) : (sign > 0 ? -Math.PI / 2 : Math.PI / 2);
   group.add(holder);
-  holder.add(shadow(new GFX.Mesh(new GFX.BoxGeometry(L * 0.8, thickness * 1.6, S), paint)));
-  for (const e of [-1, 1]) {
-    const end = new GFX.Mesh(new GFX.ConeGeometry(S * 0.5, L * 0.2 + beak, 4), paint);
-    end.rotation.set(0, Math.PI / 4, e * -Math.PI / 2 + e * -rise * 0.4);
-    end.scale.set(1, 1, 0.7);
-    end.position.set(e * (L * 0.4 + (L * 0.2 + beak) / 2 - 0.1), rise * 0.3, 0);
-    holder.add(end);
-  }
-  return { holder, long, L, S, paint };
+  return { holder, L: alongX ? w : d, S: alongX ? d : w };
 }
 
-function gondola(GFX, { w, d, thickness }) {
+/**
+ * A boat: a hull like half an egg under the deck, longer than the deck so
+ * its bow and stern run out past it (into the landings, below their edge,
+ * when it docks), a gunwale round the top, and a deck of planks to roll on.
+ */
+function hull(GFX, group, spec, colour, { deck = '#8a6a42', depth = 0.7, rail = null } = {}) {
+  const { holder, L, S } = heading(GFX, group, spec);
+  const { thickness } = spec;
+  const paint = new GFX.MeshPhysicalMaterial({ color: new GFX.Color(colour), roughness: 0.3, clearcoat: 0.6 });
+  const top = thickness / 2;
+  const body = new GFX.Mesh(new GFX.SphereGeometry(1, 28, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), paint);
+  body.scale.set(L * 0.62, depth, S * 0.5);
+  body.position.y = top - 0.02;
+  holder.add(shadow(body));
+  const gunwale = new GFX.Mesh(new GFX.TorusGeometry(1, 0.05, 6, 40), mat(GFX, rail ?? colour, { roughness: 0.4 }));
+  gunwale.rotation.x = Math.PI / 2;
+  gunwale.scale.set(L * 0.6, S * 0.48, 1);
+  gunwale.position.y = top;
+  holder.add(gunwale);
+  const planks = mat(GFX, deck, { roughness: 0.75 });
+  const n = Math.max(3, Math.round(S * 2.4));
+  for (let i = 0; i < n; i++) {
+    const across = (i / (n - 1) - 0.5) * S * 0.84;
+    const len = L * 1.08 * Math.sqrt(Math.max(0.1, 1 - (across / (S * 0.48)) ** 2));
+    const plank = new GFX.Mesh(new GFX.BoxGeometry(len, thickness, (S * 0.84) / n - 0.02), planks);
+    plank.position.set(0, 0, across);
+    holder.add(shadow(plank));
+  }
+  return { holder, L, S, paint, top };
+}
+
+function gondola(GFX, { w, d, thickness, lift }) {
   const group = new GFX.Group();
-  const { holder, L, S } = hull(GFX, group, { w, d, thickness }, '#0e0e12', { rise: 0.9, beak: 0.5 });
-  const gold = mat(GFX, '#d8b050', { metalness: 1, roughness: 0.3 });
-  const trim = new GFX.Mesh(new GFX.BoxGeometry(L * 0.82, 0.04, S + 0.04), gold);
-  trim.position.y = thickness * 0.5;
-  holder.add(trim);
-  // The ferro at the prow: a steel blade with its six teeth.
+  const { holder, L, S, top } = hull(GFX, group, { w, d, thickness, lift }, '#0e0e12', { deck: '#3a2a1e', depth: 0.6, rail: '#d8b050' });
+  // The prow and the stern curling up, the ferro on the prow: a steel blade with its six teeth.
+  const black = mat(GFX, '#0e0e12', { roughness: 0.3 });
+  for (const e of [-1, 1]) {
+    const neck = new GFX.Mesh(new GFX.BoxGeometry(0.5, 0.12, 0.16), black);
+    neck.position.set(e * (L * 0.62 - 0.1), top + 0.12, 0);
+    neck.rotation.z = e * 0.6;
+    holder.add(neck);
+  }
   const steel = mat(GFX, '#c8ccd4', { metalness: 1, roughness: 0.25 });
-  const ferro = new GFX.Mesh(new GFX.BoxGeometry(0.06, 0.6, 0.02), steel);
-  ferro.position.set(L * 0.5 + 0.55, 0.55, 0);
+  const ferro = new GFX.Mesh(new GFX.BoxGeometry(0.05, 0.62, 0.03), steel);
+  ferro.position.set(L * 0.62 + 0.1, top + 0.45, 0);
   holder.add(ferro);
   for (let i = 0; i < 6; i++) {
-    const tooth = new GFX.Mesh(new GFX.BoxGeometry(0.16, 0.035, 0.02), steel);
-    tooth.position.set(L * 0.5 + 0.63, 0.35 + i * 0.07, 0);
+    const tooth = new GFX.Mesh(new GFX.BoxGeometry(0.14, 0.03, 0.03), steel);
+    tooth.position.set(L * 0.62 + 0.15, top + 0.22 + i * 0.065, 0);
     holder.add(tooth);
   }
-  // The oar, in its forcola at the stern.
-  const oar = new GFX.Mesh(new GFX.CylinderGeometry(0.03, 0.03, 2.4, 6), mat(GFX, '#c8a070'));
-  oar.position.set(-L * 0.4, 0.4, S * 0.45);
-  oar.rotation.z = 0.9;
+  // The oar in its forcola at the stern, leaning out over the water.
+  const forcola = new GFX.Mesh(new GFX.BoxGeometry(0.1, 0.5, 0.1), mat(GFX, '#5a3a20'));
+  forcola.position.set(-L * 0.38, top + 0.25, S * 0.42);
+  holder.add(forcola);
+  const oar = new GFX.Mesh(new GFX.CylinderGeometry(0.025, 0.025, 2.4, 6), mat(GFX, '#c8a070'));
+  oar.position.set(-L * 0.55, top + 0.15, S * 0.62);
+  oar.rotation.set(0.25, 0, 1.15);
   holder.add(oar);
-  return { group, live(time) { group.rotation.z = Math.sin(time * 1.3) * 0.02; } };
+  // A red cushion on a seat in the middle.
+  const seat = new GFX.Mesh(new GFX.BoxGeometry(0.5, 0.12, S * 0.5), mat(GFX, '#8a1a24', { roughness: 0.8 }));
+  seat.position.set(L * 0.3, top + 0.06, 0);
+  holder.add(seat);
+  return { group, live(time) { holder.rotation.x = Math.sin(time * 1.3) * 0.02; } };
 }
 
 function cablecar(GFX, { w, d, thickness, lift }) {
@@ -329,30 +368,39 @@ function cablecar(GFX, { w, d, thickness, lift }) {
   return { group, fixed, live(time) { group.rotation[lift?.to?.[0] ? 'z' : 'x'] = Math.sin(time * 1.1) * 0.03; } };
 }
 
-function bullet(GFX, { w, d, thickness }) {
+function bullet(GFX, { w, d, thickness, lift }) {
   const group = new GFX.Group();
+  const { holder, L, S } = heading(GFX, group, { w, d, lift });
   const white = new GFX.MeshPhysicalMaterial({ color: new GFX.Color('#f4f6f8'), roughness: 0.2, clearcoat: 1 });
   const blue = mat(GFX, '#1a3a9a', { roughness: 0.3 });
-  const long = w >= d, L = long ? w : d, S = long ? d : w;
-  const holder = new GFX.Group();
-  if (!long) holder.rotation.y = Math.PI / 2;
-  group.add(holder);
-  holder.add(shadow(new GFX.Mesh(new GFX.BoxGeometry(L, thickness, S), white)));
-  const skirt = new GFX.Mesh(new GFX.BoxGeometry(L, 0.45, S * 0.96), white);
-  skirt.position.y = -thickness / 2 - 0.22;
-  const stripe = new GFX.Mesh(new GFX.BoxGeometry(L + 0.01, 0.06, S * 0.97), blue);
-  stripe.position.y = -thickness / 2 - 0.12;
-  holder.add(skirt, stripe);
-  // The long nose, at the front.
-  const nose = new GFX.Mesh(new GFX.SphereGeometry(0.5, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), white);
-  nose.scale.set(S * 0.96, 1.6, 0.6);
-  nose.rotation.z = -Math.PI / 2;
-  nose.position.set(L / 2, -0.18, 0);
-  holder.add(nose);
+  const top = thickness / 2, body = 0.7, B = S * 0.92;
+  // A flat car: the deck to roll on, the body under it, a blue stripe along it, the bogies.
+  holder.add(shadow(new GFX.Mesh(new GFX.BoxGeometry(L, thickness, S), mat(GFX, '#9aa0aa', { metalness: 0.6, roughness: 0.4 }))));
+  for (const e of [-1, 1]) {
+    const line = new GFX.Mesh(new GFX.BoxGeometry(L, 0.012, 0.1), mat(GFX, '#ffd23a'));
+    line.position.set(0, top + 0.006, e * (S / 2 - 0.12));
+    holder.add(line);
+  }
+  const shell = new GFX.Mesh(new GFX.BoxGeometry(L, body, B), white);
+  shell.position.y = -top - body / 2;
+  holder.add(shadow(shell));
+  const stripe = new GFX.Mesh(new GFX.BoxGeometry(L + 0.01, 0.08, B + 0.01), blue);
+  stripe.position.y = -top - body * 0.55;
+  holder.add(stripe);
+  for (const x of [-L * 0.3, L * 0.3]) {
+    const bogie = new GFX.Mesh(new GFX.BoxGeometry(0.8, 0.25, B * 0.8), mat(GFX, '#2a2a30'));
+    bogie.position.set(x, -top - body - 0.12, 0);
+    holder.add(bogie);
+  }
+  // The long duck-bill nose, out in front: a squashed half egg, the lamps on it.
+  const nose = new GFX.Mesh(new GFX.SphereGeometry(1, 24, 12, Math.PI / 2, Math.PI), white);
+  nose.scale.set(1.5, (body + thickness) / 2, B / 2);
+  nose.position.set(L / 2, -body / 2, 0);
+  holder.add(shadow(nose));
   const lamp = glowMat(GFX, '#fff4d0');
   for (const e of [-1, 1]) {
     const l = new GFX.Mesh(new GFX.SphereGeometry(0.06, 8, 6), lamp);
-    l.position.set(L / 2 + 0.3, -0.22, e * S * 0.25);
+    l.position.set(L / 2 + 1.15, -body * 0.3, e * B * 0.3);
     holder.add(l);
   }
   return { group };
@@ -385,24 +433,24 @@ function carpet(GFX, { w, d, thickness }) {
   return { group, live(time) { group.rotation.set(Math.sin(time * 1.7) * 0.04, 0, Math.sin(time * 1.3 + 1) * 0.05); group.position.y = Math.sin(time * 2.1) * 0.03; } };
 }
 
-function felucca(GFX, { w, d, thickness }) {
+function felucca(GFX, { w, d, thickness, lift }) {
   const group = new GFX.Group();
-  const { holder, L } = hull(GFX, group, { w, d, thickness }, '#e8dcc0', { rise: 0.5, beak: 0.3 });
+  const { holder, L, top } = hull(GFX, group, { w, d, thickness, lift }, '#e8dcc0', { deck: '#9a7a50', depth: 0.65, rail: '#2a6ab8' });
   const wood = mat(GFX, '#7a5a38');
-  const mast = new GFX.Mesh(new GFX.CylinderGeometry(0.05, 0.06, 3.4, 8), wood);
-  mast.position.set(L * 0.15, 1.7, 0);
+  const mast = new GFX.Mesh(new GFX.CylinderGeometry(0.05, 0.07, 3.2, 8), wood);
+  mast.position.set(L * 0.28, top + 1.6, 0);
   holder.add(mast);
-  // The lateen sail: a great triangle off a long slanted yard.
+  // The lateen sail: a great triangle off a long slanted yard, along the boat.
   const sail = new GFX.Mesh(new GFX.BufferGeometry(), mat(GFX, '#f4f0e4', { roughness: 0.9, side: GFX.DoubleSide }));
-  const v = new Float32Array([L * 0.15, 0.4, 0, -L * 0.45, 0.5, 0, L * 0.5, 3.6, 0]);
+  const v = new Float32Array([L * 0.28, top + 0.5, 0, -L * 0.5, top + 0.6, 0, L * 0.62, top + 3.4, 0]);
   sail.geometry.setAttribute('position', new GFX.BufferAttribute(v, 3));
   sail.geometry.computeVertexNormals();
   holder.add(shadow(sail));
-  const yard = new GFX.Mesh(new GFX.CylinderGeometry(0.03, 0.03, 3.6, 6), wood);
-  yard.position.set(L * 0.02, 2.05, 0);
-  yard.rotation.z = -0.95;
+  const yard = new GFX.Mesh(new GFX.CylinderGeometry(0.03, 0.03, Math.hypot(L * 1.12, 2.8), 6), wood);
+  yard.position.set(L * 0.06, top + 2.0, 0);
+  yard.rotation.z = -Math.atan2(L * 1.12, 2.8);
   holder.add(yard);
-  return { group, live(time) { group.rotation.z = Math.sin(time * 1.1) * 0.025; } };
+  return { group, live(time) { holder.rotation.x = Math.sin(time * 1.1) * 0.025; } };
 }
 
 function float(GFX, { w, d, thickness }) {
@@ -453,24 +501,25 @@ function surfboard(GFX, { w, d, thickness }) {
   return { group, live(time) { group.rotation.set(Math.sin(time * 1.4) * 0.04, 0, Math.sin(time * 1.9) * 0.05); } };
 }
 
-function ferry(GFX, { w, d, thickness }) {
+function ferry(GFX, { w, d, thickness, lift }) {
   const group = new GFX.Group();
-  const { holder, L, S } = hull(GFX, group, { w, d, thickness }, '#1a3a6a', { rise: 0.3, beak: 0.2 });
+  const { holder, L, S, top } = hull(GFX, group, { w, d, thickness, lift }, '#1e5a3a', { deck: '#b89a6a', depth: 0.75, rail: '#f0c020' });
   const white = mat(GFX, '#f4f2ee', { roughness: 0.4 });
+  // White rails down both sides, open at the ends to get on and off.
   for (const e of [-1, 1]) {
-    const rail = new GFX.Mesh(new GFX.BoxGeometry(L * 0.8, 0.04, 0.04), white);
-    rail.position.set(0, thickness / 2 + 0.4, e * (S / 2 - 0.03));
+    const rail = new GFX.Mesh(new GFX.BoxGeometry(L * 0.7, 0.04, 0.04), white);
+    rail.position.set(0, top + 0.4, e * (S * 0.46));
     holder.add(rail);
     for (let k = 0; k < 6; k++) {
       const post = new GFX.Mesh(new GFX.CylinderGeometry(0.02, 0.02, 0.4, 5), white);
-      post.position.set((k / 5 - 0.5) * L * 0.78, thickness / 2 + 0.2, e * (S / 2 - 0.03));
+      post.position.set((k / 5 - 0.5) * L * 0.68, top + 0.2, e * (S * 0.46));
       holder.add(post);
     }
   }
-  const ring = new GFX.Mesh(new GFX.TorusGeometry(0.2, 0.06, 6, 16), mat(GFX, '#e8402a'));
-  ring.position.set(-L * 0.3, thickness / 2 + 0.3, S / 2 - 0.02);
+  const ring = new GFX.Mesh(new GFX.TorusGeometry(0.18, 0.05, 6, 16), mat(GFX, '#e8402a'));
+  ring.position.set(-L * 0.2, top + 0.25, S * 0.47);
   holder.add(ring);
-  return { group, live(time) { group.rotation.z = Math.sin(time * 1.2) * 0.02; } };
+  return { group, live(time) { holder.rotation.x = Math.sin(time * 1.2) * 0.02; } };
 }
 
 export const RIDES = { gondola, cablecar, bullet, carpet, felucca, float, surfboard, ferry };

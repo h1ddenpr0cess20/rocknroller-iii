@@ -392,7 +392,7 @@ function snow(GFX) {
   const n = fractal(401, 4, 4), g = fractal(403, 40, 2);
   const paint = (relief) => (size) => pixels(size, (u, v) => {
     const drift = n(u, v), glint = g(u, v) > 0.82 ? 0.06 : 0;
-    const k = relief ? 0.45 + drift * 0.5 : 0.93 + drift * 0.05 + glint;
+    const k = relief ? 0.35 + drift * 0.65 : 0.78 + drift * 0.16 + glint;
     return grey(Math.round(255 * Math.min(1, k)));
   });
   return pair(GFX, 256, paint(false), paint(true));

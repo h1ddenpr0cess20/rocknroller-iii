@@ -164,11 +164,11 @@ export const THEMES = {
     riff: [[0, 4, 2], [2, 5, 2], [4, 7, 4], [8, 6, 2], [10, 5, 2], [12, 4, 4], [16, 2, 2], [18, 4, 2], [20, 5, 3], [23, 4, 1], [24, 2, 6], [30, 1, 2]],
     lead: 'koto', gain: 1,
   },
-  // Rio: a samba school, the surdos booming, a cavaquinho chopping, the whistle.
+  // Rio: a samba school, the surdos booming, a cavaquinho chopping, a horn over it.
   rio: {
     key: 50, scale: 'major', prog: [0, 0, 9, 9, 2, 2, 7, 7], drums: 'samba', rhythm: 'cavaco', strum: 'samba', bass: 'boom', tone: 'upright', sevenths: true,
     riff: [[0, 4, 1], [2, 5, 1], [3, 4, 2], [6, 2, 2], [8, 4, 3], [11, 2, 1], [12, 1, 4], [16, 2, 1], [18, 4, 1], [19, 5, 2], [22, 4, 2], [24, 2, 4], [28, 0, 4]],
-    lead: 'whistle', gain: 1, drumLevel: 1.3,
+    lead: 'trumpet', gain: 1, drumLevel: 1.3,
   },
   // Sydney: surf rock, twanging at a gallop, a lead picked as fast as it goes, and a didgeridoo under it all.
   sydney: {
@@ -215,6 +215,9 @@ function room(ctx, seconds = 0.9, decay = 3) {
  */
 export const LOOKAHEAD = 4;
 
+/** Where the lead plays, in semitones over the key (a low tonic): two octaves up, in the middle of the band, not over it. */
+const LEAD = 24;
+
 /** The chord on `shift` (semitones above the key) in `theme`'s key: its notes above its root. */
 export function chordOf(theme, shift) {
   const key = KEYS[theme.scale] ?? KEYS.minor;
@@ -249,10 +252,12 @@ export function createBand(ctx, out, noise) {
   limiter.ratio.value = 20;
   limiter.attack.value = 0.001;
   limiter.release.value = 0.08;
-  // A lift on the top end, for the cymbals and the bite of the guitars.
+  // The top end taken down a little and rolled off above the cymbals, so nothing up there is shrill.
   const air = ctx.createBiquadFilter();
-  air.type = 'highshelf'; air.frequency.value = 5000; air.gain.value = 6;
-  bus.connect(air).connect(glue);
+  air.type = 'highshelf'; air.frequency.value = 6000; air.gain.value = -3;
+  const roof = ctx.createBiquadFilter();
+  roof.type = 'lowpass'; roof.frequency.value = 11000; roof.Q.value = 0.5;
+  bus.connect(air).connect(roof).connect(glue);
   bus.connect(verb).connect(wet).connect(glue);
   glue.connect(limiter).connect(out);
 
@@ -285,19 +290,39 @@ export function createBand(ctx, out, noise) {
     g.connect(target);
     return g;
   };
+  /**
+   * A burst of noise through a filter. The filters are shared, one for each
+   * sound of the kit, made once a song: a hit only adds its source and its
+   * envelope (a sweep, `to`, needs a filter of its own).
+   */
+  let filters = new Map();
+  const shared = (type, freq, q) => {
+    const key = `${type} ${freq} ${q}`;
+    if (!filters.has(key)) {
+      const f = ctx.createBiquadFilter();
+      f.type = type; f.frequency.value = freq; f.Q.value = q;
+      f.connect(target);
+      filters.set(key, f);
+    }
+    return filters.get(key);
+  };
   const noiseHit = (when, { freq = 1000, type = 'bandpass', q = 1, level = 0.3, length = 0.1, to = null }) => {
     const s = ctx.createBufferSource();
     s.buffer = noise;
-    const f = ctx.createBiquadFilter();
-    f.type = type;
-    f.frequency.setValueAtTime(freq, when);
-    if (to) f.frequency.exponentialRampToValueAtTime(to, when + length);
-    f.Q.value = q;
-    const g = voice();
+    const g = ctx.createGain();
     g.gain.setValueAtTime(level * drumLevel, when);
     g.gain.exponentialRampToValueAtTime(0.0001, when + length);
-    s.connect(f).connect(g);
-    s.start(when, Math.random() * 1.5);
+    if (to) {
+      const f = ctx.createBiquadFilter();
+      f.type = type;
+      f.frequency.setValueAtTime(freq, when);
+      f.frequency.exponentialRampToValueAtTime(to, when + length);
+      f.Q.value = q;
+      f.connect(target);
+      g.connect(f);
+    } else g.connect(shared(type, freq, q));
+    s.connect(g);
+    s.start(when, Math.random() * 0.4);
     s.stop(when + length + 0.05);
   };
 
@@ -309,12 +334,12 @@ export function createBand(ctx, out, noise) {
     const o = osc('sine', 150, when, end, g);
     o.frequency.exponentialRampToValueAtTime(48, when + 0.09);
     // The beater's click on top.
-    noiseHit(when, { freq: 3500, type: 'highpass', level: 0.3 * level / drumLevel, length: 0.014 });
+    noiseHit(when, { freq: 3000, type: 'highpass', q: 0.7, level: 0.12 * level / drumLevel, length: 0.012 });
   }
   function snare(when, level = 1) {
-    noiseHit(when, { freq: 2000, type: 'bandpass', q: 0.7, level: 0.55 * level, length: 0.18 });
-    // The wires: bright, and as long as the crack.
-    noiseHit(when, { freq: 5500, type: 'highpass', level: 0.36 * level, length: 0.15 });
+    noiseHit(when, { freq: 1800, type: 'bandpass', q: 0.7, level: 0.55 * level, length: 0.17 });
+    // The wires, under the crack.
+    noiseHit(when, { freq: 4500, type: 'highpass', q: 0.7, level: 0.18 * level, length: 0.13 });
     const g = voice();
     const end = env(g, when, 0.42 * level * drumLevel, 0.001, 0.01, 0.11);
     const o = osc('triangle', 230, when, end, g);
@@ -329,16 +354,16 @@ export function createBand(ctx, out, noise) {
     for (let i = 0; i < 3; i++) noiseHit(when + i * 0.011, { freq: 1500, type: 'bandpass', q: 1.2, level: 0.28 * level, length: 0.07 });
   }
   function hat(when, level = 1, open = false) {
-    noiseHit(when, { freq: 7000, type: 'highpass', q: 0.7, level: 0.55 * level, length: open ? 0.32 : 0.05 });
+    noiseHit(when, { freq: 7000, type: 'highpass', q: 0.7, level: 0.3 * level, length: open ? 0.28 : 0.04 });
   }
   /** A ride cymbal: a ping with a long shimmer under it. */
   function ride(when, level = 1) {
-    noiseHit(when, { freq: 8200, type: 'bandpass', q: 1.4, level: 0.34 * level, length: 0.5 });
-    noiseHit(when, { freq: 5200, type: 'highpass', q: 0.6, level: 0.12 * level, length: 0.9 });
+    noiseHit(when, { freq: 6500, type: 'bandpass', q: 1.4, level: 0.2 * level, length: 0.45 });
+    noiseHit(when, { freq: 5000, type: 'highpass', q: 0.6, level: 0.06 * level, length: 0.8 });
   }
   /** A rim click: a short dry knock. */
   function rim(when, level = 1) {
-    noiseHit(when, { freq: 2600, type: 'bandpass', q: 6, level: 0.5 * level, length: 0.03 });
+    noiseHit(when, { freq: 1700, type: 'bandpass', q: 5, level: 0.4 * level, length: 0.03 });
   }
   function tom(when, pitch = 120, level = 1) {
     const g = voice();
@@ -348,8 +373,8 @@ export function createBand(ctx, out, noise) {
     noiseHit(when, { freq: 900, type: 'bandpass', level: 0.1 * level, length: 0.05 });
   }
   function crash(when, level = 1) {
-    noiseHit(when, { freq: 4200, type: 'highpass', q: 0.5, level: 0.5 * level, length: 1.8 });
-    noiseHit(when, { freq: 8500, type: 'bandpass', q: 0.8, level: 0.3 * level, length: 1.1 });
+    noiseHit(when, { freq: 4000, type: 'highpass', q: 0.5, level: 0.26 * level, length: 1.3 });
+    noiseHit(when, { freq: 7000, type: 'bandpass', q: 0.8, level: 0.12 * level, length: 0.8 });
   }
 
   // ——— the rhythm section.
@@ -411,7 +436,7 @@ export function createBand(ctx, out, noise) {
     const end = env(gain, when, 0.5 * level, 0.002, open ? Math.max(0.05, length * 0.4) : 0.02, open ? 0.5 : 0.08);
     notes.forEach((n, i) => {
       const o = osc(twang ? 'sawtooth' : 'triangle', NOTE(n), when + i * 0.006, end, gain, side ? 4 : -4);
-      if (twang) o.detune.setValueAtTime(-60, when + i * 0.006);
+      if (twang) o.detune.setValueAtTime(-40, when + i * 0.006);
       if (twang) o.detune.linearRampToValueAtTime(0, when + i * 0.006 + 0.05);
     });
   }
@@ -434,8 +459,8 @@ export function createBand(ctx, out, noise) {
     const f = ctx.createBiquadFilter();
     f.type = 'lowpass'; f.Q.value = 1.5;
     f.frequency.setValueAtTime(600, when);
-    f.frequency.exponentialRampToValueAtTime(3200, when + 0.05);
-    f.frequency.exponentialRampToValueAtTime(1400, when + 0.05 + Math.max(0.05, length * 0.5));
+    f.frequency.exponentialRampToValueAtTime(2200, when + 0.05);
+    f.frequency.exponentialRampToValueAtTime(1100, when + 0.05 + Math.max(0.05, length * 0.5));
     const g = voice(0.07 * level);
     f.connect(g);
     const end = env(g, when, 1, 0.03, Math.max(0.03, length * 0.6), 0.12);
@@ -459,9 +484,8 @@ export function createBand(ctx, out, noise) {
     wob.connect(depth);
     for (const n of notes) {
       const a = osc('sine', NOTE(n), when, end, f);
-      const b = osc('square', NOTE(n + 12), when, end, f);
-      const c = osc('sine', NOTE(n + 19), when, end, f);
-      depth.connect(a.detune); depth.connect(b.detune); depth.connect(c.detune);
+      const b = osc('triangle', NOTE(n + 12), when, end, f);
+      depth.connect(a.detune); depth.connect(b.detune);
     }
     wob.start(when); wob.stop(end);
   }
@@ -474,7 +498,7 @@ export function createBand(ctx, out, noise) {
     f.connect(g);
     const short = length < 0.25;
     const end = env(g, when, 1, short ? 0.015 : 0.12, Math.max(0.02, length * (short ? 0.5 : 0.7)), short ? 0.08 : 0.3);
-    for (const n of notes) for (const d of [-8, 0, 8]) osc('sawtooth', NOTE(n), when, end, f, d);
+    for (const n of notes) for (const d of [-7, 7]) osc('sawtooth', NOTE(n), when, end, f, d);
   }
 
   /**
@@ -497,8 +521,8 @@ export function createBand(ctx, out, noise) {
   function pluck(when, note, length, { level = 1, bend = 0, tone = 2400 } = {}) {
     const f = ctx.createBiquadFilter();
     f.type = 'lowpass'; f.Q.value = 2;
-    f.frequency.setValueAtTime(tone * 1.8, when);
-    f.frequency.exponentialRampToValueAtTime(tone * 0.5, when + 0.25);
+    f.frequency.setValueAtTime(tone * 1.3, when);
+    f.frequency.exponentialRampToValueAtTime(tone * 0.45, when + 0.22);
     const g = voice(0.09 * level);
     f.connect(g);
     const amp = ctx.createGain();
@@ -512,17 +536,44 @@ export function createBand(ctx, out, noise) {
     }
   }
 
-  /** A mandolin in tremolo: each note picked over and over, fast, for as long as it is held. */
+  /** A mandolin in tremolo: the notes held, picked over and over, fast (the level chopped by a pick at 13 a second). */
   function mandolin(when, notes, length, level = 1) {
-    const picks = Math.max(1, Math.round(length / 0.06));
-    for (let k = 0; k < picks; k++) for (const n of notes) pluck(when + k * 0.06 + (k % 2) * 0.004, n, 0.05, { level: level * (k === 0 ? 1 : 0.6), tone: 3200 });
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 2200; f.Q.value = 1.2;
+    const g = voice(0.07 * level);
+    f.connect(g);
+    const trem = ctx.createGain();
+    trem.gain.value = 0.6;
+    trem.connect(f);
+    const amp = ctx.createGain();
+    amp.connect(trem);
+    const end = env(amp, when, 1, 0.004, Math.max(0.02, length - 0.06), 0.08);
+    const pick = ctx.createOscillator();
+    pick.type = 'triangle';
+    pick.frequency.value = 13;
+    const depth = ctx.createGain();
+    depth.gain.value = 0.4;
+    pick.connect(depth).connect(trem.gain);
+    pick.start(when); pick.stop(end);
+    notes.forEach((n, i) => {
+      osc('sawtooth', NOTE(n), when, end, amp, i ? 6 : -6);
+      osc('triangle', NOTE(n), when, end, amp);
+    });
   }
 
   /** A nylon-strung guitar, strummed hard and fast with the fingers fanned (a rasgueado), or (`cavaco`) a cavaquinho, small and bright. */
   function nylon(when, notes, length, { level = 1, open = false, cavaco = false } = {}) {
-    const spread = cavaco ? 0.006 : 0.014;
-    notes.forEach((n, i) => pluck(when + i * spread, cavaco ? n + 12 : n, open ? length : length * 0.4, { level: level * (cavaco ? 0.55 : 0.75), tone: cavaco ? 3400 : 1900 }));
-    if (open && !cavaco) noiseHit(when, { freq: 3000, type: 'bandpass', q: 1, level: 0.03, length: 0.04 });
+    const spread = cavaco ? 0.006 : 0.014, tone = cavaco ? 2400 : 1700;
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass'; f.Q.value = 1.5;
+    f.frequency.setValueAtTime(tone * 1.3, when);
+    f.frequency.exponentialRampToValueAtTime(tone * 0.45, when + 0.2);
+    const g = voice(0.07 * level * (cavaco ? 0.8 : 1));
+    f.connect(g);
+    const amp = ctx.createGain();
+    amp.connect(f);
+    const end = env(amp, when, 1, 0.002, 0.01, Math.min(1.1, 0.15 + (open ? length : length * 0.4) * 0.9));
+    notes.forEach((n, i) => osc(cavaco ? 'triangle' : 'sawtooth', NOTE(n), when + i * spread, end, amp, i % 2 ? 4 : -4));
   }
 
   /** A didgeridoo: a low drone that breathes, its mouth shaping it, with a bark now and then. */
@@ -606,6 +657,7 @@ export function createBand(ctx, out, noise) {
   const fresh = () => {
     target = ctx.createGain();
     target.connect(bus);
+    filters = new Map();
     rigs = [rig(-0.6), rig(0.6)];
     leadRig = makeLeadRig();
     return target;
@@ -639,14 +691,14 @@ export function createBand(ctx, out, noise) {
     if (rock) {
       const end = env(gain, when, level, 0.012, Math.max(0.05, length * 0.8), 0.14);
       const type = kind === 'square' ? 'square' : 'sawtooth';
-      leadRig.lp.frequency.setValueAtTime(kind === 'tube' ? 2400 : 3600, when);
+      leadRig.lp.frequency.setValueAtTime(kind === 'tube' ? 2000 : 2600, when);
       const a = osc(type, NOTE(note), when, end, gain, -7);
       const b = osc(type, NOTE(note), when, end, gain, 7);
       vibrato([a, b], 5.2, 14, 0.25).stop(end);
       lastLead = note;
       return;
     }
-    leadRig.lp.frequency.setValueAtTime(kind === 'muted' ? 1800 : kind === 'whistle' || kind === 'theremin' ? 4000 : 3000, when);
+    leadRig.lp.frequency.setValueAtTime(kind === 'muted' ? 1600 : kind === 'whistle' || kind === 'theremin' ? 3000 : 2500, when);
     if (kind === 'accordion') {
       accordion(when, [note], length, 3.2 * level);
       lastLead = note;
@@ -655,7 +707,7 @@ export function createBand(ctx, out, noise) {
     if (kind === 'mandolin' || kind === 'oud' || kind === 'koto' || kind === 'guitar') {
       // Plucked: a mandolin tremolos its long notes; an oud, a koto and a Spanish guitar bend up into theirs.
       if (kind === 'mandolin' && length > 0.25) mandolin(when, [note], length, 2.4 * level);
-      else pluck(when, note, length, { level: 2.6 * level, bend: kind === 'mandolin' ? 0 : kind === 'oud' ? 70 : kind === 'guitar' ? 20 : 45, tone: kind === 'oud' ? 1500 : kind === 'koto' ? 3600 : kind === 'guitar' ? 2200 : 3000 });
+      else pluck(when, note, length, { level: 2.6 * level, bend: kind === 'mandolin' ? 0 : kind === 'oud' ? 70 : kind === 'guitar' ? 20 : 45, tone: kind === 'oud' ? 1400 : kind === 'koto' ? 2200 : kind === 'guitar' ? 1900 : 2200 });
       lastLead = note;
       return;
     }
@@ -713,7 +765,7 @@ export function createBand(ctx, out, noise) {
       // A horn: a sax, breathy and reedy, or a trumpet, bright (or muted, nasal).
       const f = ctx.createBiquadFilter();
       f.type = 'bandpass';
-      f.frequency.setValueAtTime(kind === 'sax' ? 900 : kind === 'muted' ? 1500 : 1800, when);
+      f.frequency.setValueAtTime(kind === 'sax' ? 850 : kind === 'muted' ? 1300 : 1400, when);
       f.Q.value = kind === 'muted' ? 3 : 1.1;
       f.connect(gain);
       const end = env(gain, when, (kind === 'sax' ? 2.2 : 1.8) * level, kind === 'sax' ? 0.04 : 0.025, Math.max(0.04, length * 0.8), 0.14);
@@ -731,24 +783,22 @@ export function createBand(ctx, out, noise) {
   /** A synth arpeggio and pad: saws through a filter that opens and closes. */
   function arp(when, note, length, level = 1) {
     const f = ctx.createBiquadFilter();
-    f.type = 'lowpass'; f.Q.value = 6;
-    f.frequency.setValueAtTime(500, when);
-    f.frequency.exponentialRampToValueAtTime(3200, when + length * 0.6);
-    const g = voice(0.065 * level);
+    f.type = 'lowpass'; f.Q.value = 3;
+    f.frequency.setValueAtTime(450, when);
+    f.frequency.exponentialRampToValueAtTime(1800, when + length * 0.6);
+    const g = voice(0.05 * level);
     f.connect(g);
     const end = env(g, when, 1, 0.003, length * 0.4, length * 0.5);
     osc('sawtooth', NOTE(note), when, end, f, -8);
-    osc('square', NOTE(note + 12), when, end, f, 8);
+    osc('triangle', NOTE(note), when, end, f, 8);
   }
   function pad(when, notes, length, level = 1) {
-    for (const n of notes) {
-      const f = ctx.createBiquadFilter();
-      f.type = 'lowpass'; f.frequency.value = 1100;
-      const g = voice(0.032 * level);
-      f.connect(g);
-      const end = env(g, when, 1, length * 0.3, length * 0.3, length * 0.5);
-      for (const d of [-9, 0, 9]) osc('sawtooth', NOTE(n), when, end, f, d);
-    }
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 1000;
+    const g = voice(0.03 * level);
+    f.connect(g);
+    const end = env(g, when, 1, length * 0.3, length * 0.3, length * 0.5);
+    for (const n of notes) for (const d of [-8, 8]) osc('sawtooth', NOTE(n), when, end, f, d);
   }
 
   let playing = null;
@@ -828,7 +878,6 @@ export function createBand(ctx, out, noise) {
       }
     }
     if (of === 0 && name !== 'intro') crash(when, (loud ? 1 : 0.8) * soft);
-    if (of === 4 && loud) crash(when, 0.7 * soft);
     if (bar % FORM_LENGTH === 0) crash(when, 0.6 * soft);
 
     // ——— bass.
@@ -865,21 +914,22 @@ export function createBand(ctx, out, noise) {
 
     // ——— the rhythm part: the chord, comped, by whoever is playing it.
     const kind = theme.rhythm ?? 'drive';
-    const voicing = chord.map((n) => root + 24 + n);
+    // The chords an octave over the bass, under the lead.
+    const voicing = chord.map((n) => root + 12 + n);
     const comp = (t, len, open, g) => {
       if (kind === 'drive') {
         guitar(t, root + 12, len, { open, side: 0, level: level * g });
         guitar(t + 0.007, root + 12, len, { open, side: 1, level: level * g });
       } else if (kind === 'clean' || kind === 'twang') {
         cleanGuitar(t, voicing, len, { open, side: 0, level: level * g, twang: kind === 'twang' });
-        if (kind === 'twang') cleanGuitar(t + 0.009, voicing.map((n) => n + 12), len, { open, side: 1, level: level * g * 0.6, twang: true });
-      } else if (kind === 'piano') piano(t, open ? [root + 12, ...voicing] : voicing, len, level * g);
+        if (kind === 'twang') cleanGuitar(t + 0.009, voicing, len, { open, side: 1, level: level * g * 0.6, twang: true });
+      } else if (kind === 'piano') piano(t, open ? [root, ...voicing] : voicing, len, level * g);
       else if (kind === 'brass') brass(t, voicing.map((n) => n + 12), len, level * g);
       else if (kind === 'organ') organ(t, voicing, len, level * g);
       else if (kind === 'strings') strings(t, voicing.map((n) => n + 12), len, level * g);
       else if (kind === 'accordion') accordion(t, voicing, len, level * g);
       else if (kind === 'mandolin') mandolin(t, voicing.slice(1).map((n) => n + 12), len, level * g * 0.5);
-      else if (kind === 'nylon') nylon(t, [root + 12, ...voicing], len, { level: level * g, open });
+      else if (kind === 'nylon') nylon(t, [root, ...voicing], len, { level: level * g, open });
       else if (kind === 'cavaco') nylon(t, voicing, len, { level: level * g, open, cavaco: true });
     };
     if (kind === 'none') {
@@ -912,12 +962,13 @@ export function createBand(ctx, out, noise) {
     const riff = (up, g, from = 0) => {
       for (const [s, degree, len] of theme.riff) {
         if (s < from * 16 || s >= from * 16 + 16) continue;
-        lead(at(s - from * 16), theme.key + 36 + up + scale[degree % scale.length], step * len, theme.lead, level * g);
+        lead(at(s - from * 16), theme.key + LEAD + up + scale[degree % scale.length], step * len, theme.lead, level * g);
       }
     };
     if (name === 'chorus') {
-      // The riff, over two bars; the last time round, an octave up.
-      riff(time >= 2 ? 12 : 0, 1, of % 2);
+      // The riff, over two bars; the last time round, doubled an octave under.
+      riff(0, 1, of % 2);
+      if (time >= 2) riff(-12, 0.45, of % 2);
     } else if (name === 'verse' && time >= 1 && of >= 4) {
       // The second verse: the riff answered, down an octave and quiet.
       riff(-12, 0.55, of % 2);
@@ -929,7 +980,7 @@ export function createBand(ctx, out, noise) {
       for (let i = 0; i < 16;) {
         const len = rand() < 0.3 ? 4 : rand() < 0.6 ? 2 : 1;
         degree = Math.max(0, Math.min(scale.length - 1, degree + (rand() < 0.5 ? -1 : 1) * (rand() < 0.25 ? 2 : 1)));
-        lead(at(i), theme.key + 36 + scale[degree] + (rand() < 0.15 ? 12 : 0), step * len, theme.lead, level * 0.95);
+        lead(at(i), theme.key + LEAD + scale[degree], step * len, theme.lead, level * 0.95);
         i += len;
       }
     }
@@ -937,9 +988,9 @@ export function createBand(ctx, out, noise) {
     // ——— synths: an arpeggio round the chord, a pad under it.
     if (theme.arp && name !== 'intro' && name !== 'break') {
       const notes = [0, third, chord[2], 12];
-      for (let i = 0; i < 16; i++) arp(at(i), root + 36 + notes[i % 4] + (i % 8 >= 4 ? 12 : 0), step * 0.9, level * (loud ? 1 : 0.7));
+      for (let i = 0; i < 16; i++) arp(at(i), root + 24 + notes[i % 4], step * 0.9, level * (loud ? 1 : 0.7));
     }
-    if (theme.pad && (loud || name === 'break') && of % 2 === 0) pad(when, [root + 36, root + 36 + third, root + 36 + chord[2]], beat * 8, level);
+    if (theme.pad && (loud || name === 'break') && of % 2 === 0) pad(when, [root + 24, root + 24 + third, root + 24 + chord[2]], beat * 8, level);
   }
 
   return {
@@ -965,7 +1016,8 @@ export function createBand(ctx, out, noise) {
         const behind = Math.floor((now - t0) / barLength) + 1;
         if (state.bar < behind) state.bar = behind;
         while (t0 + state.bar * barLength < now + LOOKAHEAD) {
-          playBar(theme, tempo, state.bar, t0 + state.bar * barLength);
+          // A bar that goes wrong is lost, not the rest of the song after it.
+          try { playBar(theme, tempo, state.bar, t0 + state.bar * barLength); } catch (e) { console.warn('music: bar', state.bar, e); }
           state.bar++;
         }
       };

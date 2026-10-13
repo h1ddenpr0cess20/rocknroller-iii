@@ -93,3 +93,15 @@ test('chords keep their thirds in the key, and the minor keys take a dominant on
   assert.deepEqual(chordOf(THEMES.egypt, 0), [0, 4, 7]);
   assert.deepEqual(chordOf(THEMES.egypt, 1), [0, 4, 7]);
 });
+
+test('no theme asks more of the audio thread than it can play: at most 140 sounds started a bar, and the chords and drums share their filters', () => {
+  for (const [name, theme] of Object.entries(THEMES)) {
+    const ctx = fakeContext();
+    let filters = 0;
+    const make = ctx.createBiquadFilter;
+    ctx.createBiquadFilter = () => { filters++; return make(); };
+    createBand(ctx, ctx.destination, ctx.createBuffer(1, 1000)).sketch(theme, 120, 52);
+    assert.ok(ctx.starts.length / 52 <= 140, `${name} starts ${Math.round(ctx.starts.length / 52)} sounds a bar`);
+    assert.ok(filters / 52 <= 40, `${name} makes ${Math.round(filters / 52)} filters a bar`);
+  }
+});

@@ -21,6 +21,8 @@ const storage = createStorage();
 const wake = () => audio.wake();
 addEventListener('pointerdown', wake);
 addEventListener('keydown', wake);
+// Back to the tab: the sound picks up again if the browser stopped it.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) audio.revive(); });
 
 let game = null;
 let input = null;

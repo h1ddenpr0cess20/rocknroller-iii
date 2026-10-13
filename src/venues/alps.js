@@ -19,9 +19,9 @@ import { across, backTile, barred, branch, flat, loop, toBack, wallTile, wash } 
  */
 
 export const ALPS = {
-  tiles: ['#eef4fa', '#dce6f0', '#8a6a4a', '#c8d6e4'],
-  walls: ['#8a8e96', '#7a7e88', '#6a5a48', '#9aa0aa'],
-  ambient: [1.15, 1.15, 1.2], lamp: '#fff4e0', trap: '#2a3a50', lift: '#c8102e', exit: '#ff3a4a', ice: '#cfe8f8', zapHue: 0.55, vary: 0.05,
+  tiles: ['#d8e2ee', '#c4d2e2', '#8a6a4a', '#b4c6da'],
+  walls: ['#6a707c', '#5c626e', '#5a4a3a', '#7a828e'],
+  ambient: [0.92, 0.95, 1.02], lamp: '#fff4e0', trap: '#2a3a50', lift: '#c8102e', exit: '#ff3a4a', ice: '#cfe8f8', zapHue: 0.55, vary: 0.05,
 };
 
 /** The mountain by day: the sun on the snow, a sky-blue, a hut's red shutters, a lamp's warm gold. */
@@ -34,7 +34,7 @@ export function alps() {
     look: {
       country: 'Switzerland', poster: '#2a6ab8', grade: 'alpine', weather: 'snow', voice: 'alpine', theme: 'alps',
       floor: 'snow', wall: 'cliff', lamp: 'bulb', crusher: 'snowball', lift: 'cablecar', pyro: 'snow', gate: 'border',
-      hemi: ['#eef4ff', '#8a96a8', 1.45], key: '#fff8ee', keyK: 1.6, lantern: '#fff0d8',
+      hemi: ['#d8e4f8', '#4a5468', 0.9], key: '#fff0dc', keyK: 1.25, lantern: '#fff0d8',
       skyColors: ['#2a62c8', '#4a86e0', '#7aaef0', '#b4d4f6', '#e8f2fc'], stars: false, skyline: '#5a6a8a', horizon: 'peaks',
       reflect: PEAK, ceiling: '#a8c4e8',
       rig: { colors: PEAK.slice(0, 2), program: 'static', every: 4 },

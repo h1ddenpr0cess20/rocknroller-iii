@@ -6,12 +6,12 @@ import { across, backTile, barred, branch, flat, toBack, wallTile, wash } from '
  * Stop 7: Tokyo. Neon, and the cherry blossom coming down through it. Out
  * of the station exit onto the great crossing, the signs stacked up the
  * buildings, the ramen stalls steaming on the beat, the salarymen and the
- * cosplayers all crossing at once; up a flight to the karaoke box, where
- * somebody has left the passport by the machine and a snow globe in the
- * private room behind the frosted glass; down a yokocho, an alley of tiny
- * bars, where the vending machines keep coming down off the delivery
- * truck; into the robot restaurant, all lights and lasers, a globe in the
- * kitchen behind the bamboo; out to the bullet train's platform, the train
+ * cosplayers all crossing at once; up a flight to the karaoke box, a snow
+ * globe in the private room behind the frosted glass; down a yokocho, an
+ * alley of tiny bars, where the vending machines keep coming down off the
+ * delivery truck; into the robot restaurant, all lights and lasers, the
+ * passport left on its floor and a globe in the kitchen behind the bamboo;
+ * out to the bullet train's platform, the train
  * out to the viewing deck where Fuji is and the last globe; and into the
  * sumo stable, the ring of rice bales, where the Yokozuna stamps and the
  * ring throws Rock out of it. City pop over taiko, a koto on top.
@@ -74,13 +74,12 @@ export function tokyo() {
   // A giant screen's light sweeping the crossing.
   g.light('spot', ...wallTile(crossing, 17), { colors: [NEON[1], NEON[0]], radius: 3, aim: toBack(crossing).map((v) => -5 * v), height: 1.3, angle: 0.24 });
 
-  // The karaoke box, up a flight off the crossing: the machine, the passport by it, a cosplayer mid-song.
+  // The karaoke box, up a flight off the crossing: the machine, a cosplayer mid-song.
   const up = branch(d, crossing, 9, 'back', 6);
   up.hall(3, { floor: 'planks', wall: 'block' });
   const karaoke = up.room(9, 9, { floor: 'carpet', wall: 'wallpaper' });
   g.block(...karaoke.rect(5, 2, 1, 1), 0.8, { prop: 'karaoke' });
   for (const k of [1, 2]) g.pillar(...backTile(karaoke, k), 1.4, { prop: 'vending' });
-  g.pass(...karaoke.tile(6, -1));
   g.foe('cosplayer', ...karaoke.tile(3, 2), { range: 4 });
   g.pick(...karaoke.tile(7, 3), 10);
   g.tape(...karaoke.tile(7, -3));
@@ -118,6 +117,8 @@ export function tokyo() {
   g.foe('ninja', ...robots.tile(2, 3), { range: 3 });
   g.pick(...robots.tile(2, -2), 10).pick(...robots.tile(10, 5), 10).pick(...robots.tile(15, -3), 10);
   g.lighter(...robots.tile(16, -5));
+  // The passport, left on the floor by somebody who came for the robots and is still here.
+  g.pass(...robots.tile(11, -3));
   sign(robots, 8, 'ROBOT', NEON[1], 0.6, 1.9);
   g.light('laser', ...wallTile(robots, 4), { colors: [NEON[0], NEON[1]], height: 2.2 });
   wash(g, robots, [NEON[0], NEON[4]], { cans: 2, program: 'chase', every: 2 });

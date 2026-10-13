@@ -38,7 +38,7 @@ export function createAudio() {
   try { muted = localStorage.getItem('rocknroller3.muted') === '1'; } catch {}
 
   function wake() {
-    if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+    if (ctx) { if (ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume().catch(() => {}); return; }
     const AC = globalThis.AudioContext || globalThis.webkitAudioContext;
     if (!AC) return;
     ctx = new AC();
@@ -163,6 +163,8 @@ export function createAudio() {
 
   const api = {
     wake,
+    /** The sound back on, if there is any and the browser stopped it; nothing is made that wasn't. */
+    revive() { if (ctx && ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume().catch(() => {}); },
 
     get muted() { return muted; },
 
@@ -237,42 +239,44 @@ export function createAudio() {
     /** Picks: a plink, or for a suitcase of them the latches snapping and a strum. */
     pick(big = false) {
       const scale = [64, 67, 69, 71, 74, 76];
-      const n = scale[Math.floor(Math.random() * scale.length)] + 12;
-      tone({ freq: NOTE(n), length: 0.28, type: 'triangle', gain: 0.18 });
-      tone({ freq: NOTE(n) * 2, length: 0.1, type: 'sine', gain: 0.08 });
+      const n = scale[Math.floor(Math.random() * scale.length)];
+      tone({ freq: NOTE(n), length: 0.24, type: 'triangle', gain: 0.16 });
+      tone({ freq: NOTE(n) * 2, length: 0.06, type: 'sine', gain: 0.03 });
       if (big) {
-        for (const at of [0, 0.08]) burst({ at, length: 0.03, type: 'bandpass', freq: 3200, q: 4, gain: 0.5 });
+        for (const at of [0, 0.08]) burst({ at, length: 0.03, type: 'bandpass', freq: 1800, q: 3, gain: 0.35 });
         [52, 59, 64, 67, 71].forEach((m, i) => tone({ at: 0.12 + 0.04 * i, freq: NOTE(m), length: 0.7, type: 'sawtooth', gain: 0.06 }));
       }
     },
 
     tape() {
-      burst({ length: 0.45, type: 'bandpass', freq: 1200, sweep: 5000, q: 1, gain: 0.3 });
-      tone({ at: 0.35, freq: NOTE(79), length: 0.18, type: 'triangle', gain: 0.12 });
+      burst({ length: 0.45, type: 'bandpass', freq: 900, sweep: 2600, q: 1, gain: 0.25 });
+      tone({ at: 0.35, freq: NOTE(67), length: 0.18, type: 'triangle', gain: 0.12 });
     },
 
     /** A lighter: the flint, the flame catching, and the crowd's hopes going up. */
     lighter() {
-      burst({ length: 0.03, type: 'highpass', freq: 5000, gain: 0.5 });
+      burst({ length: 0.03, type: 'bandpass', freq: 2600, q: 2, gain: 0.3 });
       burst({ at: 0.06, length: 0.35, type: 'bandpass', freq: 600, sweep: 1800, q: 1, gain: 0.25 });
       [72, 76, 79].forEach((n, i) => tone({ at: 0.2 + i * 0.08, freq: NOTE(n), length: 0.5, type: 'triangle', gain: 0.1 }));
     },
 
     pass() {
-      tone({ freq: NOTE(88), length: 0.07, type: 'square', gain: 0.07 });
-      tone({ at: 0.09, freq: NOTE(95), length: 0.2, type: 'square', gain: 0.07 });
+      // The stamp coming down on it, and a two-note chime.
+      burst({ length: 0.06, type: 'bandpass', freq: 500, q: 1.5, gain: 0.5 });
+      tone({ at: 0.06, freq: NOTE(72), length: 0.2, type: 'triangle', gain: 0.13 });
+      tone({ at: 0.16, freq: NOTE(79), length: 0.35, type: 'triangle', gain: 0.13 });
     },
 
     /** A snow globe: the little music box in its base, playing, and a cheer. */
     globe() {
-      [84, 88, 91, 88, 93, 91, 96].forEach((n, i) => tone({ at: i * 0.11, freq: NOTE(n), length: 0.45, type: 'sine', gain: 0.1, attack: 0.002 }));
-      [72, 79].forEach((n) => tone({ freq: NOTE(n), length: 1.1, type: 'triangle', gain: 0.06 }));
+      [72, 76, 79, 76, 81, 79, 84].forEach((n, i) => tone({ at: i * 0.11, freq: NOTE(n), length: 0.45, type: 'triangle', gain: 0.11, attack: 0.002 }));
+      [60, 67].forEach((n) => tone({ freq: NOTE(n), length: 1.1, type: 'triangle', gain: 0.06 }));
       cheer(0.6, 1.6);
     },
 
     gate() {
       burst({ length: 1, type: 'bandpass', freq: 220, sweep: 520, q: 4, gain: 0.5 });
-      for (let i = 0; i < 12; i++) burst({ at: i * 0.07, length: 0.05, type: 'highpass', freq: 3000, gain: 0.2 });
+      for (let i = 0; i < 12; i++) burst({ at: i * 0.07, length: 0.05, type: 'bandpass', freq: 1600, q: 2, gain: 0.18 });
     },
 
     locked() {
@@ -354,8 +358,8 @@ export function createAudio() {
 
     /** A camera flash going off in Rock's face: the whine of it charging, and the pop. */
     flash() {
-      tone({ freq: 2400, to: 5200, length: 0.25, type: 'sine', gain: 0.05 });
-      burst({ at: 0.24, length: 0.05, type: 'highpass', freq: 4000, gain: 0.35 });
+      tone({ freq: 900, to: 1700, length: 0.22, type: 'sine', gain: 0.03 });
+      burst({ at: 0.22, length: 0.05, type: 'bandpass', freq: 2000, q: 1, gain: 0.25 });
     },
 
     hype() {},
