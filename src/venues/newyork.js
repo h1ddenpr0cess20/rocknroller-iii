@@ -30,7 +30,7 @@ export function newyork() {
     name: 'New York', act: 10, cols: 140, rows: 146, palette: NEWYORK, tempo: 136,
     intro: 'The last night of the tour. The Garden. Sold out. Rock is not on the list.',
     look: {
-      country: 'USA', theme: 'finale', floor: 'asphalt', wall: 'brick', lamp: 'bulb', crusher: 'speaker', lift: 'crowd', gate: 'border',
+      country: 'USA', poster: '#e8b020', theme: 'finale', floor: 'asphalt', wall: 'brick', lamp: 'bulb', crusher: 'speaker', lift: 'crowd', gate: 'border',
       hemi: ['#ffe8d8', '#4a2028', 1.15], key: '#fff0e0', keyK: 1.1, lantern: '#ffe8c8',
       skyColors: ['#020410', '#060a1e', '#0e1430', '#1c1c40', '#302848'], stars: false, skyline: '#05060c', horizon: 'city',
       reflect: BROADWAY, ceiling: '#2a1620',

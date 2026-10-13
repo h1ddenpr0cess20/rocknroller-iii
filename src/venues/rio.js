@@ -31,7 +31,7 @@ export function rio() {
     name: 'Rio de Janeiro', act: 8, cols: 140, rows: 140, palette: RIO, tempo: 104,
     intro: 'Carnival. Two million people dancing in the street. Rock is rolling in it.',
     look: {
-      country: 'Brazil', grade: 'tropical', theme: 'rio', floor: 'mosaic', wall: 'stucco', lamp: 'bulb', crusher: 'surdo', lift: 'float', pyro: 'fireworks', gate: 'border',
+      country: 'Brazil', poster: '#1a9a4a', grade: 'tropical', theme: 'rio', floor: 'mosaic', wall: 'stucco', lamp: 'bulb', crusher: 'surdo', lift: 'float', pyro: 'fireworks', gate: 'border',
       hemi: ['#e8d8f0', '#3a2a30', 1.15], key: '#fff0e0', keyK: 1.1, lantern: '#ffe0c0',
       skyColors: ['#04081a', '#0a1430', '#1a2a50', '#3a3a6a', '#6a4a7a'], stars: true, skyline: '#0a0c18', horizon: 'sea',
       reflect: CARNIVAL, ceiling: '#1a1c30',

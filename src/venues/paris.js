@@ -29,7 +29,7 @@ export function paris() {
     name: 'Paris', act: 2, cols: 130, rows: 126, palette: PARIS, tempo: 132,
     intro: 'The city of light. And of mimes. Mostly of mimes.',
     look: {
-      country: 'France', grade: 'dusk', theme: 'paris', floor: 'cobble', wall: 'haussmann', lamp: 'bulb', crusher: 'piano', lift: 'ferry', pyro: 'water', gate: 'border',
+      country: 'France', poster: '#1e4a9a', grade: 'dusk', theme: 'paris', floor: 'cobble', wall: 'haussmann', lamp: 'bulb', crusher: 'piano', lift: 'ferry', pyro: 'water', gate: 'border',
       hemi: ['#c8c4e8', '#3a3448', 1.1], key: '#ffe8d8', keyK: 1.05, lantern: '#ffe2b8',
       skyColors: ['#060818', '#0e1230', '#22244a', '#4a3a5a', '#7a5a62'], stars: true, skyline: '#0a0a14', horizon: 'city',
       reflect: LUMIERE, ceiling: '#1a1e30',

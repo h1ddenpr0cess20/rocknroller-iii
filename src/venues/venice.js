@@ -29,7 +29,7 @@ export function venice() {
     name: 'Venice', act: 3, cols: 136, rows: 140, palette: VENICE, tempo: 152,
     intro: 'A city with no roads. Rock is mostly road.',
     look: {
-      country: 'Italy', grade: 'dusk', theme: 'venice', floor: 'terracotta', wall: 'stucco', lamp: 'bulb', crusher: 'flowerpot', lift: 'gondola', pyro: 'fireworks', gate: 'bars',
+      country: 'Italy', poster: '#1a7a6a', grade: 'dusk', theme: 'venice', floor: 'terracotta', wall: 'stucco', lamp: 'bulb', crusher: 'flowerpot', lift: 'gondola', pyro: 'fireworks', gate: 'bars',
       hemi: ['#e8c8c0', '#3a2a30', 1.1], key: '#ffe0c8', keyK: 1.1, lantern: '#ffe0b0',
       skyColors: ['#0a0c22', '#1c1a3a', '#3a2a4a', '#7a4a52', '#c8784a'], stars: true, skyline: '#1a1218', horizon: 'sea',
       reflect: LAGOON, ceiling: '#1a2030',

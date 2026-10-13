@@ -32,7 +32,7 @@ export function alps() {
     name: 'The Alps', act: 4, cols: 150, rows: 150, palette: ALPS, tempo: 144,
     intro: 'The show is at the bottom of the mountain. Rock is at the top. A boulder, on a mountain.',
     look: {
-      country: 'Switzerland', grade: 'alpine', weather: 'snow', voice: 'alpine', theme: 'alps',
+      country: 'Switzerland', poster: '#2a6ab8', grade: 'alpine', weather: 'snow', voice: 'alpine', theme: 'alps',
       floor: 'snow', wall: 'cliff', lamp: 'bulb', crusher: 'snowball', lift: 'cablecar', pyro: 'snow', gate: 'border',
       hemi: ['#eef4ff', '#8a96a8', 1.45], key: '#fff8ee', keyK: 1.6, lantern: '#fff0d8',
       skyColors: ['#2a62c8', '#4a86e0', '#7aaef0', '#b4d4f6', '#e8f2fc'], stars: false, skyline: '#5a6a8a', horizon: 'peaks',

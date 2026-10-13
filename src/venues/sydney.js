@@ -29,7 +29,7 @@ export function sydney() {
     name: 'Sydney', act: 9, cols: 142, rows: 140, palette: SYDNEY, tempo: 160,
     intro: 'The other side of the world. Rock is upside down. He cannot tell.',
     look: {
-      country: 'Australia', grade: 'tropical', theme: 'sydney', floor: 'concrete', wall: 'stucco', lamp: 'bulb', crusher: 'crate', lift: 'ferry', gate: 'border',
+      country: 'Australia', poster: '#1a8ad8', grade: 'tropical', theme: 'sydney', floor: 'concrete', wall: 'stucco', lamp: 'bulb', crusher: 'crate', lift: 'ferry', gate: 'border',
       hemi: ['#c8d8f0', '#3a3430', 1.1], key: '#fff0d8', keyK: 1.1, lantern: '#ffe0a8',
       skyColors: ['#020814', '#061428', '#0e2440', '#1c3050', '#304060'], stars: true, skyline: '#05080e', horizon: 'sea',
       reflect: HARBOUR, ceiling: '#1e2230',

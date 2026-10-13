@@ -13,10 +13,10 @@ import { VENUES } from './venues/index.js';
 
 const SEGMENTS = 24;
 
-/** The sets' names and tints, read once. */
+/** The stops' names and poster colours, read once. */
 const INFO = VENUES.map((make) => {
   const v = make();
-  return { name: v.name, act: v.act, intro: v.intro, country: v.look.country ?? v.look.genre ?? '', tint: v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
+  return { name: v.name, act: v.act, intro: v.intro, country: v.look.country ?? v.look.genre ?? '', tint: v.look.poster ?? v.palette.walls?.[0] ?? '#2a1a3a', grade: v.look.grade ?? '' };
 });
 
 const el = (tag, className = '', html = '') => {
@@ -127,7 +127,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
       <header class="logo">
         <p class="presents">Live on stage, all over the world</p>
         <h1 class="top">Rock <span class="amp">'n'</span> Roller <span class="two">III</span></h1>
-        <h1 class="bottom flicker">World Tour</h1>
+        <h1 class="bottom">World Tour</h1>
         <p class="tag">a boulder goes abroad</p>
       </header>
       <div class="menu">
@@ -155,7 +155,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
   const review = screen('review', 'scrim', `
     <div class="card">
       <div class="venue-name"></div>
-      <h2 class="neon" style="--glow: var(--gold)">The Review</h2>
+      <h2 class="neon" style="--glow: var(--sun)">The Review</h2>
       <div class="newbest" hidden>new best</div>
       <div class="big-stars"></div>
       <ul class="goals"></ul>
@@ -192,7 +192,7 @@ export function createHud(root, { onStart, onResume, onRestart, onQuit, onNext, 
 
   const settings = screen('settings', 'scrim', `
     <div class="card">
-      <h2 class="neon" style="--glow: var(--gold)">Settings</h2>
+      <h2 class="neon" style="--glow: var(--sun)">Settings</h2>
       <div class="settings"></div>
       <div class="row" style="margin-top:14px"><button class="btn alt small" data-act="back" type="button"><span>Done</span></button></div>
     </div>`);

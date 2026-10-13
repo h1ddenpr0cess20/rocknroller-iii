@@ -31,7 +31,7 @@ export function spain() {
     name: 'Spain', act: 5, cols: 130, rows: 130, palette: SPAIN, tempo: 112,
     intro: 'They run the bulls in the morning. In the evening, they run the boulder.',
     look: {
-      country: 'Spain', grade: 'warm', theme: 'spain', floor: 'terracotta', wall: 'stucco', lamp: 'bulb', crusher: 'bell', lift: 'raft', pyro: 'fireworks', gate: 'bars',
+      country: 'Spain', poster: '#e8642a', grade: 'warm', theme: 'spain', floor: 'terracotta', wall: 'stucco', lamp: 'bulb', crusher: 'bell', lift: 'raft', pyro: 'fireworks', gate: 'bars',
       hemi: ['#ffd8b8', '#5a3028', 1.1], key: '#ffe8c8', keyK: 1.1, lantern: '#ffd8a8',
       skyColors: ['#0c0820', '#2a1438', '#6a2a3a', '#c8502a', '#f0a040'], stars: true, skyline: '#1a0c0c', horizon: 'hills',
       reflect: FIESTA, ceiling: '#3a2418',

@@ -30,7 +30,7 @@ export function egypt() {
     name: 'Egypt', act: 6, cols: 120, rows: 130, palette: EGYPT, tempo: 108,
     intro: 'Four and a half thousand years old, and they still have not seen anything like Rock.',
     look: {
-      country: 'Egypt', grade: 'warm', weather: 'sand', theme: 'egypt', floor: 'sand', wall: 'sandstone', lamp: 'bulb', crusher: 'block', lift: 'felucca', pyro: 'sand', gate: 'bars',
+      country: 'Egypt', poster: '#d8a030', grade: 'warm', weather: 'sand', theme: 'egypt', floor: 'sand', wall: 'sandstone', lamp: 'bulb', crusher: 'block', lift: 'felucca', pyro: 'sand', gate: 'bars',
       hemi: ['#ffe8c8', '#6a4a28', 1.15], key: '#ffe8c8', keyK: 1.15, lantern: '#ffd8a8',
       skyColors: ['#1a1030', '#3a2040', '#8a4a3a', '#d8803a', '#f0c060'], stars: true, skyline: '#3a2414', horizon: 'dunes',
       reflect: DESERT, ceiling: '#3a2a18',

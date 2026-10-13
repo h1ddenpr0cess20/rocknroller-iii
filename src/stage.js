@@ -281,7 +281,6 @@ export async function createStage(host) {
     setVenue(venue) {
       const look = venue.look ?? {};
       host.dataset.grade = look.grade ?? '';
-      document.body.classList.toggle('noir', look.grade === 'noir');
       document.body.classList.toggle('sandstorm', look.weather === 'sand');
       const palette = venue.palette ?? {};
       const sky = paintBackdrop({ sky: look.skyColors, stars: look.stars, skyline: look.skyline, horizon: look.horizon });

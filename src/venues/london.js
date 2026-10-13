@@ -32,7 +32,7 @@ export function london() {
     name: 'London', act: 1, cols: 96, rows: 96, palette: LONDON, tempo: 128,
     intro: 'Raining. Naturally. The first show is in Camden. Rock is in Piccadilly.',
     look: {
-      country: 'England', grade: 'fog', weather: 'rain', voice: 'british', theme: 'london',
+      country: 'England', poster: '#c8302a', grade: 'fog', weather: 'rain', voice: 'british', theme: 'london',
       floor: 'asphalt', wall: 'brick', lamp: 'bulb', crusher: 'phonebox', lift: 'ferry', gate: 'border',
       hemi: ['#c8d0e0', '#3a3430', 1.05], key: '#e8ecff', keyK: 1.0, lantern: '#ffe2b0',
       skyColors: ['#05070c', '#0a0e18', '#121826', '#1c2232', '#2a2e3c'], stars: false, skyline: '#07080c', horizon: 'city',

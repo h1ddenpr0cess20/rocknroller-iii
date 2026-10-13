@@ -31,7 +31,7 @@ export function tokyo() {
     name: 'Tokyo', act: 7, cols: 146, rows: 138, palette: TOKYO, tempo: 124,
     intro: 'Thirty-seven million people. One boulder. Everybody is filming it.',
     look: {
-      country: 'Japan', grade: 'neon', weather: 'petals', theme: 'tokyo',
+      country: 'Japan', poster: '#d81a5a', grade: 'neon', weather: 'petals', theme: 'tokyo',
       floor: 'asphalt', wall: 'block', lamp: 'bulb', crusher: 'vending', lift: 'bullet', pyro: 'steam', gate: 'border',
       hemi: ['#c8b8f0', '#2a2030', 1.05], key: '#f0e8ff', keyK: 1.1, lantern: '#ffd8e8',
       skyColors: ['#04040e', '#0a0a20', '#1a1438', '#3a2050', '#6a3060'], stars: false, skyline: '#08060e', horizon: 'fuji',
