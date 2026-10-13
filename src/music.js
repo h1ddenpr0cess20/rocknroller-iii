@@ -150,7 +150,7 @@ export const THEMES = {
   spain: {
     key: 45, scale: 'harmonic', prog: [0, 0, 10, 10, 8, 8, 7, 7], drums: 'rumba', rhythm: 'nylon', strum: 'rasgueado', bass: 'bossa', tone: 'upright', dominant: true,
     riff: [[0, 7, 1], [1, 6, 1], [2, 5, 1], [3, 4, 1], [4, 5, 2], [6, 4, 2], [8, 3, 4], [12, 2, 2], [14, 1, 2], [16, 4, 1], [17, 3, 1], [18, 2, 1], [19, 1, 1], [20, 2, 2], [22, 1, 2], [24, 0, 8]],
-    lead: 'guitar', gain: 1, drumLevel: 1.3,
+    lead: 'guitar', gain: 1.5, drumLevel: 1.3,
   },
   // Egypt: the darbuka's maqsum, strings swelling, an oud in the hijaz mode.
   egypt: {
@@ -493,8 +493,8 @@ export function createBand(ctx, out, noise) {
   /** Strings: detuned saws with a slow bow, or (short) a sawing stroke. */
   function strings(when, notes, length, level = 1) {
     const f = ctx.createBiquadFilter();
-    f.type = 'lowpass'; f.frequency.value = 2400;
-    const g = voice(0.04 * level);
+    f.type = 'lowpass'; f.frequency.value = 1600;
+    const g = voice(0.045 * level);
     f.connect(g);
     const short = length < 0.25;
     const end = env(g, when, 1, short ? 0.015 : 0.12, Math.max(0.02, length * (short ? 0.5 : 0.7)), short ? 0.08 : 0.3);
@@ -507,12 +507,14 @@ export function createBand(ctx, out, noise) {
    */
   function accordion(when, notes, length, level = 1) {
     const f = ctx.createBiquadFilter();
-    f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 0.6;
-    const g = voice(0.05 * level);
-    f.connect(g);
+    f.type = 'bandpass'; f.frequency.value = 950; f.Q.value = 0.7;
+    const soft = ctx.createBiquadFilter();
+    soft.type = 'lowpass'; soft.frequency.value = 2000;
+    const g = voice(0.06 * level);
+    f.connect(soft).connect(g);
     const end = env(g, when, 1, 0.025, Math.max(0.03, length * 0.75), 0.09);
     for (const n of notes) {
-      osc('square', NOTE(n), when, end, f, -9);
+      osc('triangle', NOTE(n), when, end, f, -9);
       osc('sawtooth', NOTE(n), when, end, f, 11);
     }
   }
@@ -568,7 +570,7 @@ export function createBand(ctx, out, noise) {
     f.type = 'lowpass'; f.Q.value = 1.5;
     f.frequency.setValueAtTime(tone * 1.3, when);
     f.frequency.exponentialRampToValueAtTime(tone * 0.45, when + 0.2);
-    const g = voice(0.07 * level * (cavaco ? 0.8 : 1));
+    const g = voice(0.09 * level * (cavaco ? 0.75 : 1));
     f.connect(g);
     const amp = ctx.createGain();
     amp.connect(f);
