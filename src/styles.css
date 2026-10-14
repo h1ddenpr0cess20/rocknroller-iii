@@ -400,3 +400,5 @@ kbd {
 
 #vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.5) 100%); }
 body.sandstorm #vignette { background: radial-gradient(ellipse at center, rgba(214,170,100,0.22) 30%, rgba(150,100,40,0.55) 100%); }
+/* No keyboard on a phone: the rev meter doesn't say Space. */
+@media (pointer: coarse) { .meters .label kbd { display: none; } }
