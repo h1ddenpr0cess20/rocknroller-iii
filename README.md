@@ -10,8 +10,9 @@ its own way of dropping things on you on the beat. One of them is a
 mountain.
 
 The third [Rock 'n' Roller](https://github.com/h1ddenpr0cess20/rocknroller),
-on the engine of [Rock 'n' Roller II: Hollywood Nights](https://github.com/h1ddenpr0cess20/rocknroller-ii)
-(the renderer, physics, tiled venues and camera), with the stops, cast,
+on the engine of [Rock 'n' Roller II: Hollywood Nights](https://github.com/h1ddenpr0cess20/rocknroller-ii),
+now the [Madness Engine](https://github.com/h1ddenpr0cess20/madness-engine)
+(the renderer, physics, camera, stage and sound), with the stops, cast,
 props, machinery, score and rules all redone for the road.
 
 ![The title screen](docs/screenshots/title.png)
@@ -133,38 +134,38 @@ Fuji (`look.horizon`), and the weather falls on it: rain in London,
 splashing on the cobbles, snow in the Alps, sand blowing in Egypt and
 cherry blossom in Tokyo.
 
-The rig (`src/lightshow.js`) keeps the beat of the music: pars, spots,
-strobes, lasers, neon signs, chandeliers, festoons, searchlights sweeping
-the sky, marquees of bulbs and street lamps. Strobes and lightning never
-flash more than three times in any second, and **Settings → Flashing
-lights** turns them, and the flashbulbs, down to a glow.
+The rig (the engine's `scenery/lightshow.rocknroller-iii`) keeps the beat of
+the music: pars, spots, strobes, lasers, neon signs, chandeliers, festoons,
+searchlights sweeping the sky, marquees of bulbs and street lamps. Strobes and
+lightning never flash more than three times in any second, and **Settings →
+Flashing lights** turns them, and the flashbulbs, down to a glow.
 
 ## The music
 
-Played live in Web Audio (`src/music.js`), with no audio files: a theme for
-every country, each with its own drums, bass line, rhythm part and lead. The
-main title is a stadium anthem, the guitars wide open (it comes back for New
-York with the brass out). Britpop for London; a musette with the accordion
-out front for Paris; a tarantella of mandolins for Venice; a polka and an
-alphorn in the Alps; a rumba, rasgueado and palmas, for Spain; the
-darbuka's maqsum and an oud for Egypt; city pop over taiko, with a koto,
-for Tokyo; a samba school for Rio; surf rock and a didgeridoo for Sydney.
-The beat clock drives the hazards and the lights.
+Played live in Web Audio (the engine's `music/band.rocknroller-iii`), with no
+audio files: a theme for every country, each with its own drums, bass line,
+rhythm part and lead. The main title is a stadium anthem, the guitars wide
+open (it comes back for New York with the brass out). Britpop for London; a
+musette with the accordion out front for Paris; a tarantella of mandolins for
+Venice; a polka and an alphorn in the Alps; a rumba, rasgueado and palmas, for
+Spain; the darbuka's maqsum and an oud for Egypt; city pop over taiko, with a
+koto, for Tokyo; a samba school for Rio; surf rock and a didgeridoo for
+Sydney. The beat clock drives the hazards and the lights.
 
 ## The cast
 
-Sculpted in code (`src/models/cast/`) and baked in background workers while
-the page loads. People for every stop: a City Gent with his brolly and The
-Times, a bobby, a guardsman, a Camden punk; a mime in his box, a pavement
-artist, a waiter with his tray in the air, a cyclist on his bicycle; a
-gondolier, a Carnival mask, a pizzaiolo spinning the dough, a nonna with
-her spoon; skiers, snowboarders and a yodeler; a matador, a flamenco dancer
-and a bull runner; a souvenir seller and an archaeologist; a salaryman at
-karaoke, a cosplayer, a sumo apprentice and a theme-park ninja; a samba
-dancer, a capoeirista, a beach footballer and a beach vendor; a surfer and
-a surf lifesaver; a cab driver and a hot dog vendor. And the ones who
-follow the tour everywhere: tourists, influencers, fans, paparazzi,
-security, doormen and camera drones.
+Sculpted in code (the engine's `characters/`, listed in `src/models/cast/`)
+and baked in background workers while the page loads. People for every stop: a
+City Gent with his brolly and The Times, a bobby, a guardsman, a Camden punk;
+a mime in his box, a pavement artist, a waiter with his tray in the air, a
+cyclist on his bicycle; a gondolier, a Carnival mask, a pizzaiolo spinning the
+dough, a nonna with her spoon; skiers, snowboarders and a yodeler; a matador,
+a flamenco dancer and a bull runner; a souvenir seller and an archaeologist; a
+salaryman at karaoke, a cosplayer, a sumo apprentice and a theme-park ninja; a
+samba dancer, a capoeirista, a beach footballer and a beach vendor; a surfer
+and a surf lifesaver; a cab driver and a hot dog vendor. And the ones who
+follow the tour everywhere: tourists, influencers, fans, paparazzi, security,
+doormen and camera drones.
 
 ![The cast](docs/screenshots/cast.jpg)
 
@@ -194,6 +195,24 @@ itinerary and the stop you are on, postcards with the airmail stripes for
 the review, a postmark for the III.
 
 ![The review](docs/screenshots/review.jpg)
+
+## On the engine
+
+The game runs on the
+[Madness Engine](https://github.com/h1ddenpr0cess20/madness-engine), which
+`npm install` fetches from GitHub. The renderer (WebGPU, or WebGL 2), the
+physics, the controls, the arcade camera, the stage, the film, the sound, the
+flying bits and the weather, the save slot and the sculpting kit are the
+engine's, and so are Rock (`heroes/rock`), the rig
+(`scenery/lightshow.rocknroller-iii`), the music
+(`music/band.rocknroller-iii`), the stops' textures
+(`textures/venue.rocknroller-iii`), the cast and props (`characters/…`,
+`props/…`) and each stop's mood (`moods/london` and the rest: its light, sky,
+reflections, grade and weather), all from the engine's library. What is left
+here is the game: the stops, the rules, the machinery, the props and the HUD,
+and the game's own sounds and bits on the engine's (`audio.js`, `effects.js`).
+The rosters (`src/models/cast/index.js`, `src/models/props/index.js`) say who
+is in the game and take each one from the library.
 
 ## Develop
 
@@ -230,8 +249,9 @@ browser console `rocknroller.debug.venue(i)` jumps to a stop and
 ## Credits
 
 Rock is [Rock](https://github.com/h1ddenpr0cess20/rock)'s boulder. The engine
-is [Rock 'n' Roller](https://github.com/h1ddenpr0cess20/rocknroller)'s, from
-[dungeon-roller](https://github.com/h1ddenpr0cess20/dungeon-roller), by way
+is the [Madness Engine](https://github.com/h1ddenpr0cess20/madness-engine),
+which grew out of [Rock 'n' Roller](https://github.com/h1ddenpr0cess20/rocknroller)'s
+and [dungeon-roller](https://github.com/h1ddenpr0cess20/dungeon-roller), by way
 of [Rock 'n' Roller II](https://github.com/h1ddenpr0cess20/rocknroller-ii).
 Type is Alfa Slab One, Anton and Barlow Condensed, from
 [Fontsource](https://fontsource.org). See also
