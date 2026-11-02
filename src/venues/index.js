@@ -17,5 +17,6 @@ import { venice } from './venice.js';
 export const VENUES = [london, paris, venice, alps, spain, egypt, tokyo, rio, sydney, newyork];
 
 export function loadVenue(index) {
-  return VENUES[index]();
+  // The rig's lights on posts stood where nothing walks or rolls into them.
+  return VENUES[index]().settleRig();
 }
