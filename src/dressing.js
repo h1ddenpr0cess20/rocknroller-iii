@@ -1,4 +1,4 @@
-import { random } from 'madness-engine/textures/venue.rocknroller-iii';
+import { random } from 'madness-engine/textures/venue';
 
 /**
  * Set dressing: the everyday furniture of the tour (see decor.js, which
