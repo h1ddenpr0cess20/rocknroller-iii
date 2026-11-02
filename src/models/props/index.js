@@ -1,6 +1,6 @@
 import globe from 'madness-engine/props/globe';
 import lighter from 'madness-engine/props/lighter';
-import pass from 'madness-engine/props/pass.rocknroller-iii';
+import pass from 'madness-engine/props/pass';
 import pick from 'madness-engine/props/pick';
 import suitcase from 'madness-engine/props/suitcase';
 import tape from 'madness-engine/props/tape';
