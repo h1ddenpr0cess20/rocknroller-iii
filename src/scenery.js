@@ -1,6 +1,13 @@
 import { BELT } from './gig.js';
-import { canvas, texture, beltTexture, cached, floorTexture, wallTexture } from 'madness-engine/textures/venue.rocknroller-iii';
+import { canvas, texture, beltTexture, cached, floorTexture, wallTexture, bill } from 'madness-engine/textures/venue';
 import { createZapMaterial } from './zap.js';
+
+// The tour's posters: the world tour, and the bands on the bill with it.
+bill({
+  bands: ['WORLD TOUR', 'BOULDER DASH', 'THE PEBBLES', 'LANDSLIDE', 'BEDROCK', 'THE SEDIMENTS', 'MAGMA', 'SCREE', 'GRANITE', 'SLAB', 'TECTONIC', 'HARD PLACE'],
+  headline: 'ROCK · LIVE',
+  badge: 'SOON',
+});
 
 /**
  * The stop as it is drawn: floors (a layer for each sort — concrete, stage

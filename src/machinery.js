@@ -2,7 +2,7 @@ import { isBaked, ready } from './models/library.js';
 import { createStatic } from 'madness-engine/models/model';
 import { PROPS } from './models/props/index.js';
 import { BUMPERS, BURSTS, DROPS, RIDES } from './travel.js';
-import { canvas, floorTexture, gaffTexture, glowTexture, grilleTexture, panelTexture, shutterTexture, texture, tiled } from 'madness-engine/textures/venue.rocknroller-iii';
+import { canvas, floorTexture, gaffTexture, glowTexture, grilleTexture, panelTexture, shutterTexture, texture, tiled } from 'madness-engine/textures/venue';
 
 /**
  * What moves, and what lies about, as it is drawn: sandbags and rigs that
