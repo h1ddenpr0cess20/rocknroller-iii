@@ -19,7 +19,7 @@ test('every stop can be played through to the stage door in one piece, with all 
     const globes = r.gig.actors.pickups.filter((p) => p.kind === 'globe');
     assert.equal(globes.length, GLOBES, `${name} hides ${GLOBES} snow globes`);
     assert.ok(globes.every((p) => p.taken), `${name}: every snow globe can be got`);
-    assert.ok(r.gig.rock.hp > 0, `${name}: Rock got there whole`);
+    assert.ok(r.gig.hero.hp > 0, `${name}: Rock got there whole`);
   }
 });
 

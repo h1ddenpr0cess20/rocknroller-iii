@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, backTile, barred, branch, flat, frontHeading, toBack, wallTile, wash } from './helpers.js';
+import { across, backTile, barred, branch, flat, frontHeading, toBack, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 9: Sydney. The far side of the world, and the show is at the Opera

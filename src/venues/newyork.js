@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { barred, branch, facingRot, flat, toBack, wallTile, wash } from './helpers.js';
+import { barred, branch, facingRot, flat, toBack, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 10: New York. The last night of the tour, the big one: out of a

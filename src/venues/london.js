@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, backTile, barred, flat, loop, pick, toBack, wallTile } from './helpers.js';
+import { across, backTile, barred, flat, loop, pick, toBack, wallTile } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 1: London. The first night of the tour, in the rain, of course. Off

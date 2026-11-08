@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, barred, branch, flat, frontHeading, wallTile, wash } from './helpers.js';
+import { across, barred, branch, flat, frontHeading, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 8: Rio. Carnival, and the whole city out in the street for it.

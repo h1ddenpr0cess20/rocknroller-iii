@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, backTile, barred, branch, flat, wallTile, wash } from './helpers.js';
+import { across, backTile, barred, branch, flat, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 3: Venice. A city with no roads, and a boulder. Down from the top
