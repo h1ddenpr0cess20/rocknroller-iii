@@ -1,10 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { COMBO_WINDOW, comboAt, createHype, earn, MAX_MULTIPLIER, smashed, windowLeft } from '../src/hype.js';
-import { createIntegrity, cracked, encore, heal, hurt, shattered } from '../src/integrity.js';
 import { GLOBES, goals, stars } from '../src/rating.js';
-import { closingSpeed, CRIT, resolveImpact } from '../src/smash.js';
+import { closingSpeed, CRIT, resolveImpact } from 'madness-engine/venue/smash';
 import { createStorage } from '../src/storage.js';
 import { FOES } from '../src/foes.js';
 import { CAST } from '../src/models/cast/index.js';
@@ -67,37 +65,6 @@ test('everyone in the way is sculpted, and nobody is sculpted who is not in the 
     // The bosses stand head and shoulders over everyone else.
     if (FOES[kind].boss) assert.ok(def.scale >= 2.4, `${kind} is big`);
   }
-});
-
-test('hype: smashes in a row build a combo that multiplies, up to the cap, and it drops after the window', () => {
-  const hype = createHype();
-  assert.equal(smashed(hype, 100, 0).gain, 100);
-  assert.equal(smashed(hype, 100, 1).gain, 200);
-  assert.equal(smashed(hype, 100, 2).multiplier, 3);
-  for (let t = 3; t < 12; t++) smashed(hype, 100, t);
-  assert.equal(comboAt(hype, 11.5), 12);
-  assert.equal(smashed(hype, 100, 12).multiplier, MAX_MULTIPLIER);
-  assert.equal(comboAt(hype, 12 + COMBO_WINDOW + 0.1), 0);
-  assert.equal(smashed(hype, 100, 30).gain, 100);
-  assert.ok(windowLeft(hype, 30.2) > 0.9 && windowLeft(hype, 40) === 0);
-  assert.equal(earn(hype, 25), 25);
-});
-
-test('integrity: hurt, heal up to the best and no more, shatter, and an encore from a lighter', () => {
-  const rock = createIntegrity();
-  assert.equal(hurt(rock, 30), 30);
-  assert.equal(rock.hp, 70);
-  assert.equal(heal(rock, 25), 25);
-  assert.equal(heal(rock, 25), 5);
-  assert.equal(cracked(rock), 0);
-  hurt(rock, 150);
-  assert.ok(shattered(rock));
-  assert.equal(encore(rock), false);
-  rock.encores = 1;
-  assert.equal(encore(rock), true);
-  assert.equal(rock.hp, 50);
-  assert.equal(rock.encores, 0);
-  assert.equal(heal({ hp: 0, max: 100 }, 10), 0, 'no healing the dead');
 });
 
 test('stars: one for making the show, one for smashing three in four, one for the three snow globes', () => {

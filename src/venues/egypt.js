@@ -1,6 +1,6 @@
-import { digger } from '../dig.js';
+import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, backTile, barred, branch, centre, flat, loop, toBack, wallTile, wash } from './helpers.js';
+import { across, backTile, barred, branch, centre, flat, loop, toBack, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 6: Egypt. The show is at the foot of the pyramids, and the sand is
