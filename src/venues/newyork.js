@@ -6,7 +6,7 @@ import { barred, branch, facingRot, flat, toBack, wallTile, wash } from 'madness
  * Stop 10: New York. The last night of the tour, the big one: out of a
  * yellow cab into Times Square, the billboards stacked up into the sky and
  * the searchlights going; down Broadway between the velvet ropes, the
- * theatres lit, the paparazzi who have followed him round the world and
+ * theaters lit, the paparazzi who have followed him round the world and
  * the hoofers between shows; into the arena's concourse, the hot dogs, the
  * security, the passport left at the box office, a globe in the coat check;
  * through the doors and down the stands, the speaker stacks of the first
@@ -57,7 +57,7 @@ export function newyork() {
   d.turn('+z', AVENUE);
   d.hall(2, { floor: 'carpet', wall: 'brick' });
 
-  // Broadway: the velvet ropes, the paparazzi and the hoofers, a cop on the beat, the theatres' marquees.
+  // Broadway: the velvet ropes, the paparazzi and the hoofers, a cop on the beat, the theaters' marquees.
   const broadway = d.room(24, 9, { floor: 'carpet', wall: 'damask' });
   for (const a of [3, 7, 11, 15, 19]) { rope(broadway, a, -2); rope(broadway, a, 2); }
   g.foe('paparazzo', ...broadway.tile(5, 3), { range: 4 }).foe('paparazzo', ...broadway.tile(13, -3), { range: 4 });

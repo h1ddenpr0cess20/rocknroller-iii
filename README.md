@@ -94,7 +94,7 @@ before. The game plays the same with storage blocked.
 - **Drops**, coming down on the beat, a different thing in every country: London's phone boxes, the pianos they keep moving up to the flats in Paris, Venice's window boxes, snowballs off the Alps, Spain's church bells, Egypt's quarry blocks, Tokyo's vending machines, Rio's surdo drums, Sydney's crates off the wharf crane, the speaker stacks in New York. Wait for the moment they go up.
 - **The floor goes up** on the beat: snow cannons, sand spouts, the fountains of the palace gardens, the steam off Tokyo's ramen stalls, festival fireworks, barbecues.
 - **Live wires** zap whatever rolls onto them; water does the same.
-- **Rides**: a Thames ferry, the last Métro, a bateau-mouche, a gondola, the cable car, a raft on the river at Ronda, a felucca on the Nile, the bullet train, a carnival float, Sydney's harbour ferries, and in New York's arena the crowd's hands. Get on while they wait.
+- **Rides**: a Thames ferry, the last Métro, a bateau-mouche, a gondola, the cable car, a raft on the river at Ronda, a felucca on the Nile, the bullet train, a carnival float, Sydney's harbor ferries, and in New York's arena the crowd's hands. Get on while they wait.
 - **Ice**: in the Alps' ice cave and on the frozen lake, Rock can hardly push and hardly stop.
 - **Sticky floors** (the tomatoes in Spain, quicksand in Egypt) slow Rock; **the crowd and the rip** carry him; **bumpers** (bollards, snowmen, palms, mooring poles, amphorae, stone lanterns) throw him back.
 
@@ -113,7 +113,7 @@ music.
 | 6 | **Egypt** | In a sandstorm. The bazaar and its sellers, a felucca across the Nile, the quarry where the blocks come down off the cliff as they did for the builders, the archaeologists' tent, the dunes and their quicksand and the Mummy, and down inside the pyramid to the king's chamber and the treasury across the pit. The darbuka's maqsum, strings, an oud. |
 | 7 | **Tokyo** | Neon, and the cherry blossom coming down through it. The great crossing, the ramen stalls steaming on the beat, a karaoke box (the tour's one mirror ball), an alley of tiny bars where the vending machines come off the truck, the robot restaurant, the bullet train out to where Fuji is, and the sumo stable, where **the Yokozuna** stamps and the ring throws you out of it. City pop over taiko, a koto on top. |
 | 8 | **Rio** | Carnival. Down the favela's steps under the live wires, the samba school's hall where the drums rehearse, the Sambadrome with the crowd surging to the edge, the shed where the floats are built, a float over the gap, and Copacabana. A samba school: the surdos, a cavaquinho, the whistle. |
-| 9 | **Sydney** | Off the top of the Harbour Bridge, across Circular Quay on the ferries, the barbecues in the Rocks flaring on the beat, Bondi and its rip, the surf club, the rock pool and its croc. Surf rock at a gallop, and a didgeridoo. |
+| 9 | **Sydney** | Off the top of the Harbor Bridge, across Circular Quay on the ferries, the barbecues in the Rocks flaring on the beat, Bondi and its rip, the surf club, the rock pool and its croc. Surf rock at a gallop, and a didgeridoo. |
 | 10 | **New York** | The last night. Times Square under the searchlights, Broadway between the velvet ropes, the arena's concourse, down the stands under the speaker stacks, across the pit on the crowd's hands, and onto the stage, where **the Superfan**, who has been to every show and has Rock's face on his arm, moves on the beat, like Rock taught him. The anthem, with the brass out. |
 
 | | |

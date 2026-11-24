@@ -1,6 +1,6 @@
 import { digger } from 'madness-engine/venue/dig';
 import { Venue } from '../venue.js';
-import { across, backTile, barred, branch, centre, flat, loop, toBack, wallTile, wash } from 'madness-engine/venue/helpers';
+import { across, backTile, barred, branch, center, flat, loop, toBack, wallTile, wash } from 'madness-engine/venue/helpers';
 
 /**
  * Stop 6: Egypt. The show is at the foot of the pyramids, and the sand is
@@ -76,7 +76,7 @@ export function egypt() {
   g.bumper(...bank.tile(3, 3), { radius: 0.45, look: 'palm' });
   g.foe('camel', ...bank.tile(4, -2), { range: 5 });
   g.pick(...bank.tile(2, -3), 10).pick(...bank.tile(6, 4), 10);
-  g.light('chandelier', ...centre(bank), { height: 3.2, radius: 4, color: '#ffc890' });
+  g.light('chandelier', ...center(bank), { height: 3.2, radius: 4, color: '#ffc890' });
   d.hall(4, { floor: 'planks', wall: 'fence' });
   d.ferry(10, { size: 3, period: 8 });
   d.hall(3, { floor: 'sand', wall: 'sandstone' });
@@ -144,7 +144,7 @@ export function egypt() {
   g.foe('scarab', ...plank.tile(3, 0), { path: [plank.tile(1, 0), plank.tile(5, 0)] });
   const treasury = pit.room(5, 5, TOMB);
   g.globe(...treasury.tile(2, 0));
-  g.light('chandelier', ...centre(treasury), { height: 2.8, radius: 2.5, color: '#ffd890' });
+  g.light('chandelier', ...center(treasury), { height: 2.8, radius: 2.5, color: '#ffd890' });
   d.hall(3, TOMB);
   d.exit(3);
   return g;
