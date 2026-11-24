@@ -4,9 +4,9 @@ import { across, backTile, barred, branch, flat, frontHeading, toBack, wallTile,
 
 /**
  * Stop 9: Sydney. The far side of the world, and the show is at the Opera
- * House. Off the top of the Harbour Bridge's arch, where the climbers go,
+ * House. Off the top of the Harbor Bridge's arch, where the climbers go,
  * down the stairs inside it; across Circular Quay, the wharf crane dropping
- * crates on the beat and the harbour ferries the only way over the water,
+ * crates on the beat and the harbor ferries the only way over the water,
  * a snow globe through the glass of the Opera House's foyer; down to the
  * Rocks, the beer garden where the barbecues flare on the beat; along
  * Bondi, the rip pulling everything out toward the edge, the surfers and
@@ -21,8 +21,8 @@ export const SYDNEY = {
   ambient: [1.0, 1.0, 1.02], lamp: '#ffe0a8', trap: '#1a2a3a', lift: '#2a6a3a', exit: '#ffd23a', zapHue: 0.6, vary: 0.06,
 };
 
-/** The harbour at night: the bridge's lamps, the Opera House lit white, the surf's blue, a barbecue's orange. */
-const HARBOUR = ['#ffe0a8', '#f4f6ff', '#3ab0ff', '#ff8a3a'];
+/** The harbor at night: the bridge's lamps, the Opera House lit white, the surf's blue, a barbecue's orange. */
+const HARBOR = ['#ffe0a8', '#f4f6ff', '#3ab0ff', '#ff8a3a'];
 
 export function sydney() {
   const g = new Venue({
@@ -32,12 +32,12 @@ export function sydney() {
       country: 'Australia', poster: '#1a8ad8', grade: 'tropical', theme: 'sydney', floor: 'concrete', wall: 'stucco', lamp: 'bulb', crusher: 'crate', lift: 'ferry', gate: 'border',
       hemi: ['#c8d8f0', '#3a3430', 1.1], key: '#fff0d8', keyK: 1.1, lantern: '#ffe0a8',
       skyColors: ['#020814', '#061428', '#0e2440', '#1c3050', '#304060'], stars: true, skyline: '#05080e', horizon: 'sea',
-      reflect: HARBOUR, ceiling: '#1e2230',
-      rig: { colors: HARBOUR.slice(0, 2), program: 'pulse', every: 2 },
+      reflect: HARBOR, ceiling: '#1e2230',
+      rig: { colors: HARBOR.slice(0, 2), program: 'pulse', every: 2 },
     },
   });
-  const sign = (p, along, text, color = HARBOUR[0], size = 0.55, height = 1.6) => g.light('neon', ...wallTile(p, along), { text, color, height, size });
-  const beacon = (p, along, color = HARBOUR[2], reach = 2) => g.light('spot', ...wallTile(p, along), { colors: [color], radius: reach, aim: toBack(p).map((v) => -(reach + 1) * v), height: 1.3, angle: 0.22 });
+  const sign = (p, along, text, color = HARBOR[0], size = 0.55, height = 1.6) => g.light('neon', ...wallTile(p, along), { text, color, height, size });
+  const beacon = (p, along, color = HARBOR[2], reach = 2) => g.light('spot', ...wallTile(p, along), { colors: [color], radius: reach, aim: toBack(p).map((v) => -(reach + 1) * v), height: 1.3, angle: 0.22 });
   const QUAY = { floor: 'plate', wall: 'stucco' };
 
   // The top of the arch, where the bridge climbers come up.
@@ -49,7 +49,7 @@ export function sydney() {
   for (const k of [3, 8]) g.pillar(...backTile(arch, k), 1.0, { prop: 'flagpole' });
   g.foe('surfer', ...arch.tile(6, 1), { range: 3 }).foe('drone', ...arch.tile(9, 0), { path: [arch.tile(3, 0), arch.tile(11, 0)] });
   g.pick(...arch.tile(1, 0), 5).pick(...arch.tile(5, -1), 5).pick(...arch.tile(10, 1), 10);
-  sign(arch, 6, 'BRIDGE CLIMB', HARBOUR[1], 0.45);
+  sign(arch, 6, 'BRIDGE CLIMB', HARBOR[1], 0.45);
   d.turn('+z', { floor: 'plate', wall: 'block' });
   // The stairs inside the arch: down and round.
   d.stairs(6, 3, { wall: 'block' });
@@ -57,7 +57,7 @@ export function sydney() {
   d.stairs(5, 2.5, { wall: 'block' });
   d.hall(2, QUAY);
 
-  // Circular Quay: the wharf crane dropping crates, and the harbour ferries over the water.
+  // Circular Quay: the wharf crane dropping crates, and the harbor ferries over the water.
   const wharf = d.hall(8, { width: 5, ...QUAY });
   g.drop(...across(wharf, 4, { beats: 8 }));
   g.foe('tourist', ...wharf.tile(6, 1), { range: 3 });
@@ -91,8 +91,8 @@ export function sydney() {
   g.foe('surfer', ...garden.tile(3, 2), { range: 3 }).foe('kangaroo', ...garden.tile(8, -1), { range: 2 }).foe('lifeguard', ...garden.tile(13, 2), { range: 2 });
   g.pick(...garden.tile(1, 0), 10).pick(...garden.tile(7, 3), 10).pick(...garden.tile(12, -2), 10).pick(...garden.tile(18, 0), 10);
   g.tape(...garden.tile(17, 4));
-  for (const k of [4, 14]) beacon(garden, k, k === 4 ? HARBOUR[3] : HARBOUR[0]);
-  sign(garden, 9.5, 'THE ROCKS', HARBOUR[0], 0.5);
+  for (const k of [4, 14]) beacon(garden, k, k === 4 ? HARBOR[3] : HARBOR[0]);
+  sign(garden, 9.5, 'THE ROCKS', HARBOR[0], 0.5);
   d.hall(2, { floor: 'cobble', wall: 'brick' });
   d.turn('+x', { floor: 'sand', wall: 'fence' });
 
@@ -107,7 +107,7 @@ export function sydney() {
   g.foe('lifeguard', ...bondi.tile(20, 0), { range: 2 });
   g.pick(...bondi.tile(2, bondi.back), 5).pick(...bondi.tile(9, -bondi.back), 5).pick(...bondi.tile(16, -bondi.back), 10);
   g.lighter(...bondi.tile(21, -bondi.back));
-  sign(bondi, 7, 'BONDI', HARBOUR[2], 0.5);
+  sign(bondi, 7, 'BONDI', HARBOR[2], 0.5);
   sign(bondi, 14, 'SWIM BETWEEN THE FLAGS', '#ffd23a', 0.32);
   d.turn('+z', QUAY);
   d.hall(2, QUAY);
@@ -120,8 +120,8 @@ export function sydney() {
   g.foe('lifeguard', ...club.tile(12, -2), { range: 3 }).foe('surfer', ...club.tile(14, 2), { range: 4 }).foe('kangaroo', ...club.tile(5, -2), { range: 4 });
   g.pick(...club.tile(1, 0), 10).pick(...club.tile(11, -3), 10).pick(...club.tile(16, 3), 10);
   g.suitcase(...club.tile(16, -5), 70);
-  wash(g, club, [HARBOUR[1], HARBOUR[2]], { cans: 3, program: 'static' });
-  sign(club, 4, 'SURF CLUB', HARBOUR[3], 0.45);
+  wash(g, club, [HARBOR[1], HARBOR[2]], { cans: 3, program: 'static' });
+  sign(club, 4, 'SURF CLUB', HARBOR[3], 0.45);
   const wall = branch(d, club, 11, 'front', 7);
   const back = wall.hall(5, { floor: 'planks', wall: 'stucco' });
   flat(g, back, 3, { look: 'drywall', breakAt: 6.5 });

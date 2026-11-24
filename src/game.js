@@ -46,7 +46,7 @@ const TITLE_TURN = 0.16;
 export function createGame({ stage, hud, input, audio, storage, loading }) {
   const { GFX, scene, view } = stage;
   const effects = createEffects(GFX, scene);
-  const rock = createGraniteRock(GFX, { radius: BALL_RADIUS, colour: 'white' });
+  const rock = createGraniteRock(GFX, { radius: BALL_RADIUS, color: 'white' });
   rock.group.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   scene.add(rock.group);
 
@@ -271,7 +271,7 @@ export function createGame({ stage, hud, input, audio, storage, loading }) {
     for (const p of out.picked) picked(p);
     for (const bm of out.bumped) { audio.bumper(); rock.react('smash', 0.3); stage.shake = Math.max(stage.shake, 0.05); void bm; }
     for (const p of out.smashed) {
-      const at = [p.centre[0], p.centre[1] + 0.5, p.centre[2]];
+      const at = [p.center[0], p.center[1] + 0.5, p.center[2]];
       effects.chips(...at, 10 + Math.min(20, p.spec.w * p.spec.d * 4));
       effects.dust(...at);
       audio.panel();
@@ -280,7 +280,7 @@ export function createGame({ stage, hud, input, audio, storage, loading }) {
       hud.pop(s.x, s.y, `+${PROP_HYPE}`, '');
     }
     for (const g of out.broke) {
-      const at = [g.centre[0], g.base + 0.6, g.centre[2]];
+      const at = [g.center[0], g.base + 0.6, g.center[2]];
       effects.dust(...at);
       effects.chips(...at, 22);
       effects.confetti(...at, 14);

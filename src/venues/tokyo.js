@@ -23,7 +23,7 @@ export const TOKYO = {
   ambient: [0.95, 0.92, 1.05], lamp: '#fff0d8', trap: '#202028', lift: '#f4f6f8', exit: '#ff3a8a', zap: '#ffe8f8', zapHue: 0.9, vary: 0.07,
 };
 
-/** Tokyo at night: neon pink, electric blue, a lantern's red, signs in every other colour. */
+/** Tokyo at night: neon pink, electric blue, a lantern's red, signs in every other color. */
 const NEON = ['#ff3a8a', '#3ad8ff', '#ff3a3a', '#ffd23a', '#9a5aff'];
 
 export function tokyo() {
